@@ -21,7 +21,7 @@ namespace Extensibility.Kubernetes
             {
                 var parsedGvk = new GroupVersionKind(match.Groups["group"].Value, match.Groups["version"].Value, match.Groups["kind"].Value);
                 
-                if (parsedGvk.Group == "core")
+                if (parsedGvk.Group == "core" || parsedGvk.Group == "")
                 {
                     parsedGvk = new GroupVersionKind(null, parsedGvk.Version, parsedGvk.Kind);
                 }
