@@ -21,7 +21,13 @@ namespace Extensibility.Kubernetes
             {
                 var parsedGvk = new GroupVersionKind(match.Groups["group"].Value, match.Groups["version"].Value, match.Groups["kind"].Value);
                 
-                if (parsedGvk.Group == "core")
+                if (parsedGvk.Group != null && parsedGvk.Group.StartsWith("kubernetes."))
+                {
+                    // Remove the kubernetes. prefix for compat with radius.
+                    parsedGvk = new GroupVersionKind(parsedGvk.Group.Substring("kubernetes.".Length), parsedGvk.Version, parsedGvk.Kind);
+                }
+
+                if (parsedGvk.Group == "core" || parsedGvk.Group == "")
                 {
                     parsedGvk = new GroupVersionKind(null, parsedGvk.Version, parsedGvk.Kind);
                 }
