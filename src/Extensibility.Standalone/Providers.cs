@@ -4,6 +4,7 @@ namespace Extensibility.Standalone
     using Extensibility.AzureStorage;
     using Extensibility.Kubernetes;
     using Extensibility.Core.Contract;
+    using System;
 
     public static class Providers
     {
@@ -13,7 +14,14 @@ namespace Extensibility.Standalone
             ["Kubernetes"] = new KubernetesProvider(),
         };
 
-        public static IExtensibilityProvider? TryGetProvider(string name)
-            => ProvidersLookup.TryGetValue(name, out var provider) ? provider : null;
+        public static IExtensibilityProvider GetProvider(string? name)
+        {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            return ProvidersLookup.TryGetValue(name, out var provider) ? provider : throw new InvalidOperationException($"Failed to find provider \"{name}\"");
+        }
     }
 }

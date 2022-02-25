@@ -12,20 +12,16 @@ namespace Extensibility.Standalone
     [Route("[controller]")]
     public class ApiController
     {
-        private ILogger<ApiController> _logger;
-
-        public ApiController(ILogger<ApiController> logger)
+        public ApiController()
         {
-            _logger = logger;
         }
 
         [HttpPost("delete")]
         public async Task<IActionResult> Delete([FromBody] DeleteRequest request)
         {
-            ServiceClientTracing.IsEnabled = true;
-            ServiceClientTracing.AddTracingInterceptor(new LoggerTracingInterceptor(_logger));
-            _logger.LogInformation($"Received request Delete");
-            var response = await Providers.TryGetProvider(request.Body!.Import!.Provider!)!.Delete(request, CancellationToken.None);
+            var provider = Providers.GetProvider(request.Body?.Import?.Provider);
+
+            var response = await provider.Delete(request, CancellationToken.None);
 
             return new OkObjectResult(response);
         }
@@ -33,10 +29,9 @@ namespace Extensibility.Standalone
         [HttpPost("get")]
         public async Task<IActionResult> Get([FromBody] GetRequest request)
         {
-            ServiceClientTracing.IsEnabled = true;
-            ServiceClientTracing.AddTracingInterceptor(new LoggerTracingInterceptor(_logger));
-            _logger.LogInformation($"Received request Get");
-            var response = await Providers.TryGetProvider(request.Body!.Import!.Provider!)!.Get(request, CancellationToken.None);
+            var provider = Providers.GetProvider(request.Body?.Import?.Provider);
+            
+            var response = await provider.Get(request, CancellationToken.None);
 
             return new OkObjectResult(response);
         }
@@ -44,10 +39,9 @@ namespace Extensibility.Standalone
         [HttpPost("save")]
         public async Task<IActionResult> Save([FromBody] SaveRequest request)
         {
-            ServiceClientTracing.IsEnabled = true;
-            ServiceClientTracing.AddTracingInterceptor(new LoggerTracingInterceptor(_logger));
-            _logger.LogInformation($"Received request Save");
-            var response = await Providers.TryGetProvider(request.Body!.Import!.Provider!)!.Save(request, CancellationToken.None);
+            var provider = Providers.GetProvider(request.Body?.Import?.Provider);
+
+            var response = await provider.Save(request, CancellationToken.None);
 
             return new OkObjectResult(response);
         }
@@ -55,10 +49,9 @@ namespace Extensibility.Standalone
         [HttpPost("previewSave")]
         public async Task<IActionResult> PreviewSave([FromBody] PreviewSaveRequest request)
         {
-            ServiceClientTracing.IsEnabled = true;
-            ServiceClientTracing.AddTracingInterceptor(new LoggerTracingInterceptor(_logger));
-            _logger.LogInformation($"Received request PreviewSave");
-            var response = await Providers.TryGetProvider(request.Body!.Import!.Provider!)!.PreviewSave(request, CancellationToken.None);
+            var provider = Providers.GetProvider(request.Body?.Import?.Provider);
+
+            var response = await provider.PreviewSave(request, CancellationToken.None);
 
             return new OkObjectResult(response);
         }

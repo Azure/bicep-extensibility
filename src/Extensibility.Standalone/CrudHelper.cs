@@ -13,7 +13,7 @@ namespace Extensibility.Standalone
             var providerName = resource.Import?.Provider ?? throw new InvalidOperationException($"resource.Import.Provider should not be null");
             var typeString = resource.Type ?? throw new InvalidOperationException($"resource.Type should not be null");
 
-            return Providers.TryGetProvider(providerName) ?? throw new InvalidOperationException($"Failed to find provider \"{providerName}\"");
+            return Providers.GetProvider(providerName);
         }
 
         public static async Task<ExtensibleResourceBody> Delete(ExtensibleResourceBody resource, CancellationToken cancellationToken)
