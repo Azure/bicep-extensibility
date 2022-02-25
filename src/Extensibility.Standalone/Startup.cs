@@ -19,7 +19,7 @@ namespace Extensibility.Standalone
         {
             services.AddMvc().AddNewtonsoftJson(opts => {
                 opts.SerializerSettings.Converters.Add(new StringEnumConverter());
-            });;
+            });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
