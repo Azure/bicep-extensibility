@@ -36,7 +36,8 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
       appSettings: [
         {
           name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~3'
+          // match AzureFunctionsVersion in src/Extensibility.Host/Extensibility.Host.csproj
+          value: '~4'
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
