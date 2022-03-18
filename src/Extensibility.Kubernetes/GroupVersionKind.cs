@@ -8,7 +8,7 @@ namespace Extensibility.Kubernetes
     public readonly struct GroupVersionKind : IEquatable<GroupVersionKind>
     {
         // Expected format = (<group>/)?<Kind>@<version>
-        // ex: 
+        // ex:
         //
         //  apps/Deployment@v1 -> Kind: Deployment, ApiVersion: apps/v1
         //  Service@v1 -> Kind: Service, ApiVersion: v1
@@ -20,7 +20,7 @@ namespace Extensibility.Kubernetes
             if (parser.Match(version) is Match match)
             {
                 var parsedGvk = new GroupVersionKind(match.Groups["group"].Value, match.Groups["version"].Value, match.Groups["kind"].Value);
-                
+
                 if (parsedGvk.Group != null && parsedGvk.Group.StartsWith("kubernetes."))
                 {
                     // Remove the kubernetes. prefix for compat with radius.
@@ -68,9 +68,9 @@ namespace Extensibility.Kubernetes
                 string.Equals(Kind, other.Kind, StringComparison.OrdinalIgnoreCase);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is GroupVersionKind gvk ? Equals(gvk) : false;
+            return obj is GroupVersionKind gvk && Equals(gvk);
         }
 
         public override int GetHashCode()
