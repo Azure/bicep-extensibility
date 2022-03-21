@@ -197,7 +197,7 @@ namespace Extensibility.Kubernetes
                         name,
                         fieldManager: "bicep",
                         force: true,
-                        dryRun: "true",
+                        dryRun: "All",
                         cancellationToken: cancellationToken);
 
                     return new()
@@ -249,7 +249,7 @@ namespace Extensibility.Kubernetes
                         name,
                         fieldManager: "bicep",
                         force: true,
-                        dryRun: "true",
+                        dryRun: "All",
                         cancellationToken: cancellationToken);
 
                     return new()
