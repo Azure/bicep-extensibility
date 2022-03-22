@@ -1,6 +1,6 @@
 ﻿namespace Extensibility.Core.Data
 {
-    using Newtonsoft.Json.Linq;
+    using System.Text.Json.Nodes;
 
     public class ExtensibleImport
     {
@@ -8,6 +8,6 @@
 
         public string? Version { get; set; }
 
-        public JObject? Config { get; set; }
+        public JsonObject? Config { get; set; }
     }
 }

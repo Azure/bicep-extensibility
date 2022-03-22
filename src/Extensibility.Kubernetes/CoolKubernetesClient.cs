@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using k8s.Models;
 using Microsoft.Rest;
-using Microsoft.Rest.Serialization;
-using Newtonsoft.Json;
 
 namespace Extensibility.Kubernetes
 {
@@ -139,7 +138,7 @@ namespace Extensibility.Kubernetes
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = SafeJsonConvert.DeserializeObject<V1APIResourceList>(_responseContent, DeserializationSettings);
+                    _result.Body = JsonSerializer.Deserialize<V1APIResourceList>(_responseContent)!;
                 }
                 catch (JsonException ex)
                 {

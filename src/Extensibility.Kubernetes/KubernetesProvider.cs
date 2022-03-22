@@ -1,15 +1,14 @@
 using System;
 using System.IO;
-using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
-using Extensibility.Core;
 using Extensibility.Core.Contract;
 using Extensibility.Core.Data;
 using Extensibility.Core.Messages;
 using k8s;
 using Microsoft.Rest;
-using Newtonsoft.Json.Linq;
 
 namespace Extensibility.Kubernetes
 {
@@ -119,7 +118,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -152,7 +151,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -174,8 +173,8 @@ namespace Extensibility.Kubernetes
             }
 
             // User is not required to type these in, they are implicit as part of the type.
-            resource.Properties!["apiVersion"] = new JValue(gvk.Value.ApiVersion);
-            resource.Properties!["kind"] = new JValue(gvk.Value.Kind);
+            resource.Properties!["apiVersion"] = JsonValue.Create(gvk.Value.ApiVersion);
+            resource.Properties!["kind"] = JsonValue.Create(gvk.Value.Kind);
 
             var (config, clientConfig) = InitializeConfig(resource.Import!);
 
@@ -206,7 +205,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -221,7 +220,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.Parse(ex.Response.Content),
+                            Properties = JsonObject.Parse(ex.Response.Content),
                         }
                     };
                 }
@@ -256,7 +255,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -271,7 +270,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.Parse(ex.Response.Content),
+                            Properties = JsonObject.Parse(ex.Response.Content),
                         }
                     };
                 }
@@ -293,8 +292,8 @@ namespace Extensibility.Kubernetes
             }
 
             // User is not required to type these in, they are implicit as part of the type.
-            resource.Properties!["apiVersion"] = new JValue(gvk.Value.ApiVersion);
-            resource.Properties!["kind"] = new JValue(gvk.Value.Kind);
+            resource.Properties!["apiVersion"] = JsonValue.Create(gvk.Value.ApiVersion);
+            resource.Properties!["kind"] = JsonValue.Create(gvk.Value.Kind);
 
             var (config, clientConfig) = InitializeConfig(resource.Import!);
 
@@ -325,7 +324,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -340,7 +339,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.Parse(ex.Response.Content),
+                            Properties = JsonObject.Parse(ex.Response.Content),
                         }
                     };
                 }
@@ -376,7 +375,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.FromObject(response.Body),
+                            Properties = JsonSerializer.SerializeToNode(response.Body),
                         }
                     };
                 }
@@ -391,7 +390,7 @@ namespace Extensibility.Kubernetes
 
                             // HEY LISTEN: it's wierd to have to specify this on the return value.
                             Import = resource.Import,
-                            Properties = JObject.Parse(ex.Response.Content),
+                            Properties = JsonObject.Parse(ex.Response.Content),
                         }
                     };
                 }
@@ -405,7 +404,7 @@ namespace Extensibility.Kubernetes
 
         private (KubernetesConfig config, KubernetesClientConfiguration clientConfig) InitializeConfig(ExtensibleImport import)
         {
-            var config = import.Config?.ToObject<KubernetesConfig>() ?? new KubernetesConfig();
+            var config = import.Config?.GetValue<KubernetesConfig>() ?? new KubernetesConfig();
             if (config.KubeConfig.Length > 0)
             {
 
@@ -438,27 +437,27 @@ namespace Extensibility.Kubernetes
             throw new InvalidOperationException($"API Resource: {gvk} is not supported by the cluster.");
         }
 
-        // HEY LISTEN: Why is JObject featured so prominently in the API? It's bad mojo to surface a 3rd party type
+        // HEY LISTEN: Why is JsonObject featured so prominently in the API? It's bad mojo to surface a 3rd party type
         // as an exchange type. I'd suggest using byte[] or stream or string.
         private static (string name, string? @namespace) GetKeys(ExtensibleResourceBody resource)
         {
-            if ((resource.Properties as JObject)!.TryGetValue("metadata", out var token) && token is JObject metadata)
+            if ((resource.Properties as JsonObject)!.TryGetPropertyValue("metadata", out var token) && token is JsonObject metadata)
             {
-                metadata.TryGetValue("name", StringComparison.Ordinal, out var nameToken);
-                metadata.TryGetValue("namespace", StringComparison.Ordinal, out var namespaceToken);
+                metadata.TryGetPropertyValue("name", out var nameToken);
+                metadata.TryGetPropertyValue("namespace", out var namespaceToken);
 
-                if (nameToken is null || nameToken.Type != JTokenType.String)
+                if (nameToken is not JsonValue)
                 {
                     throw new InvalidOperationException("resource does not contain the required string property '.metadata.name'");
                 }
 
                 // Namespace must be a string if it is specified.
-                if (namespaceToken is JToken && namespaceToken.Type != JTokenType.String)
+                if (namespaceToken is not JsonValue)
                 {
                     throw new InvalidOperationException("property '.metadata.namespace' must be a string");
                 }
 
-                return (nameToken.Value<string>(), namespaceToken?.Value<string>());
+                return (nameToken.GetValue<string>(), namespaceToken?.GetValue<string>());
             }
 
             throw new InvalidOperationException("resource does not contain the required object property '.metadata'");

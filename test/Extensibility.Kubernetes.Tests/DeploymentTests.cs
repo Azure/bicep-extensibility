@@ -1,10 +1,9 @@
 using System;
-using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensibility.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 
 namespace Extensibility.Kubernetes.Tests
 {
@@ -19,7 +18,7 @@ namespace Extensibility.Kubernetes.Tests
         private static readonly string Base64KubeConfig = Environment.GetEnvironmentVariable("KUBECONFIG_BASE64") ?? 
             throw new InvalidOperationException($"You must set the KUBECONFIG_BASE64 env variable before running this test. Try running:\nexport KUBECONFIG_BASE64=$(base64 -w 0 ./path/to/kubeconfig)");
 
-        private static readonly JObject AzureVoteBackService = JObject.Parse(@"
+        private static readonly JsonObject AzureVoteBackService = JsonObject.Parse(@"
 {
   ""metadata"": {
     ""name"": ""azure-vote-back""
@@ -35,9 +34,9 @@ namespace Extensibility.Kubernetes.Tests
     }
   }
 }
-");
+")!.AsObject();
 
-        private static readonly JObject AzureVoteBackDeployment = JObject.Parse(@"
+        private static readonly JsonObject AzureVoteBackDeployment = JsonObject.Parse(@"
 {
   ""metadata"": {
     ""name"": ""azure-vote-back""
@@ -88,37 +87,37 @@ namespace Extensibility.Kubernetes.Tests
     }
   }
 }
-");
+")!.AsObject();
 
-        private static readonly JObject Deployment = new JObject()
+        private static readonly JsonObject Deployment = new JsonObject()
         {
-            ["metadata"] = new JObject()
+            ["metadata"] = new JsonObject()
             {
                 ["name"] = "test-deployment",
             },
-            ["spec"] = new JObject()
+            ["spec"] = new JsonObject()
             {
-                ["selector"] = new JObject()
+                ["selector"] = new JsonObject()
                 {
-                    ["matchLabels"] = new JObject()
+                    ["matchLabels"] = new JsonObject()
                     {
                         ["app"] = "test-deployment",
                     }
                 },
-                ["template"] = new JObject()
+                ["template"] = new JsonObject()
                 {
-                    ["metadata"] = new JObject()
+                    ["metadata"] = new JsonObject()
                     {
-                        ["labels"] = new JObject()
+                        ["labels"] = new JsonObject()
                         {
                             ["app"] = "test-deployment",
                         },
                     },
-                    ["spec"] = new JObject()
+                    ["spec"] = new JsonObject()
                     {
-                        ["containers"] = new JArray()
+                        ["containers"] = new JsonArray()
                         {
-                            new JObject()
+                            new JsonObject()
                             {
                                 ["name"] = "magpie",
                                 ["image"] = "radius.azurecr.io/magpie:latest",
@@ -138,7 +137,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "default",
@@ -157,7 +156,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "default",
@@ -176,7 +175,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "default",

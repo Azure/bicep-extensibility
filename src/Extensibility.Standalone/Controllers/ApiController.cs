@@ -4,7 +4,6 @@ using Extensibility.Core.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
-using Newtonsoft.Json;
 
 namespace Extensibility.Standalone
 {
@@ -30,7 +29,7 @@ namespace Extensibility.Standalone
         public async Task<IActionResult> Get([FromBody] GetRequest request)
         {
             var provider = Providers.GetProvider(request.Body?.Import?.Provider);
-            
+
             var response = await provider.Get(request, CancellationToken.None);
 
             return new OkObjectResult(response);

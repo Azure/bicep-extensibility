@@ -1,10 +1,10 @@
-﻿namespace Extensibility.AzureStorage.Tests
+namespace Extensibility.AzureStorage.Tests
 {
+    using System.Text.Json.Nodes;
     using System.Threading;
     using System.Threading.Tasks;
     using Extensibility.Tests;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Newtonsoft.Json.Linq;
 
     [TestClass]
     public class ContainerTests
@@ -16,7 +16,7 @@
             {
                 Type = "container",
                 Import = TestHelper.BuildImport(),
-                Properties = new JObject
+                Properties = new JsonObject
                 {
                     ["name"] = "test123",
                 }

@@ -2,11 +2,11 @@ namespace Extensibility.AzureStorage.Tests
 {
     using System;
     using System.Text;
+    using System.Text.Json.Nodes;
     using System.Threading;
     using System.Threading.Tasks;
     using Extensibility.Tests;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Newtonsoft.Json.Linq;
 
     [TestClass]
     public class BlobTests
@@ -19,7 +19,7 @@ namespace Extensibility.AzureStorage.Tests
             {
                 Type = "container",
                 Import = TestHelper.BuildImport(),
-                Properties = new JObject
+                Properties = new JsonObject
                 {
                     ["name"] = "mrblobby",
                 }
@@ -29,7 +29,7 @@ namespace Extensibility.AzureStorage.Tests
             {
                 Type = "blob",
                 Import = TestHelper.BuildImport(),
-                Properties = new JObject
+                Properties = new JsonObject
                 {
                     ["containerName"] = "mrblobby",
                     ["name"] = "testfile.txt",
