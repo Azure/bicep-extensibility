@@ -196,6 +196,8 @@ namespace Extensibility.Kubernetes
                         api.Name,
                         name,
                         fieldManager: "bicep",
+                        force: true,
+                        dryRun: "true",
                         cancellationToken: cancellationToken);
 
                     return new()
@@ -246,6 +248,8 @@ namespace Extensibility.Kubernetes
                         api.Name,
                         name,
                         fieldManager: "bicep",
+                        force: true,
+                        dryRun: "true",
                         cancellationToken: cancellationToken);
 
                     return new()
@@ -315,6 +319,7 @@ namespace Extensibility.Kubernetes
                         api.Name,
                         name,
                         fieldManager: "bicep",
+                        force: true,
                         cancellationToken: cancellationToken);
 
                     return new()
@@ -366,6 +371,7 @@ namespace Extensibility.Kubernetes
                         api.Name,
                         name,
                         fieldManager: "bicep",
+                        force: true,
                         cancellationToken: cancellationToken);
 
                     return new()
