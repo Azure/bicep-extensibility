@@ -185,5 +185,48 @@ namespace Extensibility.Kubernetes.Tests
                 Properties = AzureVoteBackDeployment,
             }, CancellationToken.None);
         }
+
+        private static readonly JObject TestNamespace = JObject.Parse(@"
+{
+  ""metadata"": {
+    ""name"": ""test""
+  },
+  ""spec"": {}
+}
+");
+
+        [TestMethod]
+        public async Task Save_and_get_Namespace()
+        {
+            await CrudHelper.Save(new()
+            {
+                Type = "core/Namespace@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                    },
+                },
+                Properties = TestNamespace,
+            }, CancellationToken.None);
+
+            var body = await CrudHelper.Get(new()
+            {
+                Type = "core/Namespace@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                    },
+                },
+                Properties = TestNamespace,
+            }, CancellationToken.None);
+
+            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+        }
     }
 }
