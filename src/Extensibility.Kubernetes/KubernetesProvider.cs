@@ -9,6 +9,7 @@ using Extensibility.Core.Data;
 using Extensibility.Core.Messages;
 using k8s;
 using Microsoft.Rest;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Extensibility.Kubernetes
@@ -186,6 +187,38 @@ namespace Extensibility.Kubernetes
 
             if (api.Namespaced)
             {
+                // For namespaced resources we have to handle a special case where the namespace is being created as part of the same
+                // template. When we do the dry-run request this will fail if the namespace does not yet exist. This isn't useful to us
+                // because if the namespace is being created as part of the template this would be a false positive. So for these cases
+                // we want to fall back to a "client" dry-run if the namespace has yet to be created. This is lower fidelity but it won't 
+                // block things that would work.
+                var namespaceFound = true;
+                try
+                {
+                    _ = await client.ReadNamespaceAsync(@namespace ?? config.Namespace);
+                }
+                catch (HttpOperationException ex) when (ex.Response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    namespaceFound = false;
+                }
+
+                if (!namespaceFound)
+                {
+                    // If the namespace doesn't exist we have to fall back to a "client" dry-run and just send back the payload.
+                    resource.Properties["metadata"]["namespace"] = new JValue(@namespace ?? config.Namespace);
+                    return new()
+                    {
+                        Body = new()
+                        {
+                            Type = resource.Type,
+
+                            // HEY LISTEN: it's wierd to have to specify this on the return value.
+                            Import = resource.Import,
+                            Properties = JObject.FromObject(resource.Properties),
+                        }
+                    };
+                }
+
                 try
                 {
                     var response = await client.PatchNamespacedCustomObjectWithHttpMessagesAsync(

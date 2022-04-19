@@ -185,5 +185,114 @@ namespace Extensibility.Kubernetes.Tests
                 Properties = AzureVoteBackDeployment,
             }, CancellationToken.None);
         }
+
+        private static JObject GetNamespace(string name) => JObject.Parse($@"
+{{
+  ""metadata"": {{
+    ""name"": ""{name}""
+  }},
+  ""spec"": {{}}
+}}
+");
+
+        [TestMethod]
+        public async Task Save_and_get_Namespace()
+        {
+            await CrudHelper.Save(new()
+            {
+                Type = "core/Namespace@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                    },
+                },
+                Properties = GetNamespace("save-and-get-namespace"),
+            }, CancellationToken.None);
+
+            var body = await CrudHelper.Get(new()
+            {
+                Type = "core/Namespace@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                    },
+                },
+                Properties = GetNamespace("save-and-get-namespace"),
+            }, CancellationToken.None);
+
+            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+        }
+
+              private static readonly JObject TestSecret = JObject.Parse(@"
+{
+  ""metadata"": {
+    ""name"": ""test""
+  },
+  ""data"": {}
+}
+");
+
+        [TestMethod]
+        public async Task PreviewSave_with_existing_namespace()
+        {
+            await CrudHelper.Save(new()
+            {
+                Type = "core/Namespace@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                    },
+                },
+                Properties = GetNamespace("preview-save-with-existing-namespace"),
+            }, CancellationToken.None);
+
+            var body = await CrudHelper.PreviewSave(new()
+            {
+                Type = "core/Secret@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                        ["namespace"] = "test",
+                    },
+                },
+                Properties = TestSecret,
+            }, CancellationToken.None);
+
+            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+        }
+
+        [TestMethod]
+        public async Task PreviewSave_without_existing_namespace()
+        {
+            var body = await CrudHelper.PreviewSave(new()
+            {
+                Type = "core/Secret@v1",
+                Import = new()
+                {
+                    Provider = "Kubernetes",
+                    Config = new JObject()
+                    {
+                        ["kubeConfig"] = Base64KubeConfig,
+                        ["namespace"] = "preview-save-without-existing-namespace",
+                    },
+                },
+                Properties = TestSecret,
+            }, CancellationToken.None);
+
+            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+            Assert.AreEqual(new JValue("preview-save-without-existing-namespace"), (dynamic)(body.Properties!)["metadata"]["namespace"]);
+        }
     }
 }
