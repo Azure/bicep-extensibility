@@ -1,5 +1,4 @@
 ﻿using Azure.ResourceManager.Extensibility.Core.Validators;
-using FluentValidation;
 using Json.Schema;
 using System.Text.RegularExpressions;
 

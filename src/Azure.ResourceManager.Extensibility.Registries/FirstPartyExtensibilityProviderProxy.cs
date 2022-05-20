@@ -1,4 +1,5 @@
 ﻿using Azure.ResourceManager.Extensibility.Core;
+using Azure.ResourceManager.Extensibility.Core.Exceptions;
 using FluentValidation;
 using Json.Pointer;
 
@@ -14,19 +15,19 @@ namespace Azure.ResourceManager.Extensibility.Registries
         }
 
         public Task<ExtensibilityResponse> DeleteAsync(ExtensibilityRequest request, CancellationToken cancellationToken) =>
-            HandleValidationException(this.provider.DeleteAsync)(request, cancellationToken);
+            HandleExceptions(this.provider.DeleteAsync)(request, cancellationToken);
 
         public Task<ExtensibilityResponse> GetAsync(ExtensibilityRequest request, CancellationToken cancellationToken) =>
-            HandleValidationException(this.provider.GetAsync)(request, cancellationToken);
+            HandleExceptions(this.provider.GetAsync)(request, cancellationToken);
 
         public Task<ExtensibilityResponse> PreviewSaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken) =>
-            HandleValidationException(this.provider.PreviewSaveAsync)(request, cancellationToken);
+            HandleExceptions(this.provider.PreviewSaveAsync)(request, cancellationToken);
 
         public Task<ExtensibilityResponse> SaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken) =>
-            HandleValidationException(this.provider.SaveAsync)(request, cancellationToken);
+            HandleExceptions(this.provider.SaveAsync)(request, cancellationToken);
         
 
-        private static ExtensibilityOperation HandleValidationException(ExtensibilityOperation operation)
+        private static ExtensibilityOperation HandleExceptions(ExtensibilityOperation operation)
         {
             return async (ExtensibilityRequest request, CancellationToken cancellationToken) =>
             {
@@ -45,6 +46,10 @@ namespace Azure.ResourceManager.Extensibility.Registries
                     }
 
                     return new ExtensibilityErrorResponse(extensibilityErrors.ToArray());
+                }
+                catch (ExtensibilityException extensibilityException)
+                {
+                    return new ExtensibilityErrorResponse(extensibilityException.Errors);
                 }
             };
         }

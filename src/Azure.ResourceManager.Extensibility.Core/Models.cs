@@ -26,5 +26,11 @@ namespace Azure.ResourceManager.Extensibility.Core
         : ExtensibilityResponse(Resource, ResourceMetadata, null);
 
     public record ExtensibilityErrorResponse(IEnumerable<ExtensibilityError> Errors)
-        : ExtensibilityResponse(null, null, Errors);
+        : ExtensibilityResponse(null, null, Errors)
+    {
+        public ExtensibilityErrorResponse(ExtensibilityError error, params ExtensibilityError[] additionalErrors)
+            : this((new[] { error }).Concat(additionalErrors))
+        {
+        }
+    }
 }

@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Models
 {
-    public record KubernetesResourceMetadata(string Name, string? Namespace);
+    public readonly record struct KubernetesResourceMetadata(string Name, string? Namespace);
 
     public record KubernetesResourceProperties
     {
@@ -39,15 +39,6 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Models
             this.AdditionalData[propertyName] = value;
 
             return this;
-        }
-
-        public string ToJsonString()
-        {
-            return JsonSerializer.Serialize(this, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-            });
         }
     }
 }
