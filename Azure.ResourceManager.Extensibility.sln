@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Exten
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Extensibility.Core", "src\Azure.ResourceManager.Extensibility.Core\Azure.ResourceManager.Extensibility.Core.csproj", "{D0B72CE2-3037-418E-9926-FA175B9E7844}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.ResourceManager.Extensibility.Core.Tests.Unit", "src\Azure.ResourceManager.Extensibility.Core.Tests.Unit\Azure.ResourceManager.Extensibility.Core.Tests.Unit.csproj", "{E699C5C2-C63E-4B24-A537-7EB6F26CD480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.ResourceManager.Extensibility.Core.Tests.Unit", "src\Azure.ResourceManager.Extensibility.Core.Tests.Unit\Azure.ResourceManager.Extensibility.Core.Tests.Unit.csproj", "{E699C5C2-C63E-4B24-A537-7EB6F26CD480}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

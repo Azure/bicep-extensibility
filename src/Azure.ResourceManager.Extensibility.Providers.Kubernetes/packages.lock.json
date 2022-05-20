@@ -10,13 +10,13 @@
       },
       "KubernetesClient": {
         "type": "Direct",
-        "requested": "[7.2.19, )",
-        "resolved": "7.2.19",
-        "contentHash": "wycP/ApzjNToo6N0is0cDVK6m282MOXSlJDaZPmMibpdgZf2MKjS289MRUIXz3+Syftu4zsqlinDMGbmi5Xjog==",
+        "requested": "[8.0.4, )",
+        "resolved": "8.0.4",
+        "contentHash": "IupceJSaReaXAhctVEZm/ncllcrgxMb1exDKSmuMEKtHpel/hFHdRIq0C7JP92X3UpOWRHgJCJwVD9V4bysbLA==",
         "dependencies": {
           "IdentityModel.OidcClient": "4.0.0",
-          "KubernetesClient.Basic": "7.2.19",
-          "KubernetesClient.Models": "7.2.19",
+          "KubernetesClient.Basic": "8.0.4",
+          "KubernetesClient.Models": "8.0.4",
           "System.IO.Abstractions": "13.2.47",
           "System.IdentityModel.Tokens.Jwt": "6.13.1",
           "prometheus-net": "5.0.1"
@@ -98,16 +98,16 @@
       },
       "KubernetesClient.Basic": {
         "type": "Transitive",
-        "resolved": "7.2.19",
-        "contentHash": "1LboFwnEg9gxB8gF9BqaS8gnNVetqRGS9XWyVMlzAxpeYaTF5mNCoj4OCZyLj8Ogo0kdrASjG9qOjozpQDWZlg==",
+        "resolved": "8.0.4",
+        "contentHash": "Z+GhaKNNlSymlHhBuZSbnqJYZzwVgWhCkptXu66h+hxTCEhw2Q/LgW5Lbl87ZkxTQBPKdJTgF93LBb6UDzY50Q==",
         "dependencies": {
-          "KubernetesClient.Models": "7.2.19"
+          "KubernetesClient.Models": "8.0.4"
         }
       },
       "KubernetesClient.Models": {
         "type": "Transitive",
-        "resolved": "7.2.19",
-        "contentHash": "ekEK90+eJTKN1KzW7kFcJofSjv3X+Q4MhLxAZdgn7pTCJg0qk4/FhV8sYJ/ZMw20Ue5Rob3vAw9WROHZaLNIdQ==",
+        "resolved": "8.0.4",
+        "contentHash": "43RYYlchvvn6rragAhOGVw3QO23Oqhkqqjd92eu1rZsPDxqfVpOMPxycE384ee1KsxSE879gKoDZifVSXpZn8w==",
         "dependencies": {
           "AutoMapper": "10.1.1",
           "Fractions": "7.0.0",

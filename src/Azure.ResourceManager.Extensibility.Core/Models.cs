@@ -4,9 +4,9 @@ using System.Text.Json;
 
 namespace Azure.ResourceManager.Extensibility.Core
 {
-    public record ExtensibleImport(string Provider, string Version, JsonElement Config);
+    public record ExtensibleImport<T>(string Provider, string Version, T Config);
 
-    public record ExtensibleResource(string Type, JsonElement Properties);
+    public record ExtensibleResource<T>(string Type, T Properties);
 
     public record ExtensibleResourceMetadata(
         IEnumerable<JsonPath> ReadOnlyProperties,
@@ -15,11 +15,14 @@ namespace Azure.ResourceManager.Extensibility.Core
 
     public record ExtensibilityError(string Code, JsonPointer Target, string Message);
 
-    public record ExtensibilityRequest(ExtensibleImport Import, ExtensibleResource Resource);
+    public record ExtensibilityRequest<TImport, TConfig>(ExtensibleImport<TImport> Import, ExtensibleResource<TConfig> Resource);
 
-    public abstract record ExtensibilityResponse(ExtensibleResource? Resource, ExtensibleResourceMetadata? ResourceMetadata, IEnumerable<ExtensibilityError>? Errors);
+    public record ExtensibilityRequest(ExtensibleImport<JsonElement> Import, ExtensibleResource<JsonElement> Resource)
+        : ExtensibilityRequest<JsonElement, JsonElement>(Import, Resource);
 
-    public record ExtensibilitySuccessResponse(ExtensibleResource Resource, ExtensibleResourceMetadata? ResourceMetadata = null)
+    public abstract record ExtensibilityResponse(ExtensibleResource<JsonElement>? Resource, ExtensibleResourceMetadata? ResourceMetadata, IEnumerable<ExtensibilityError>? Errors);
+
+    public record ExtensibilitySuccessResponse(ExtensibleResource<JsonElement> Resource, ExtensibleResourceMetadata? ResourceMetadata = null)
         : ExtensibilityResponse(Resource, ResourceMetadata, null);
 
     public record ExtensibilityErrorResponse(IEnumerable<ExtensibilityError> Errors)
