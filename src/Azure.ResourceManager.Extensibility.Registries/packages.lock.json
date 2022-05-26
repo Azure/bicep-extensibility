@@ -11,11 +11,6 @@
           "System.Reflection.Emit": "4.7.0"
         }
       },
-      "FluentValidation": {
-        "type": "Transitive",
-        "resolved": "11.0.1",
-        "contentHash": "fcL5zF/glDwskUtpL0IfBupVWTChxOOvVs+dAA7Gme5NjIeJBiFKWq3eZV1O+AigucnBTr8SWG7wRRn+PgFnTw=="
-      },
       "Fractions": {
         "type": "Transitive",
         "resolved": "7.0.0",
@@ -398,7 +393,6 @@
       "azure.resourcemanager.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "11.0.1",
           "JsonPath.Net": "0.2.1",
           "JsonSchema.Net": "2.3.0"
         }
@@ -407,7 +401,6 @@
         "type": "Project",
         "dependencies": {
           "Azure.ResourceManager.Extensibility.Core": "1.0.0",
-          "FluentValidation": "11.0.1",
           "KubernetesClient": "8.0.4"
         }
       }

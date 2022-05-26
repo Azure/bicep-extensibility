@@ -19,11 +19,11 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
 
             var kubernetes = CreateKubernetes(config);
-            var api = await kubernetes.FindApiResourceByTypeAsync(resourceType, cancellationToken);
+            var api = await kubernetes.FindApiAsync(resourceType, resource, cancellationToken);
 
             await HandleHttpOperationExceptionAsync(async () => api.Namespaced
-                ? await kubernetes.DeleteNamespacedResourceAsync(resource, resourceType, @namespace, api.Name, cancellationToken)
-                : await kubernetes.DeleteClusterResourceAsync(resource, resourceType, api.Name, cancellationToken));
+                ? await kubernetes.DeleteNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
+                : await kubernetes.DeleteClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
             return new ExtensibilitySuccessResponse(request.Resource);
         }
@@ -34,11 +34,11 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
 
             var kubernetes = CreateKubernetes(config);
-            var api = await kubernetes.FindApiResourceByTypeAsync(resourceType, cancellationToken);
+            var api = await kubernetes.FindApiAsync(resourceType, resource, cancellationToken);
 
             var properties = await HandleHttpOperationExceptionAsync(async () => api.Namespaced
-                ? await kubernetes.GetNamespacedResourceAsync(resource, resourceType, @namespace, api.Name, cancellationToken)
-                : await kubernetes.GetClusterResourceAsync(resource, resourceType, api.Name, cancellationToken));
+                ? await kubernetes.GetNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
+                : await kubernetes.GetClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
             return new ExtensibilitySuccessResponse(request.Resource with { Properties = properties });
         }
@@ -49,7 +49,7 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
 
             var kubernetes = CreateKubernetes(config);
-            var api = await kubernetes.FindApiResourceByTypeAsync(resourceType, cancellationToken);
+            var api = await kubernetes.FindApiAsync(resourceType, resource, cancellationToken);
 
             if (api.Namespaced)
             {
@@ -80,8 +80,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
             }
 
             var dryRunProperties = await HandleHttpOperationExceptionAsync(async () => api.Namespaced
-                ? await kubernetes.PatchNamespacedResourceAsync(resource, resourceType, @namespace, api.Name, cancellationToken, dryRun: "All")
-                : await kubernetes.PatchClusterResourceAsync(resource, resourceType, api.Name, cancellationToken, dryRun: "All"));
+                ? await kubernetes.PatchNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken, dryRun: "All")
+                : await kubernetes.PatchClusterResourceAsync(resourceType, resource, api.Name, cancellationToken, dryRun: "All"));
 
             return new ExtensibilitySuccessResponse(request.Resource with { Properties = dryRunProperties });
         }
@@ -92,11 +92,11 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
 
             var kubernetes = CreateKubernetes(config);
-            var api = await kubernetes.FindApiResourceByTypeAsync(resourceType, cancellationToken);
+            var api = await kubernetes.FindApiAsync(resourceType, resource, cancellationToken);
 
             var patchedProperties = await HandleHttpOperationExceptionAsync(async () => api.Namespaced
-                ? await kubernetes.PatchNamespacedResourceAsync(resource, resourceType, @namespace, api.Name, cancellationToken)
-                : await kubernetes.PatchClusterResourceAsync(resource, resourceType, api.Name, cancellationToken));
+                ? await kubernetes.PatchNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
+                : await kubernetes.PatchClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
             return new ExtensibilitySuccessResponse(request.Resource with { Properties = patchedProperties });
         }

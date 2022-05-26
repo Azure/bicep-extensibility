@@ -2,12 +2,6 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
-      "FluentValidation": {
-        "type": "Direct",
-        "requested": "[11.0.1, )",
-        "resolved": "11.0.1",
-        "contentHash": "fcL5zF/glDwskUtpL0IfBupVWTChxOOvVs+dAA7Gme5NjIeJBiFKWq3eZV1O+AigucnBTr8SWG7wRRn+PgFnTw=="
-      },
       "JsonPath.Net": {
         "type": "Direct",
         "requested": "[0.2.1, )",

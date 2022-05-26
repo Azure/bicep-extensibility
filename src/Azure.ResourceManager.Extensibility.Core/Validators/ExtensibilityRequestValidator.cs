@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using Azure.ResourceManager.Extensibility.Core.Exceptions;
 using Json.Schema;
 using System.Text.RegularExpressions;
 
@@ -7,29 +6,27 @@ namespace Azure.ResourceManager.Extensibility.Core.Validators
 {
     public class ExtensibilityRequestValidator
     {
-        private readonly ExtensibleImportValidator importValidator;
+        private readonly JsonSchema importConfigSchema;
 
-        private readonly ExtensibleResourceValidator resourceValidator;
+        private readonly Regex resourceTypeRegex;
+
+        private readonly JsonSchema resourcePropertySchema;
 
         public ExtensibilityRequestValidator(JsonSchema importConfigSchema, Regex resourceTypeRegex, JsonSchema resourcePropertySchema)
         {
-            this.importValidator = new ExtensibleImportValidator(importConfigSchema);
-            this.resourceValidator = new ExtensibleResourceValidator(resourceTypeRegex, resourcePropertySchema);
+            this.importConfigSchema = importConfigSchema;
+            this.resourceTypeRegex = resourceTypeRegex;
+            this.resourcePropertySchema = resourcePropertySchema;
         }
 
         public void ValidateAndThrow(ExtensibilityRequest request)
         {
-            var importValidationResult = this.importValidator.Validate(request.Import);
-            var resourceValidationResult = this.resourceValidator.Validate(request.Resource);
+            var importErrors = new ExtensibleImportValidator(this.importConfigSchema).Validate(request.Import);
+            var resourceErrors = new ExtensibleResourceValidator(this.resourceTypeRegex, this.resourcePropertySchema).Validate(request.Resource);
 
-            if (!importValidationResult.IsValid || !resourceValidationResult.IsValid)
+            if (importErrors.Any() || resourceErrors.Any())
             {
-                var errors = new List<ValidationFailure>();
-
-                errors.AddRange(importValidationResult.Errors);
-                errors.AddRange(resourceValidationResult.Errors);
-                
-                throw new ValidationException(errors);
+                throw new ExtensibilityException(importErrors.Concat(resourceErrors));
             }
         }
     }

@@ -10,16 +10,16 @@ namespace Azure.ResourceManager.Extensibility.Core
         };
 
         public static ExtensibleImport<T> MapToConcrete<T>(ExtensibleImport<JsonElement> import) =>
-            new(import.Provider, import.Version, Deserialize<T>(import.Config));
+            new(import.SymbolicName, import.Provider, import.Version, Deserialize<T>(import.Config));
 
         public static ExtensibleImport<JsonElement> MapToGeneric<T>(ExtensibleImport<T> import) =>
-            new(import.Provider, import.Version, SerializeToElement(import.Config));
+            new(import.SymbolicName, import.Provider, import.Version, SerializeToElement(import.Config));
 
         public static ExtensibleResource<T> MapToConcrete<T>(ExtensibleResource<JsonElement> resource) =>
-            new(resource.Type, Deserialize<T>(resource.Properties));
+            new(resource.SymbolicName, resource.Type, Deserialize<T>(resource.Properties));
 
         public static ExtensibleResource<JsonElement> MapToGeneric<T>(ExtensibleResource<T> resource) =>
-            new(resource.Type, SerializeToElement(resource.Properties));
+            new(resource.SymbolicName, resource.Type, SerializeToElement(resource.Properties));
 
         private static T Deserialize<T>(JsonElement element) =>
             JsonSerializer.Deserialize<T>(element, JsonSerializerOptions) ??

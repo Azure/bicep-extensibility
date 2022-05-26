@@ -1,7 +1,5 @@
 ﻿using Azure.ResourceManager.Extensibility.Core;
 using Azure.ResourceManager.Extensibility.Core.Exceptions;
-using FluentValidation;
-using Json.Pointer;
 
 namespace Azure.ResourceManager.Extensibility.Registries
 {
@@ -34,18 +32,6 @@ namespace Azure.ResourceManager.Extensibility.Registries
                 try
                 {
                     return await operation.Invoke(request, cancellationToken);
-                }
-                catch (ValidationException validationException)
-                {
-                    var extensibilityErrors = new List<ExtensibilityError>();
-
-                    foreach (var error in validationException.Errors)
-                    {
-                        var target = JsonPointer.Parse(error.PropertyName);
-                        extensibilityErrors.Add(new(error.ErrorCode, target, error.ErrorMessage));
-                    }
-
-                    return new ExtensibilityErrorResponse(extensibilityErrors.ToArray());
                 }
                 catch (ExtensibilityException extensibilityException)
                 {

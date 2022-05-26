@@ -11,7 +11,7 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 {
     public static class IKubernetesExtensions
     {
-        public static async Task<V1APIResource> FindApiResourceByTypeAsync(this IKubernetes kubernetes, KubernetesResourceType resourceType, CancellationToken cancellationToken)
+        public static async Task<V1APIResource> FindApiAsync(this IKubernetes kubernetes, KubernetesResourceType resourceType, ExtensibleResource<KubernetesResourceProperties> resource, CancellationToken cancellationToken)
         {
             var client = new GenericClient(kubernetes, resourceType.Group, resourceType.Version, plural: "");
 
@@ -22,8 +22,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
             {
                 throw new ExtensibilityException(
                     "UnknownResourceKind",
-                    JsonPointer.Create<ExtensibleResource<KubernetesResourceProperties>>(x => x.Type).CamelCase(),
-                    $"Unknown resource kind \"{resourceType.Kind}\".");
+                    resource.GetJsonPointer(x => x.Type),
+                    @$"Unknown resource kind ""{resourceType.Kind}"" in resource type ""{resource.Type}"".");
             }
 
             return apiResource;
@@ -31,8 +31,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> GetNamespacedResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string @namespace,
             string plural,
             CancellationToken cancellationToken)
@@ -50,8 +50,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> GetClusterResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string plural,
             CancellationToken cancellationToken)
         {
@@ -69,8 +69,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> PatchNamespacedResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string @namespace,
             string plural,
             CancellationToken cancellationToken,
@@ -94,8 +94,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> PatchClusterResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string plural,
             CancellationToken cancellationToken,
             string? dryRun = null)
@@ -122,7 +122,7 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
             {
                 throw new ExtensibilityException(
                     "ShouldNotSpecifyNamespace",
-                    JsonPointer.Create<ExtensibleResource<KubernetesResourceProperties>>(x => x.Properties.Metadata.Namespace!).CamelCase(),
+                    resource.GetJsonPointer(x => x.Properties.Metadata.Namespace!),
                     $"A namespace should not be specified for a cluster-scoped resource.");
             }
 
@@ -130,8 +130,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> DeleteNamespacedResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string @namespace,
             string plural,
             CancellationToken cancellationToken)
@@ -149,8 +149,8 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes.Extensions
 
         public static async Task<JsonElement> DeleteClusterResourceAsync(
             this IKubernetes kubernetes,
-            ExtensibleResource<KubernetesResourceProperties> resource,
             KubernetesResourceType resourceType,
+            ExtensibleResource<KubernetesResourceProperties> resource,
             string plural,
             CancellationToken cancellationToken)
         {
