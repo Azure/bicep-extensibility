@@ -68,8 +68,8 @@
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "2.3.0",
-        "contentHash": "Dpo9qyCavaSf4APYWSbpz1SHzU0th4lXz+AC3ToDODbRbHSwMNByTlQMR3FAvLr6R3krf7inC0sLGstW1bXkIQ==",
+        "resolved": "2.4.0",
+        "contentHash": "1Ror15ONf40nQk7TCExpGC31pfCFGXUVqUzZfugXDUt+ETmgiKJzu2u8Y1UwJ0hIKoEE7qK6+lADTDkGcsXUeQ==",
         "dependencies": {
           "JetBrains.Annotations": "2021.2.0",
           "Json.More.Net": "1.5.0",
@@ -78,12 +78,12 @@
       },
       "KubernetesClient": {
         "type": "Transitive",
-        "resolved": "8.0.4",
-        "contentHash": "IupceJSaReaXAhctVEZm/ncllcrgxMb1exDKSmuMEKtHpel/hFHdRIq0C7JP92X3UpOWRHgJCJwVD9V4bysbLA==",
+        "resolved": "8.0.6",
+        "contentHash": "iyWvNaMXmN35C1CUg2gbKxFAbBsCxVD69Qkv5Ivf4CbqrtbW52VEjfkFHw0t+8J2gQGDE03KTOFH7o78lQJCcQ==",
         "dependencies": {
           "IdentityModel.OidcClient": "4.0.0",
-          "KubernetesClient.Basic": "8.0.4",
-          "KubernetesClient.Models": "8.0.4",
+          "KubernetesClient.Basic": "8.0.6",
+          "KubernetesClient.Models": "8.0.6",
           "System.IO.Abstractions": "13.2.47",
           "System.IdentityModel.Tokens.Jwt": "6.13.1",
           "prometheus-net": "5.0.1"
@@ -91,16 +91,16 @@
       },
       "KubernetesClient.Basic": {
         "type": "Transitive",
-        "resolved": "8.0.4",
-        "contentHash": "Z+GhaKNNlSymlHhBuZSbnqJYZzwVgWhCkptXu66h+hxTCEhw2Q/LgW5Lbl87ZkxTQBPKdJTgF93LBb6UDzY50Q==",
+        "resolved": "8.0.6",
+        "contentHash": "OdXWtGAjacYv9PftaYTqQv8lGqXTw0tRkgXWowd9R/WXKNxSDihSVCYKXC1YW1l2Ywz1UHgYwBDF1xj3YthTgg==",
         "dependencies": {
-          "KubernetesClient.Models": "8.0.4"
+          "KubernetesClient.Models": "8.0.6"
         }
       },
       "KubernetesClient.Models": {
         "type": "Transitive",
-        "resolved": "8.0.4",
-        "contentHash": "43RYYlchvvn6rragAhOGVw3QO23Oqhkqqjd92eu1rZsPDxqfVpOMPxycE384ee1KsxSE879gKoDZifVSXpZn8w==",
+        "resolved": "8.0.6",
+        "contentHash": "oA/+TSn8TAJKqN1ENNvxxEe/geHPxnL79ayJ+ZR5jL7nlg56K09hzxBUVBopayqIeZYCdlmlhs+yevaZHYzNdg==",
         "dependencies": {
           "AutoMapper": "10.1.1",
           "Fractions": "7.0.0",
@@ -394,14 +394,14 @@
         "type": "Project",
         "dependencies": {
           "JsonPath.Net": "0.2.1",
-          "JsonSchema.Net": "2.3.0"
+          "JsonSchema.Net": "2.4.0"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "1.0.0",
-          "KubernetesClient": "8.0.4"
+          "KubernetesClient": "8.0.6"
         }
       }
     }
