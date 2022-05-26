@@ -15,20 +15,20 @@ namespace Azure.ResourceManager.Extensibility.Core
 
     public record ExtensibilityError(string Code, JsonPointer Target, string Message);
 
-    public record ExtensibilityRequest<TImport, TConfig>(ExtensibleImport<TImport> Import, ExtensibleResource<TConfig> Resource);
+    public record ExtensibilityOperationRequest<TImport, TConfig>(ExtensibleImport<TImport> Import, ExtensibleResource<TConfig> Resource);
 
-    public record ExtensibilityRequest(ExtensibleImport<JsonElement> Import, ExtensibleResource<JsonElement> Resource)
-        : ExtensibilityRequest<JsonElement, JsonElement>(Import, Resource);
+    public record ExtensibilityOperationRequest(ExtensibleImport<JsonElement> Import, ExtensibleResource<JsonElement> Resource)
+        : ExtensibilityOperationRequest<JsonElement, JsonElement>(Import, Resource);
 
-    public abstract record ExtensibilityResponse(ExtensibleResource<JsonElement>? Resource, ExtensibleResourceMetadata? ResourceMetadata, IEnumerable<ExtensibilityError>? Errors);
+    public abstract record ExtensibilityOperationResponse(ExtensibleResource<JsonElement>? Resource, ExtensibleResourceMetadata? ResourceMetadata, IEnumerable<ExtensibilityError>? Errors);
 
-    public record ExtensibilitySuccessResponse(ExtensibleResource<JsonElement> Resource, ExtensibleResourceMetadata? ResourceMetadata = null)
-        : ExtensibilityResponse(Resource, ResourceMetadata, null);
+    public record ExtensibilityOperationSuccessResponse(ExtensibleResource<JsonElement> Resource, ExtensibleResourceMetadata? ResourceMetadata = null)
+        : ExtensibilityOperationResponse(Resource, ResourceMetadata, null);
 
-    public record ExtensibilityErrorResponse(IEnumerable<ExtensibilityError> Errors)
-        : ExtensibilityResponse(null, null, Errors)
+    public record ExtensibilityOperationErrorResponse(IEnumerable<ExtensibilityError> Errors)
+        : ExtensibilityOperationResponse(null, null, Errors)
     {
-        public ExtensibilityErrorResponse(ExtensibilityError error, params ExtensibilityError[] additionalErrors)
+        public ExtensibilityOperationErrorResponse(ExtensibilityError error, params ExtensibilityError[] additionalErrors)
             : this((new[] { error }).Concat(additionalErrors))
         {
         }

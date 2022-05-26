@@ -6,8 +6,8 @@ namespace Azure.ResourceManager.Extensibility.Core.Extensions
 {
     public static class ExtensibilityRequestExtensions
     {
-        public static ExtensibilityRequest<TConfig, TProperty> Validate<TConfig, TProperty>(
-            this ExtensibilityRequest request,
+        public static ExtensibilityOperationRequest<TConfig, TProperty> Validate<TConfig, TProperty>(
+            this ExtensibilityOperationRequest request,
             JsonSchema importConfigSchema,
             Regex resourceTypeRegex,
             JsonSchema resourcePropertySchema)
@@ -16,7 +16,7 @@ namespace Azure.ResourceManager.Extensibility.Core.Extensions
             
             validator.ValidateAndThrow(request);
 
-            return new ExtensibilityRequest<TConfig, TProperty>(
+            return new ExtensibilityOperationRequest<TConfig, TProperty>(
                 ModelMapper.MapToConcrete<TConfig>(request.Import),
                 ModelMapper.MapToConcrete<TProperty>(request.Resource));
         }

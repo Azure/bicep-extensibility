@@ -13,7 +13,7 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
     {
         public const string ProviderName = "Kubernetes";
 
-        public async Task<ExtensibilityResponse> DeleteAsync(ExtensibilityRequest request, CancellationToken cancellationToken)
+        public async Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (config, resourceType, resource) = Validate(request);
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
@@ -25,10 +25,10 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
                 ? await kubernetes.DeleteNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
                 : await kubernetes.DeleteClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
-            return new ExtensibilitySuccessResponse(request.Resource);
+            return new ExtensibilityOperationSuccessResponse(request.Resource);
         }
 
-        public async Task<ExtensibilityResponse> GetAsync(ExtensibilityRequest request, CancellationToken cancellationToken)
+        public async Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (config, resourceType, resource) = Validate(request);
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
@@ -40,10 +40,10 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
                 ? await kubernetes.GetNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
                 : await kubernetes.GetClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
-            return new ExtensibilitySuccessResponse(request.Resource with { Properties = properties });
+            return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = properties });
         }
 
-        public async Task<ExtensibilityResponse> PreviewSaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken)
+        public async Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (config, resourceType, resource) = Validate(request);
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
@@ -71,7 +71,7 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
                         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                     });
 
-                    return new ExtensibilitySuccessResponse(request.Resource with { Properties = propertiesElement });
+                    return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = propertiesElement });
                 }
                 catch (HttpOperationException exception)
                 {
@@ -83,10 +83,10 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
                 ? await kubernetes.PatchNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken, dryRun: "All")
                 : await kubernetes.PatchClusterResourceAsync(resourceType, resource, api.Name, cancellationToken, dryRun: "All"));
 
-            return new ExtensibilitySuccessResponse(request.Resource with { Properties = dryRunProperties });
+            return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = dryRunProperties });
         }
 
-        public async Task<ExtensibilityResponse> SaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken)
+        public async Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (config, resourceType, resource) = Validate(request);
             var @namespace = resource.Properties.Metadata.Namespace ?? config.Namespace;
@@ -98,10 +98,10 @@ namespace Azure.ResourceManager.Extensibility.Providers.Kubernetes
                 ? await kubernetes.PatchNamespacedResourceAsync(resourceType, resource, @namespace, api.Name, cancellationToken)
                 : await kubernetes.PatchClusterResourceAsync(resourceType, resource, api.Name, cancellationToken));
 
-            return new ExtensibilitySuccessResponse(request.Resource with { Properties = patchedProperties });
+            return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = patchedProperties });
         }
 
-        private static (KubernetesConfig, KubernetesResourceType, ExtensibleResource<KubernetesResourceProperties>) Validate(ExtensibilityRequest request)
+        private static (KubernetesConfig, KubernetesResourceType, ExtensibleResource<KubernetesResourceProperties>) Validate(ExtensibilityOperationRequest request)
         {
             var (import, resource) = request.Validate<KubernetesConfig, KubernetesResourceProperties>(
                 KubernetesConfig.Schema,

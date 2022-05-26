@@ -40,7 +40,7 @@ namespace Azure.ResourceManager.Extensibility.Core.Tests.Unit.Extensions
         {
             resource = resource with { Type = "TYPE" };
 
-            var sut = new ExtensibilityRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
+            var sut = new ExtensibilityOperationRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
 
             var (mappedImport, mappedResource) = sut.Validate<ValidConfig, ValidProperties>(SampleImportConfigSchema, SampleResourceTypeRegex, SampleResourcePropertiesSchema);
 
@@ -53,7 +53,7 @@ namespace Azure.ResourceManager.Extensibility.Core.Tests.Unit.Extensions
         {
             resource = resource with { Type = "TYPE" };
 
-            var sut = new ExtensibilityRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
+            var sut = new ExtensibilityOperationRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
 
             var errors = Invoking(() => sut.Validate<InvalidConfig, InvalidProperties>(SampleImportConfigSchema, SampleResourceTypeRegex, SampleResourcePropertiesSchema))
                 .Should()
@@ -75,7 +75,7 @@ namespace Azure.ResourceManager.Extensibility.Core.Tests.Unit.Extensions
         [Theory, AutoData]
         public void Validate_InvalidResourceType_SkipsValidatingResourceProperties(ExtensibleImport<ValidConfig> import, ExtensibleResource<InvalidProperties> resource)
         {
-            var sut = new ExtensibilityRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
+            var sut = new ExtensibilityOperationRequest(ModelMapper.MapToGeneric(import), ModelMapper.MapToGeneric(resource));
 
             var errors = Invoking(() => sut.Validate<InvalidConfig, InvalidProperties>(SampleImportConfigSchema, SampleResourceTypeRegex, SampleResourcePropertiesSchema))
                 .Should()

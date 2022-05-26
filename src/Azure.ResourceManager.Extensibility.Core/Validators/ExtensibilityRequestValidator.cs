@@ -19,7 +19,7 @@ namespace Azure.ResourceManager.Extensibility.Core.Validators
             this.resourcePropertySchema = resourcePropertySchema;
         }
 
-        public void ValidateAndThrow(ExtensibilityRequest request)
+        public void ValidateAndThrow(ExtensibilityOperationRequest request)
         {
             var importErrors = new ExtensibleImportValidator(this.importConfigSchema).Validate(request.Import);
             var resourceErrors = new ExtensibleResourceValidator(this.resourceTypeRegex, this.resourcePropertySchema).Validate(request.Resource);

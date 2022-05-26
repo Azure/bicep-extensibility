@@ -1,15 +1,15 @@
 ﻿namespace Azure.ResourceManager.Extensibility.Core
 {
-    public delegate Task<ExtensibilityResponse> ExtensibilityOperation(ExtensibilityRequest request, CancellationToken cancellationToken);
+    public delegate Task<ExtensibilityOperationResponse> ExtensibilityOperation(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 
     public interface IExtensibilityProvider
     {
-        Task<ExtensibilityResponse> SaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken);
+        Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 
-        Task<ExtensibilityResponse> PreviewSaveAsync(ExtensibilityRequest request, CancellationToken cancellationToken);
+        Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 
-        Task<ExtensibilityResponse> GetAsync(ExtensibilityRequest request, CancellationToken cancellationToken);
+        Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 
-        Task<ExtensibilityResponse> DeleteAsync(ExtensibilityRequest request, CancellationToken cancellationToken);
+        Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
     }
 }
