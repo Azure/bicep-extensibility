@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonPath.Net" Version="0.2.1" />
+    <PackageReference Include="JsonSchema.Net" Version="2.4.0" />
+  </ItemGroup>
+
+</Project>
