@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj" />
+    <ProjectReference Include="..\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj" />
   </ItemGroup>
 
 </Project>

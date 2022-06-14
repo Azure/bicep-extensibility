@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Core.Tests.Unit", "src\Azure.Deployments.Extensibility.Core.Tests.Unit\Azure.Deployments.Extensibility.Core.Tests.Unit.csproj", "{E699C5C2-C63E-4B24-A537-7EB6F26CD480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
