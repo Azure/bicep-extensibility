@@ -3,7 +3,6 @@ using Azure.Deployments.Extensibility.Core.Exceptions;
 using Azure.Deployments.Extensibility.Core.Extensions;
 using FluentAssertions;
 using Json.Schema;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Xunit;
 using static FluentAssertions.FluentActions;
