@@ -7,10 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B288A1A3-0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{71A5B95E-429D-4E5A-BCDD-69E963D79962}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registries", "Registries", "{9BA1554F-5B51-4521-A310-85B3EF5045E7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Registries", "src\Azure.Deployments.Extensibility.Registries\Azure.Deployments.Extensibility.Registries.csproj", "{118032EA-5B57-4080-A784-B878D97D252C}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{13E01E57-50E3-42B7-A0E2-5EA0709CB27B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes", "src\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj", "{8EDBF496-6D80-497B-A205-B8116C457038}"
@@ -19,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Core.Tests.Unit", "src\Azure.Deployments.Extensibility.Core.Tests.Unit\Azure.Deployments.Extensibility.Core.Tests.Unit.csproj", "{E699C5C2-C63E-4B24-A537-7EB6F26CD480}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +23,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{118032EA-5B57-4080-A784-B878D97D252C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{118032EA-5B57-4080-A784-B878D97D252C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{118032EA-5B57-4080-A784-B878D97D252C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{118032EA-5B57-4080-A784-B878D97D252C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8EDBF496-6D80-497B-A205-B8116C457038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8EDBF496-6D80-497B-A205-B8116C457038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EDBF496-6D80-497B-A205-B8116C457038}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -52,7 +44,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{118032EA-5B57-4080-A784-B878D97D252C} = {9BA1554F-5B51-4521-A310-85B3EF5045E7}
 		{13E01E57-50E3-42B7-A0E2-5EA0709CB27B} = {71A5B95E-429D-4E5A-BCDD-69E963D79962}
 		{8EDBF496-6D80-497B-A205-B8116C457038} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{D0B72CE2-3037-418E-9926-FA175B9E7844} = {B288A1A3-08D1-4D97-B9F8-32873EFEB4B0}
