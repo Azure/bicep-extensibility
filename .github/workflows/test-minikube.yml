@@ -32,5 +32,4 @@ jobs:
       run: dotnet build src/MiniKubeTests/MiniKubeTests.csproj --configuration release
 
     - name: Test
-      if: matrix.runTests
       run: dotnet test src/MiniKubeTests/MiniKubeTests.csproj --configuration release
