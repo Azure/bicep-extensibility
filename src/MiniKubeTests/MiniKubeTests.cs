@@ -35,7 +35,7 @@ namespace MiniKubeTests
 
             foreach (var item in namespaces.Items)
             {
-                this.output.WriteLine(item.Metadata.Name);
+                Console.WriteLine(item.Metadata.Name);
             }
         }
 
