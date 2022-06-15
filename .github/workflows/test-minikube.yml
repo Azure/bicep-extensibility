@@ -32,4 +32,4 @@ jobs:
       run: dotnet build src/MiniKubeTests/MiniKubeTests.csproj --configuration release
 
     - name: Test
-      run: dotnet test src/MiniKubeTests/MiniKubeTests.csproj --configuration release
+      run: dotnet test src/MiniKubeTests/MiniKubeTests.csproj --configuration release --logger "console;verbosity=detailed"
