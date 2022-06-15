@@ -22,3 +22,6 @@ jobs:
 
     - name: cat kubeconfig
       run: cat ~/.kube/config
+
+    - name: cat kubeconfig2
+      run: cat /etc/kubernetes/admin.conf
