@@ -4,5 +4,8 @@
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~3",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "publish (functions)"
+    "azureFunctions.preDeployTask": "publish (functions)",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///e%3A/Repos/bicep-extensibility/.github/workflows/deploy.yml"
+    }
 }

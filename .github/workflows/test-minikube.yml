@@ -23,5 +23,14 @@ jobs:
     - name: cat kubeconfig
       run: cat ~/.kube/config
 
-    - name: cat kubeconfig2
-      run: cat /etc/kubernetes/admin.conf
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v2
+
+    - name: Build
+      run: dotnet build src/MiniKubeTests/MiniKubeTests.csproj --configuration release
+
+    - name: Test
+      if: matrix.runTests
+      run: dotnet test src/MiniKubeTests/MiniKubeTests.csproj --configuration release
