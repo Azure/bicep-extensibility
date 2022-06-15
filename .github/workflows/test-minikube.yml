@@ -1,6 +1,6 @@
 name: Test minikube
 on:
-  - workflow_dispatch
+  workflow_dispatch:
 
 jobs:
   job1:
