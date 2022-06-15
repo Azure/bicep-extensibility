@@ -8,11 +8,11 @@ namespace MiniKubeTests
 {
     public class MiniKubeTests
     {
-        private readonly ITestOutputHelper testOutput;
+        private readonly ITestOutputHelper output;
 
         public MiniKubeTests(ITestOutputHelper testOutput)
         {
-            this.testOutput = testOutput;
+            this.output = testOutput;
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace MiniKubeTests
 
             var kubeConfigContent = File.ReadAllText(kubeConfigPath);
 
-            this.testOutput.WriteLine(kubeConfigContent);
+            this.output.WriteLine(kubeConfigContent);
 
             var kubeConfigBytes = File.ReadAllBytes(kubeConfigPath);
             var kubernetesConfig = new KubernetesConfig("default", kubeConfigBytes, null);
@@ -32,6 +32,11 @@ namespace MiniKubeTests
             var namespaces = await kubernetes.CoreV1.ListNamespaceAsync();
 
             namespaces.Items.Should().NotBeEmpty();
+
+            foreach (var item in namespaces.Items)
+            {
+                this.output.WriteLine(item.Metadata.Name);
+            }
         }
 
         private static IKubernetes CreateKubernetes(KubernetesConfig config) => new k8s.Kubernetes(
