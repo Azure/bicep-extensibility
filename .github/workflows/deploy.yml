@@ -3,6 +3,8 @@ name: Deploy
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'Extensibility.*/**'
   workflow_dispatch:
 
 env:

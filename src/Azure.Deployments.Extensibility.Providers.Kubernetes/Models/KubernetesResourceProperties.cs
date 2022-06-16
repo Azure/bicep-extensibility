@@ -14,15 +14,24 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
                 ("metadata", new JsonSchemaBuilder()
                     .Properties(
                         ("name", new JsonSchemaBuilder().Type(SchemaValueType.String)),
-                        ("namespace", new JsonSchemaBuilder().Type(SchemaValueType.String)))
+                        ("namespace", new JsonSchemaBuilder().Type(SchemaValueType.String, SchemaValueType.Null)))
                     .Required("name")))
             .Required("metadata")
             .AdditionalProperties(true);
 
-        public KubernetesResourceProperties(KubernetesResourceMetadata metadata, Dictionary<string, JsonElement> extensionData)
+        public KubernetesResourceProperties()
+        {
+        }
+
+        public KubernetesResourceProperties(KubernetesResourceMetadata metadata)
+            : this(metadata, null)
+        {
+        }
+
+        public KubernetesResourceProperties(KubernetesResourceMetadata metadata, Dictionary<string, JsonElement>? additionalData)
         {
             this.Metadata = metadata;
-            this.AdditionalData = extensionData;
+            this.AdditionalData = additionalData;
         }
 
         public KubernetesResourceMetadata Metadata { get; init; }

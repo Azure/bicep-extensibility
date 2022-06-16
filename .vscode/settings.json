@@ -4,5 +4,8 @@
     "azureFunctions.projectLanguage": "C#",
     "azureFunctions.projectRuntime": "~3",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "publish (functions)"
+    "azureFunctions.preDeployTask": "publish (functions)",
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "/.github/**/*.yml"
+    }
 }

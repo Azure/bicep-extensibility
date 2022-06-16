@@ -1,0 +1,27 @@
+name: On pull request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-tests:
+    name: Run tests
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: true # don't print dotnet logo
+      DOTNET_CLI_TELEMETRY_OPTOUT: true # disable telemetry (reduces dotnet tool output in logs)
+      CI: true
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+
+      - name: Build
+        run: dotnet build Azure.Deployments.Extensibility.sln --configuration release
+      
+      - name: Test
+        run: dotnet test Azure.Deployments.Extensibility.sln --configuration release

@@ -3,7 +3,6 @@ using Azure.Deployments.Extensibility.Core.Exceptions;
 using Azure.Deployments.Extensibility.Core.Extensions;
 using FluentAssertions;
 using Json.Schema;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Xunit;
 using static FluentAssertions.FluentActions;
@@ -63,7 +62,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.Extensions
             errors.Should().HaveCount(3);
 
             errors[0].Target.Should().Be(import.GetJsonPointer(x => x.Config.Height));
-            errors[0].Message.Should().Be(@"Value is ""false"" but should be ""integer"".");
+            errors[0].Message.Should().Be(@"Value is ""boolean"" but should be ""integer"".");
 
             errors[1].Target.Should().Be(import.GetJsonPointer(x => x.Config.Length));
             errors[1].Message.Should().Be(@"Value fails against the ""#/additionalProperties"": false schema.");

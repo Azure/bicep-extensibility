@@ -6,8 +6,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
     {
         public readonly static JsonSchema Schema = new JsonSchemaBuilder()
             .Properties(
+                ("namespace", new JsonSchemaBuilder().Type(SchemaValueType.String)),
                 ("kubeConfig", new JsonSchemaBuilder().Type(SchemaValueType.String)),
-                ("context", new JsonSchemaBuilder().Type(SchemaValueType.String)))
+                ("context", new JsonSchemaBuilder().Type(SchemaValueType.String, SchemaValueType.Null)))
             .AdditionalProperties(false);
     }
 }
