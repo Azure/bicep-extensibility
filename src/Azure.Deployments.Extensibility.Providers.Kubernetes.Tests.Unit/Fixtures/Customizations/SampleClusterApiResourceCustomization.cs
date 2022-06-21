@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using k8s.Models;
 
-namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.AutoFixture.Customizations
+namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Customizations
 {
     public class SampleClusterApiResourceCustomization : ICustomization
     {

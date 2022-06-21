@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
 
-namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.AutoFixture.Customizations
+namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Customizations
 {
     public class NullAdditionalDataResourcePropertiesCustomization : ICustomization
     {

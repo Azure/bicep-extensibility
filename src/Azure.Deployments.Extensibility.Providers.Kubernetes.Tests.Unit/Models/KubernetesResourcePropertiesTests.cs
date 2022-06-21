@@ -1,5 +1,5 @@
 ﻿using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
-using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.AutoFixture;
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Attributes;
 using FluentAssertions;
 using Xunit;
 

@@ -4,7 +4,6 @@ using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
 using k8s;
 using k8s.Autorest;
 using System.Net;
-using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 {
