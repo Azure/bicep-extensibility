@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Integration\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.csproj", "{CEA4E336-491B-4D1A-A578-776E380EF463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.csproj", "{CEA4E336-491B-4D1A-A578-776E380EF463}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core.csproj", "{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}"
 EndProject
