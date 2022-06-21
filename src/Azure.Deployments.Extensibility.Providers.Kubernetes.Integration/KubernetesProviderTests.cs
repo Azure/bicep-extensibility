@@ -10,10 +10,13 @@ using Xunit;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 {
+    // To run the integration tests locally, you need to have Docker and minikube installed.
+    // You must start Docker before running the tests. When the tests are not executed in CI,
+    // MinikubeFixture will take care of starting and deleting the minikube cluster before
+    // and after running all test cases.
     public class KubernetesProviderTests : IClassFixture<MinikubeFixture>
     {
-        [Theory]
-        [AzureVoteBackDeploymentRequestAutoData]
+        [Theory, AzureVoteBackDeploymentRequestAutoData]
         public async Task SaveAsync_AzureVoteBackDeployment_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);

@@ -2,7 +2,7 @@
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Core.Exceptions;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
-using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures;
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Attributes;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Customizations;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Mocks;
 using FluentAssertions;

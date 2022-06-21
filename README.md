@@ -1,4 +1,6 @@
-# Project
+# Bicep extensibility
+
+[![codecov](https://codecov.io/bb/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/bicep-extensibility)
 
 > This repo has been populated by an initial template to help get you started. Please
 > make sure to update the content to build a great experience for community-building.
