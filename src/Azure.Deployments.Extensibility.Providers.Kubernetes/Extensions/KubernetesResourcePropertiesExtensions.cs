@@ -1,6 +1,6 @@
-﻿using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
+﻿using Azure.Deployments.Extensibility.Core.Json;
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
 using k8s.Models;
-using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
 {
@@ -8,11 +8,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
     {
         public static V1Patch ToV1Patch(this KubernetesResourceProperties properties)
         {
-            var propertiesContent = JsonSerializer.Serialize(properties, new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
-            });
+            var propertiesContent = JsonSerializers.CamelCase.Serialize(properties);
 
 
             return new(propertiesContent, V1Patch.PatchType.ApplyPatch);

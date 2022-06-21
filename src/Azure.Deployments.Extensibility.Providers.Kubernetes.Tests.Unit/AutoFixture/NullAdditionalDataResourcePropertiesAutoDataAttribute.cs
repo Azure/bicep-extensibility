@@ -5,18 +5,15 @@ using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.AutoFixtur
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.AutoFixture
 {
-    public class NamespacedRequestAutoDataAttribute : AutoDataAttribute
+    public class NullAdditionalDataResourcePropertiesAutoDataAttribute : AutoDataAttribute
     {
-        public NamespacedRequestAutoDataAttribute()
+        public NullAdditionalDataResourcePropertiesAutoDataAttribute()
             : base(CreateFixture)
         {
         }
 
         private static IFixture CreateFixture() => new Fixture()
             .Customize(new DefaultJsonElementCustomization())
-            .Customize(new EmptyKubernetesConfigCustomization())
-            .Customize(new NullAdditionalDataResourcePropertiesCustomization())
-            .Customize(new SampleResourceCustomization())
-            .Customize(new GenericOperationRequestCustomization());
+            .Customize(new NullAdditionalDataResourcePropertiesCustomization());
     }
 }

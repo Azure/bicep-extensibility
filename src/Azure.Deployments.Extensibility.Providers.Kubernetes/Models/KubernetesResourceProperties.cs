@@ -21,11 +21,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 
         public KubernetesResourceProperties()
         {
-        }
-
-        public KubernetesResourceProperties(KubernetesResourceMetadata metadata)
-            : this(metadata, null)
-        {
+            // Adding the default constructor to make deserialization work.
         }
 
         public KubernetesResourceProperties(KubernetesResourceMetadata metadata, Dictionary<string, JsonElement>? additionalData)
@@ -34,20 +30,28 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
             this.AdditionalData = additionalData;
         }
 
-        public KubernetesResourceMetadata Metadata { get; init; }
+        public KubernetesResourceMetadata Metadata { get; set; }
 
         // Ideally this should be an immutable dictionary, but it's not supported yet.
         // See: https://github.com/dotnet/runtime/issues/31645.
         [JsonExtensionData]
-        public Dictionary<string, JsonElement>? AdditionalData { get; private set; }
+        public Dictionary<string, JsonElement>? AdditionalData { get; set; }
 
         public KubernetesResourceProperties PatchProperty(string propertyName, JsonElementProxy value)
         {
-            this.AdditionalData ??= new Dictionary<string, JsonElement>();
+            if (this.AdditionalData is null)
+            {
+                return new(this.Metadata, new Dictionary<string, JsonElement>
+                {
+                    [propertyName] = value,
+                });
+            }
 
-            this.AdditionalData[propertyName] = value;
+            var updatedData = this.AdditionalData.ToDictionary(x => x.Key, x => x.Value);
 
-            return this;
+            updatedData[propertyName] = value;
+
+            return new(this.Metadata, updatedData);
         }
     }
 }

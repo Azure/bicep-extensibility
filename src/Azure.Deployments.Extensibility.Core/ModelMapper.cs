@@ -1,14 +1,10 @@
-﻿using System.Text.Json;
+﻿using Azure.Deployments.Extensibility.Core.Json;
+using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Core
 {
     public static class ModelMapper
     {
-        private readonly static JsonSerializerOptions JsonSerializerOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        };
-
         public static ExtensibleImport<T> MapToConcrete<T>(ExtensibleImport<JsonElement> import) =>
             new(import.SymbolicName, import.Provider, import.Version, Deserialize<T>(import.Config));
 
@@ -22,10 +18,9 @@ namespace Azure.Deployments.Extensibility.Core
             new(resource.SymbolicName, resource.Type, SerializeToElement(resource.Properties));
 
         private static T Deserialize<T>(JsonElement element) =>
-            JsonSerializer.Deserialize<T>(element, JsonSerializerOptions) ??
+            JsonSerializers.CamelCase.Deserialize<T>(element) ??
             throw new InvalidOperationException($"Could not deserialize JSON element to a {nameof(T)}.");
 
-        private static JsonElement SerializeToElement<T>(T value) =>
-            JsonSerializer.SerializeToElement(value, JsonSerializerOptions);
+        private static JsonElement SerializeToElement<T>(T value) => JsonSerializers.CamelCase.SerializeToElement(value);
     }
 }

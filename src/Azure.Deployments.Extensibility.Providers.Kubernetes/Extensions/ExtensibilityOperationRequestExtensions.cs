@@ -18,7 +18,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
 
             var resourceType = KubernetesResourceType.Parse(resource.Type);
 
-            resource.Properties
+            var properties = resource.Properties
                 .PatchProperty("apiVersion", resourceType.ApiVersion)
                 .PatchProperty("kind", resourceType.Kind);
 
@@ -40,7 +40,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
                     @$"Unknown resource kind ""{resourceType.Kind}"" in resource type ""{resource.Type}"".");
             }
 
-            if (!apiResource.Namespaced && resource.Properties.Metadata.Namespace is not null)
+            if (!apiResource.Namespaced && properties.Metadata.Namespace is not null)
             {
                 throw new ExtensibilityException(
                     "NamespaceSpecifiedForClusterResource",
@@ -52,7 +52,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
                 ? resource.Properties.Metadata.Namespace ?? import.Config.Namespace
                 : null;
 
-            return new(kubernetes, resourceType.Group, resourceType.Version, @namespace, apiResource.Name, resource);
+            return new(kubernetes, resourceType.Group, resourceType.Version, @namespace, apiResource.Name, properties);
         }
     }
 }
