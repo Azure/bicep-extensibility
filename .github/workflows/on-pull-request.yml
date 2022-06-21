@@ -24,13 +24,13 @@ jobs:
         run: dotnet build Azure.Deployments.Extensibility.sln --configuration release
 
       - name: Run unit test
-        run: dotnet test src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit --configuration Release --collect:"XPlat Code Coverage"
+        run: dotnet test src/Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit --configuration Release --collect:"XPlat Code Coverage"
 
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
 
       - name: Run integration test
-        run: dotnet test src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration --configuration Release --collect:"XPlat Code Coverage"
+        run: dotnet test src/Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration --configuration Release --collect:"XPlat Code Coverage"
           
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v3
