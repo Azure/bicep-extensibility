@@ -8,7 +8,7 @@ on:
 jobs:
   run-tests:
     name: Run tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       DOTNET_NOLOGO: true # don't print dotnet logo
       DOTNET_CLI_TELEMETRY_OPTOUT: true # disable telemetry (reduces dotnet tool output in logs)
@@ -22,6 +22,17 @@ jobs:
 
       - name: Build
         run: dotnet build Azure.Deployments.Extensibility.sln --configuration release
-      
-      - name: Test
-        run: dotnet test Azure.Deployments.Extensibility.sln --configuration release
+
+      - name: Run unit test
+        run: dotnet test src/Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit --configuration Release --collect:"XPlat Code Coverage"
+
+      - name: Start minikube
+        uses: medyagh/setup-minikube@latest
+
+      - name: Run integration test
+        run: dotnet test src/Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration --configuration Release --collect:"XPlat Code Coverage"
+          
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

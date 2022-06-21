@@ -1,5 +1,5 @@
-﻿using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
+﻿using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Attributes;
 using FluentAssertions;
 using Xunit;
 
@@ -7,23 +7,23 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Models
 {
     public class KubernetesResourcePropertiesTests
     {
-        [Theory, AutoData]
+        [Theory, NullAdditionalDataResourcePropertiesAutoData]
         public void PatchProperty_NullAdditionalData_CreatesAdditionalData(KubernetesResourceProperties sut, string propertyName, string value)
         {
-            sut.PatchProperty(propertyName, value);
+            var patched = sut.PatchProperty(propertyName, value);
 
-            sut.AdditionalData.Should().NotBeNull();
-            sut.AdditionalData![propertyName].GetString().Should().Be(value);
+            patched.AdditionalData.Should().NotBeNull();
+            patched.AdditionalData![propertyName].GetString().Should().Be(value);
         }
 
-        [Theory, AutoData]
-        public void PatchProperty_NonNullAdditionalData_OverridesAdditionalData(KubernetesResourceProperties sut, string propertyName, string oldValue, string newValue)
+        [Theory, NullAdditionalDataResourcePropertiesAutoData]
+        public void PatchProperty_ExistingAdditionalData_OverridesAdditionalData(KubernetesResourceProperties sut, string propertyName, string oldValue, string newValue)
         {
-            sut.PatchProperty(propertyName, oldValue);
+            var patched = sut
+                .PatchProperty(propertyName, oldValue)
+                .PatchProperty(propertyName, newValue);
 
-            sut.PatchProperty(propertyName, newValue);
-
-            sut.AdditionalData![propertyName].GetString().Should().Be(newValue);
+            patched.AdditionalData![propertyName].GetString().Should().Be(newValue);
         }
     }
 }

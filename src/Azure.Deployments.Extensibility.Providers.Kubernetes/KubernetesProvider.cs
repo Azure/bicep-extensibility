@@ -1,9 +1,9 @@
 ﻿using Azure.Deployments.Extensibility.Core;
+using Azure.Deployments.Extensibility.Core.Json;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
 using k8s;
 using k8s.Autorest;
 using System.Net;
-using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 {
@@ -58,12 +58,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
                     // because if the namespace is being created as part of the template this would be a false positive. So for these cases
                     // we want to fall back to a "client" dry-run if the namespace has yet to be created. This is lower fidelity but it won't 
                     // block things that would work.
-                    var metadata = resource.Resource.Properties.Metadata with { Namespace = resource.Namespace };
-                    var patchedProperties = resource.Resource.Properties with { Metadata = metadata };
-                    var patchedPropertiesElement = JsonSerializer.SerializeToElement(patchedProperties, new JsonSerializerOptions
-                    {
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    });
+                    var metadata = resource.Properties.Metadata with { Namespace = resource.Namespace };
+                    var patchedProperties = resource.Properties with { Metadata = metadata };
+                    var patchedPropertiesElement = ExtensibilityJsonSerializer.Default.SerializeToElement(patchedProperties);
 
                     return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = patchedPropertiesElement });
                 }
