@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
     {
         public static V1Patch ToV1Patch(this KubernetesResourceProperties properties)
         {
-            var propertiesContent = JsonSerializers.CamelCase.Serialize(properties);
+            var propertiesContent = ExtensibilityJsonSerializer.Default.Serialize(properties);
 
 
             return new(propertiesContent, V1Patch.PatchType.ApplyPatch);

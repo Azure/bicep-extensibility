@@ -2,9 +2,9 @@
 
 namespace Azure.Deployments.Extensibility.Core.Json
 {
-    public class JsonSerializers
+    public class ExtensibilityJsonSerializer
     {
-        public static readonly JsonSerializerProxy CamelCase = new(new JsonSerializerOptions
+        public static readonly JsonSerializerProxy Default = new(new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,

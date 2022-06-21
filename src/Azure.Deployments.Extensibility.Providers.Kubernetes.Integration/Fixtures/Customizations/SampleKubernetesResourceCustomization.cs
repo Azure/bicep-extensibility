@@ -15,7 +15,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         {
             this.type = type;
             this.properties =
-                JsonSerializers.CamelCase.Deserialize<KubernetesResourceProperties>(properties) ??
+                ExtensibilityJsonSerializer.Default.Deserialize<KubernetesResourceProperties>(properties) ??
                 throw new InvalidOperationException($"Failed to deserialize properties to {nameof(KubernetesResourceProperties)}.");
         }
 

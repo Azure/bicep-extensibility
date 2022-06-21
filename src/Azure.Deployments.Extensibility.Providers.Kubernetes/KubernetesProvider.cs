@@ -60,7 +60,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
                     // block things that would work.
                     var metadata = resource.Properties.Metadata with { Namespace = resource.Namespace };
                     var patchedProperties = resource.Properties with { Metadata = metadata };
-                    var patchedPropertiesElement = JsonSerializers.CamelCase.SerializeToElement(patchedProperties);
+                    var patchedPropertiesElement = ExtensibilityJsonSerializer.Default.SerializeToElement(patchedProperties);
 
                     return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = patchedPropertiesElement });
                 }

@@ -1,4 +1,5 @@
-﻿using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
+﻿using Azure.Deployments.Extensibility.Core.Json;
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
 using k8s;
 using System.Text.Json;
 
@@ -45,7 +46,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
                     this.Properties.Metadata.Name,
                     cancellationToken);
 
-            return JsonSerializer.SerializeToElement(result);
+            return ExtensibilityJsonSerializer.Default.SerializeToElement(result);
         }
 
         public async Task<JsonElement> PatchAsync(string? dryRun, CancellationToken cancellationToken)
@@ -73,7 +74,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
                     dryRun: dryRun,
                     cancellationToken: cancellationToken);
 
-            return JsonSerializer.SerializeToElement(result);
+            return ExtensibilityJsonSerializer.Default.SerializeToElement(result);
         }
 
         public async Task<JsonElement> DeleteAsync(CancellationToken cancellationToken)
@@ -93,7 +94,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
                     this.Properties.Metadata.Name,
                     cancellationToken: cancellationToken);
 
-            return JsonSerializer.SerializeToElement(result);
+            return ExtensibilityJsonSerializer.Default.SerializeToElement(result);
         }
     }
 }

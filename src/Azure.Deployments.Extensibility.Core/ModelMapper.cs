@@ -18,9 +18,9 @@ namespace Azure.Deployments.Extensibility.Core
             new(resource.SymbolicName, resource.Type, SerializeToElement(resource.Properties));
 
         private static T Deserialize<T>(JsonElement element) =>
-            JsonSerializers.CamelCase.Deserialize<T>(element) ??
+            ExtensibilityJsonSerializer.Default.Deserialize<T>(element) ??
             throw new InvalidOperationException($"Could not deserialize JSON element to a {nameof(T)}.");
 
-        private static JsonElement SerializeToElement<T>(T value) => JsonSerializers.CamelCase.SerializeToElement(value);
+        private static JsonElement SerializeToElement<T>(T value) => ExtensibilityJsonSerializer.Default.SerializeToElement(value);
     }
 }
