@@ -47,6 +47,12 @@
           "Microsoft.TestPlatform.TestHost": "17.2.0"
         }
       },
+      "Nerdbank.GitVersioning": {
+        "type": "Direct",
+        "requested": "[3.5.107, )",
+        "resolved": "3.5.107",
+        "contentHash": "oMWWTe9aTUJ1CwU4fpfpduqx7Hzve320PU2SUyFFDzlHXTdjEouWHtFrRbaXV4LysL0lBtlzJM/nmHm47p2KWw=="
+      },
       "System.Reactive": {
         "type": "Direct",
         "requested": "[5.0.0, )",
