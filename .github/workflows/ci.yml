@@ -1,13 +1,16 @@
-name: On pull request
+name: CI
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
-  run-tests:
-    name: Run tests
+  build:
+    name: Build
     runs-on: ubuntu-latest
     env:
       DOTNET_NOLOGO: true # don't print dotnet logo
@@ -16,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
@@ -32,7 +37,18 @@ jobs:
       - name: Run integration test
         run: dotnet test src/Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration --configuration Release --collect:"XPlat Code Coverage"
           
+      - name: Pack
+        run: dotnet pack Azure.Deployments.Extensibility.sln --configuration release
+          
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: bicep-extensibility-packages
+          path: ./out/*
+          if-no-files-found: error
+          
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v3
         with:
+          # TODO: remove after the repo goes public
           token: ${{ secrets.CODECOV_TOKEN }}
