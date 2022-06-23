@@ -1,4 +1,7 @@
-﻿using Json.More;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.More;
 using Json.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;

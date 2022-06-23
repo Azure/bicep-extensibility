@@ -1,4 +1,7 @@
-﻿namespace Azure.Deployments.Extensibility.Core
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Azure.Deployments.Extensibility.Core
 {
     public delegate Task<ExtensibilityOperationResponse> ExtensibilityOperation(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 

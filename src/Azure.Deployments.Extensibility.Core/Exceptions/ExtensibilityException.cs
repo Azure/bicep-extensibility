@@ -1,4 +1,7 @@
-﻿using Json.Pointer;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.Pointer;
 
 namespace Azure.Deployments.Extensibility.Core.Exceptions
 {

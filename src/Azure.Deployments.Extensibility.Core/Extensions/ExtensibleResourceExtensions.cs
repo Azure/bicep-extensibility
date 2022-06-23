@@ -1,4 +1,7 @@
-﻿using Json.Pointer;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.Pointer;
 using System.Linq.Expressions;
 
 namespace Azure.Deployments.Extensibility.Core.Extensions

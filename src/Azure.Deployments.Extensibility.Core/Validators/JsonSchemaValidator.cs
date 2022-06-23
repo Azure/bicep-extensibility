@@ -1,4 +1,7 @@
-﻿using Json.Pointer;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.Pointer;
 using Json.Schema;
 using System.Text.Json;
 

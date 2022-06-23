@@ -1,4 +1,7 @@
-﻿namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.Fixtures.Attributes
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.Fixtures.Attributes
 {
     public class AzureVoteBackServiceRequestAutoDataAttribute : SampleKubernetesRequesetAutoDataAttribute
     {

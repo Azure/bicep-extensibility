@@ -1,4 +1,7 @@
-﻿namespace Extensibility.Core.Contract
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Extensibility.Core.Contract
 {
     using Extensibility.Core.Messages;
     using System.Threading;

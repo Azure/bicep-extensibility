@@ -1,4 +1,7 @@
-﻿namespace Extensibility.Tests
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Extensibility.Tests
 {
     using System.Collections.Generic;
     using Extensibility.AzureStorage;

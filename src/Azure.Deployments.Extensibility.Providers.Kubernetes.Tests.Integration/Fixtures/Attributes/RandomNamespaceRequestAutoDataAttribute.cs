@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using AutoFixture;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.Fixtures.Attributes
 {

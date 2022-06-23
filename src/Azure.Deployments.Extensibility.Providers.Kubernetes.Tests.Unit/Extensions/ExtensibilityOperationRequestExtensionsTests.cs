@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using AutoFixture;
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Core.Exceptions;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
