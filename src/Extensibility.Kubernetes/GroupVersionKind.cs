@@ -26,7 +26,6 @@ namespace Extensibility.Kubernetes
 
                 if (parsedGvk.Group != null && parsedGvk.Group.StartsWith("kubernetes."))
                 {
-                    // Remove the kubernetes. prefix for compat with radius.
                     parsedGvk = new GroupVersionKind(parsedGvk.Group.Substring("kubernetes.".Length), parsedGvk.Version, parsedGvk.Kind);
                 }
 

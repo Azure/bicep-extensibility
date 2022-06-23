@@ -22,7 +22,6 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 
             if (parsedType.Group != null && parsedType.Group.StartsWith("kubernetes."))
             {
-                // Remove the kubernetes. prefix for compat with radius.
                 parsedType = new KubernetesResourceType(parsedType.Group["kubernetes.".Length..], parsedType.Version, parsedType.Kind);
             }
 

@@ -93,64 +93,6 @@ namespace Extensibility.Kubernetes.Tests
 }
 ");
 
-        private static readonly JObject Deployment = new JObject()
-        {
-            ["metadata"] = new JObject()
-            {
-                ["name"] = "test-deployment",
-            },
-            ["spec"] = new JObject()
-            {
-                ["selector"] = new JObject()
-                {
-                    ["matchLabels"] = new JObject()
-                    {
-                        ["app"] = "test-deployment",
-                    }
-                },
-                ["template"] = new JObject()
-                {
-                    ["metadata"] = new JObject()
-                    {
-                        ["labels"] = new JObject()
-                        {
-                            ["app"] = "test-deployment",
-                        },
-                    },
-                    ["spec"] = new JObject()
-                    {
-                        ["containers"] = new JArray()
-                        {
-                            new JObject()
-                            {
-                                ["name"] = "magpie",
-                                ["image"] = "radius.azurecr.io/magpie:latest",
-                            },
-                        },
-                    },
-                },
-            },
-        };
-
-        [TestMethod]
-        public async Task Save_Deployment()
-        {
-            await CrudHelper.Save(new()
-            {
-                Type = "apps/Deployment@v1",
-                Import = new()
-                {
-                    Provider = "Kubernetes",
-                    Config = new JObject()
-                    {
-                        ["kubeConfig"] = Base64KubeConfig,
-                        ["namespace"] = "default",
-                    },
-                },
-                Properties = Deployment,
-            }, CancellationToken.None);
-        }
-
         [TestMethod]
         public async Task Save_AzureVoteBackService()
         {
