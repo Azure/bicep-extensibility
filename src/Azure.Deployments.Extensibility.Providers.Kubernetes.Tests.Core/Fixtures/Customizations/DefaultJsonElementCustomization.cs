@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using AutoFixture;
 using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core.Fixtures.Customizations

@@ -1,4 +1,7 @@
-﻿using Json.Schema;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.Schema;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 {

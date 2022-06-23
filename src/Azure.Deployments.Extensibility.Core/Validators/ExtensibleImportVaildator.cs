@@ -1,4 +1,7 @@
-﻿using Azure.Deployments.Extensibility.Core.Extensions;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Deployments.Extensibility.Core.Extensions;
 using Json.Pointer;
 using Json.Schema;
 using System.Text.Json;

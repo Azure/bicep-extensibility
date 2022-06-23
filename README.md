@@ -2,15 +2,9 @@
 
 [![codecov](https://codecov.io/bb/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/bicep-extensibility)
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+The repository contains source code for Bicep extensibility core package and first party providers owned by the Bicep team, including:
+- [Azure.Deployments.Extensibility.Core](src/Azure.Deployments.Extensibility.Core/)
+- [Azure.Deployments.Extensibility.Providers.Kubernetes](src/Azure.Deployments.Extensibility.Providers.Kubernetes/)
 
 ## Contributing
 

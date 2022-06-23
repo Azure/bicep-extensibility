@@ -1,4 +1,7 @@
-﻿using Azure.Deployments.Extensibility.Core.Exceptions;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Deployments.Extensibility.Core.Exceptions;
 using Json.Schema;
 using System.Text.RegularExpressions;
 

@@ -1,4 +1,7 @@
-﻿namespace Extensibility.Core.Data
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Extensibility.Core.Data
 {
     public class ExtensibilityError
     {

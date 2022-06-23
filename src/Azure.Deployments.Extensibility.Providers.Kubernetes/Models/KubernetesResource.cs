@@ -1,4 +1,7 @@
-﻿using Azure.Deployments.Extensibility.Core.Json;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Deployments.Extensibility.Core.Json;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
 using k8s;
 using System.Text.Json;

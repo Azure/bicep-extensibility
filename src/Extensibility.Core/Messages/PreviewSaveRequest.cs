@@ -1,4 +1,7 @@
-﻿namespace Extensibility.Core.Messages
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Extensibility.Core.Messages
 {
     using Extensibility.Core.Data;
 

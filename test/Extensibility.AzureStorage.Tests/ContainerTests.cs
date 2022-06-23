@@ -1,4 +1,7 @@
-﻿namespace Extensibility.AzureStorage.Tests
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Extensibility.AzureStorage.Tests
 {
     using System.Threading;
     using System.Threading.Tasks;

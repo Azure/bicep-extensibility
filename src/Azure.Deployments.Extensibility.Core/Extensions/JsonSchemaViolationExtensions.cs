@@ -1,4 +1,7 @@
-﻿using Azure.Deployments.Extensibility.Core.Validators;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Deployments.Extensibility.Core.Validators;
 
 namespace Azure.Deployments.Extensibility.Core.Extensions
 {

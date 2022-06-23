@@ -1,4 +1,7 @@
-﻿using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Deployments.Extensibility.Providers.Kubernetes.Models;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtures.Attributes;
 using FluentAssertions;
 using Xunit;

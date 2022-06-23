@@ -1,4 +1,7 @@
-﻿using Json.Path;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Json.Path;
 using Json.Pointer;
 using System.Text.Json;
 

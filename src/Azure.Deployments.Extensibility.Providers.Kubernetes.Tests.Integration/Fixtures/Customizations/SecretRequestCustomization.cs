@@ -1,4 +1,7 @@
-﻿namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.Fixtures.Customizations
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.Fixtures.Customizations
 {
     public class SecretRequestCustomization : SampleKubernetesRequestCustomization
     {
