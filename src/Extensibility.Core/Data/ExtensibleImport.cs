@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Newtonsoft.Json.Linq;
+
 namespace Extensibility.Core.Data
 {
-    using Newtonsoft.Json.Linq;
-
     public class ExtensibleImport
     {
         public string? Provider { get; set; }
