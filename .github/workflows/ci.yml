@@ -36,17 +36,17 @@ jobs:
 
       - name: Run integration test
         run: dotnet test Azure.Deployments.Extensibility.sln --filter "Category=Integration" --configuration Release --collect:"XPlat Code Coverage"
-          
+
       - name: Pack
         run: dotnet pack Azure.Deployments.Extensibility.sln --configuration release
-          
+
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v3
         with:
           name: bicep-extensibility-packages
           path: ./out/*
           if-no-files-found: error
-          
+
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v3
         with:
