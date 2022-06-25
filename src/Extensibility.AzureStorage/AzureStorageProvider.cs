@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Extensibility.AzureStorage.Operations;
+using Extensibility.Core.Contract;
+using Extensibility.Core.Messages;
+
 namespace Extensibility.AzureStorage
 {
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Extensibility.AzureStorage.Operations;
-    using Extensibility.Core.Contract;
-    using Extensibility.Core.Messages;
-
     public class AzureStorageProvider : IExtensibilityProvider
     {
         private static readonly IReadOnlyDictionary<string, IExtensibilityProvider> OperationsLookup = new Dictionary<string, IExtensibilityProvider>

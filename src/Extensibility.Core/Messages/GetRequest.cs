@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Extensibility.Core.Data;
+
 namespace Extensibility.Core.Messages
 {
-    using Extensibility.Core.Data;
-
     public class GetRequest
     {
         public ExtensibleResourceBody? Body { get; set; }

@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Extensibility.Core.Messages;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Extensibility.Core.Contract
 {
-    using Extensibility.Core.Messages;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     public interface IExtensibilityProvider
     {
         Task<SaveResponse> Save(SaveRequest request, CancellationToken cancellationToken);

@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Storage.Blobs;
+using Extensibility.Core.Contract;
+using Extensibility.Core.Messages;
+
 namespace Extensibility.AzureStorage.Operations
 {
-    using Azure.Storage.Blobs;
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Extensibility.Core.Contract;
-    using Extensibility.Core.Messages;
-
     internal class ServiceOperations : IExtensibilityProvider
     {
         public Task<DeleteResponse> Delete(DeleteRequest request, CancellationToken cancellationToken)
