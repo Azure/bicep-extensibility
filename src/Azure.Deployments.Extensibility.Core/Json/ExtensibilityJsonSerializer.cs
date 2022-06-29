@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Azure.Deployments.Extensibility.Core.Json
 {
@@ -9,26 +10,27 @@ namespace Azure.Deployments.Extensibility.Core.Json
     {
         public static readonly JsonSerializerProxy Default = new(new JsonSerializerOptions
         {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
         });
 
         public class JsonSerializerProxy
         {
-            private readonly JsonSerializerOptions options;
-
             public JsonSerializerProxy(JsonSerializerOptions options)
             {
-                this.options = options;
+                this.Options = options;
             }
 
-            public TValue? Deserialize<TValue>(string json) => JsonSerializer.Deserialize<TValue>(json, this.options);
+            public JsonSerializerOptions Options { get; }
 
-            public TValue? Deserialize<TValue>(JsonElement element) => JsonSerializer.Deserialize<TValue>(element, this.options);
+            public TValue? Deserialize<TValue>(string json) => JsonSerializer.Deserialize<TValue>(json, this.Options);
 
-            public string Serialize<TValue>(TValue value) => JsonSerializer.Serialize(value, this.options);
+            public TValue? Deserialize<TValue>(JsonElement element) => JsonSerializer.Deserialize<TValue>(element, this.Options);
 
-            public JsonElement SerializeToElement<TValue>(TValue value) => JsonSerializer.SerializeToElement(value, this.options);
+            public string Serialize<TValue>(TValue value) => JsonSerializer.Serialize(value, this.Options);
+
+            public JsonElement SerializeToElement<TValue>(TValue value) => JsonSerializer.SerializeToElement(value, this.Options);
         }
     }
 }
