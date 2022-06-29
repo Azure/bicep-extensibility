@@ -1,6 +1,6 @@
 # Bicep extensibility
 
-[![codecov](https://codecov.io/bb/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/bicep-extensibility)
+[![codecov](https://codecov.io/gh/Azure/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/Azure/bicep-extensibility)
 
 The repository contains source code for Bicep extensibility core package and first party providers owned by the Bicep team, including:
 - [Azure.Deployments.Extensibility.Core](src/Azure.Deployments.Extensibility.Core/)
