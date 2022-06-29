@@ -7,9 +7,9 @@ using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Core
 {
-    public record ExtensibleImport<T>(string SymbolicName, string Provider, string Version, T Config);
+    public record ExtensibleImport<T>(string Provider, string Version, T Config);
 
-    public record ExtensibleResource<T>(string SymbolicName, string Type, T Properties);
+    public record ExtensibleResource<T>(string Type, T Properties);
 
     public record ExtensibleResourceMetadata(
         IEnumerable<JsonPath> ReadOnlyProperties,
