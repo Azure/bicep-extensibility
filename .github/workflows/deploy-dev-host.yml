@@ -1,0 +1,62 @@
+name: Deploy dev host
+
+on:
+  push:
+    branches: 
+      - main
+    paths:
+      - 'src/Azure.Deployments.Extensibility.DevHost/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  RG_NAME: bicep-extensibility-dev-host-rg
+  WEBAPP_NAME: bicep-extensibility-dev-host
+  WEBAPP_PACKAGE_PATH: 'deploy/dev-host'
+  DOTNET_VERSION: '6.0.x'
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - uses: actions/checkout@main
+        with:
+          fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+
+      - uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Setup resource group
+        run: |
+          az deployment group create \
+            --resource-group ${{ env.RG_NAME }} \
+            --name ${{ github.run_number }} \
+            --template-file ./deploy/dev-host.bicep \
+            --parameters \
+              webAppName=${{ env.WEBAPP_NAME }}
+      
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      
+      - name: Publish host
+        run: dotnet publish src/Azure.Deployments.Extensibility.DevHost --configuration Release --output ${{ env.WEBAPP_PACKAGE_PATH }}
+          
+      - name: Deploy host
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.WEBAPP_NAME }}
+          package: ${{ env.WEBAPP_PACKAGE_PATH }}
+
+
+
+
