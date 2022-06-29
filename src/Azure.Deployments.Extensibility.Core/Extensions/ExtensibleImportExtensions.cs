@@ -8,10 +8,7 @@ namespace Azure.Deployments.Extensibility.Core.Extensions
 {
     public static class ExtensibleImportExtensions
     {
-        public static JsonPointer GetJsonPointer<TConfig>(this ExtensibleImport<TConfig> import) =>
-            JsonPointer.Create("imports", import.SymbolicName);
-
         public static JsonPointer GetJsonPointer<TConfig>(this ExtensibleImport<TConfig> import, Expression<Func<ExtensibleImport<TConfig>, object>> expression) =>
-            import.GetJsonPointer().Combine(expression.ToJsonPointer());
+            JsonPointer.Create(nameof(import)).Combine(expression.ToJsonPointer());
     }
 }

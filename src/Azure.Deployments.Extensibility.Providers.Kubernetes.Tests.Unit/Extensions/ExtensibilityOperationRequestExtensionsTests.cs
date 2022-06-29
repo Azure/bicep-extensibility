@@ -41,7 +41,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
 
             errors.Should().HaveCount(1);
             errors[0].Code.Should().Be("UnknownResourceKind");
-            errors[0].Target.ToString().Should().Be($"/resources/{request.Resource.SymbolicName}/type");
+            errors[0].Target.ToString().Should().Be($"/resource/type");
             errors[0].Message.Should().Be(@"Unknown resource kind ""sampleKind"" in resource type ""sampleGroup/sampleKind@v1"".");
         }
 
@@ -65,7 +65,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
 
             errors.Should().HaveCount(1);
             errors[0].Code.Should().Be("NamespaceSpecifiedForClusterResource");
-            errors[0].Target.ToString().Should().Be($"/resources/{request.Resource.SymbolicName}/properties/metadata/namespace");
+            errors[0].Target.ToString().Should().Be($"/resource/properties/metadata/namespace");
             errors[0].Message.Should().Be("A namespace should not be specified for a cluster-scoped resource.");
         }
 
