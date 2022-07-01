@@ -13,8 +13,7 @@ namespace Extensibility.Kubernetes
 {
     public class KubernetesProvider : IExtensibilityProvider
     {
-        public async Task<DeleteResponse> Delete(DeleteRequest request, CancellationToken cancellationToken)
-        {
+        public async Task<DeleteResponse> Delete(DeleteRequest request, CancellationToken cancellationToken) => await DoWithUnhandledErrorHandling<DeleteResponse>(async () => {
             var resource = request?.Body ?? throw new ArgumentNullException($"Request body not provided");
 
             var (name, @namespace) = GetKeys(resource);
@@ -78,10 +77,9 @@ namespace Extensibility.Kubernetes
                     throw new InvalidOperationException($"operation failed with status {ex.Response.StatusCode} and content: \n{ex.Response.Content}");
                 }
             }
-        }
+        }, error => new() { Error = error });
 
-        public async Task<GetResponse> Get(GetRequest request, CancellationToken cancellationToken)
-        {
+        public async Task<GetResponse> Get(GetRequest request, CancellationToken cancellationToken) => await DoWithUnhandledErrorHandling<GetResponse>(async () => {
             var resource = request?.Body ?? throw new ArgumentNullException($"Request body not provided");
 
             var (name, @namespace) = GetKeys(resource);
@@ -159,10 +157,9 @@ namespace Extensibility.Kubernetes
                     throw new InvalidOperationException($"operation failed with status {ex.Response.StatusCode} and content: \n{ex.Response.Content}");
                 }
             }
-        }
+        }, error => new() { Error = error });
 
-        public async Task<PreviewSaveResponse> PreviewSave(PreviewSaveRequest request, CancellationToken cancellationToken)
-        {
+        public async Task<PreviewSaveResponse> PreviewSave(PreviewSaveRequest request, CancellationToken cancellationToken) => await DoWithUnhandledErrorHandling<PreviewSaveResponse>(async () => {
             var resource = request?.Body ?? throw new ArgumentNullException($"Request body not provided");
 
             var (name, @namespace) = GetKeys(resource);
@@ -314,10 +311,9 @@ namespace Extensibility.Kubernetes
                     throw new InvalidOperationException($"operation failed with status {ex.Response.StatusCode} and content: \n{ex.Response.Content}");
                 }
             }
-        }
+        }, error => new() { Error = error });
 
-        public async Task<SaveResponse> Save(SaveRequest request, CancellationToken cancellationToken)
-        {
+        public async Task<SaveResponse> Save(SaveRequest request, CancellationToken cancellationToken) => await DoWithUnhandledErrorHandling<SaveResponse>(async () => {
             var resource = request?.Body ?? throw new ArgumentNullException($"Request body not provided");
 
             var (name, @namespace) = GetKeys(resource);
@@ -436,6 +432,22 @@ namespace Extensibility.Kubernetes
                     // TODO: return error contract
                     throw new InvalidOperationException($"operation failed with status {ex.Response.StatusCode} and content: \n{ex.Response.Content}");
                 }
+            }
+        }, error => new() { Error = error });
+
+        private async Task<T> DoWithUnhandledErrorHandling<T>(Func<Task<T>> executeFunc, Func<ExtensibilityErrorContainer, T> buildResponse)
+        {
+            try {
+                return await executeFunc();
+            }
+            catch (Exception ex)
+            {
+                return buildResponse(new ()
+                {
+                    Errors = new [] {
+                        new ExtensibilityError { Message = ex.Message, },
+                    },
+                });
             }
         }
 
