@@ -7,11 +7,19 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker;
+using System.Text.Json.Serialization;
 
 namespace Extensibility.Host
 {
     public static class RequestHelper
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+        };
+
         public static async Task<HttpResponseData> Handle<TRequest, TResponse>(
             HttpRequestData request,
             FunctionContext context,
@@ -24,12 +32,12 @@ namespace Extensibility.Host
             logger.LogInformation($"Received request {context.FunctionDefinition.Name}");
 
             var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-            var requestObj = JsonSerializer.Deserialize<TRequest>(requestBody)!;
+            var requestObj = JsonSerializer.Deserialize<TRequest>(requestBody, JsonSerializerOptions)!;
 
             var responseObj = await handleFunc(requestObj);
 
             var response = request.CreateResponse(HttpStatusCode.OK);
-            await response.WriteStringAsync(JsonSerializer.Serialize(responseObj));
+            await response.WriteStringAsync(JsonSerializer.Serialize(responseObj, JsonSerializerOptions));
 
             return response;
         }

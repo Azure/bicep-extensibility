@@ -4,6 +4,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Extensibility.Core.Contract;
+using Extensibility.Core.Extensions;
 using Extensibility.Core.Data;
 using Extensibility.Core.Messages;
 using k8s;
@@ -453,7 +454,7 @@ namespace Extensibility.Kubernetes
 
         private (KubernetesConfig config, KubernetesClientConfiguration clientConfig) InitializeConfig(ExtensibleImport import)
         {
-            var config = import.Config?.GetValue<KubernetesConfig>() ?? new KubernetesConfig();
+            var config = import.Config?.ToObject<KubernetesConfig>() ?? new KubernetesConfig();
             if (config.KubeConfig.Length > 0)
             {
 
@@ -495,18 +496,19 @@ namespace Extensibility.Kubernetes
                 metadata.TryGetPropertyValue("name", out var nameToken);
                 metadata.TryGetPropertyValue("namespace", out var namespaceToken);
 
-                if (nameToken is not JsonValue)
+                if (nameToken is not JsonValue nameValue || !nameValue.TryGetValue<string>(out var nameString))
                 {
                     throw new InvalidOperationException("resource does not contain the required string property '.metadata.name'");
                 }
 
                 // Namespace must be a string if it is specified.
-                if (namespaceToken is not JsonValue)
+                string? namespaceString = null;
+                if (namespaceToken is JsonValue namespaceValue && !namespaceValue.TryGetValue<string>(out namespaceString))
                 {
                     throw new InvalidOperationException("property '.metadata.namespace' must be a string");
                 }
 
-                return (nameToken.GetValue<string>(), namespaceToken?.GetValue<string>());
+                return (nameToken.GetValue<string>(), namespaceString);
             }
 
             throw new InvalidOperationException("resource does not contain the required object property '.metadata'");
