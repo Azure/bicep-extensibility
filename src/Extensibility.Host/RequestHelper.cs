@@ -29,7 +29,7 @@ namespace Extensibility.Host
             var responseObj = await handleFunc(requestObj);
 
             var response = request.CreateResponse(HttpStatusCode.OK);
-            await response.WriteStringAsync(JsonConvert.SerializeObject(responseObj));
+            await response.WriteStringAsync(JsonSerializer.Serialize(responseObj));
 
             return response;
         }
