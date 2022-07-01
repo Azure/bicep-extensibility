@@ -1,17 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
+using System.Net;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker;
-using System.IO;
-using Newtonsoft.Json;
-using System.Net;
 
 namespace Extensibility.Host
 {
@@ -29,7 +24,7 @@ namespace Extensibility.Host
             logger.LogInformation($"Received request {context.FunctionDefinition.Name}");
 
             var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
-            var requestObj = JsonConvert.DeserializeObject<TRequest>(requestBody);
+            var requestObj = JsonSerializer.Deserialize<TRequest>(requestBody)!;
 
             var responseObj = await handleFunc(requestObj);
 

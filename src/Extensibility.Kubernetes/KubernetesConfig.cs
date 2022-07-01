@@ -1,21 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Extensibility.Kubernetes
 {
     public class KubernetesConfig
     {
-        [JsonProperty("namespace")]
+        [JsonPropertyName("namespace")]
         public string? Namespace { get; set; }
 
         // Will be serialized as base64-encoded JSON string.
-        [JsonProperty("kubeConfig")]
+        [JsonPropertyName("kubeConfig")]
         public byte[] KubeConfig { get; set; } = Array.Empty<byte>();
 
-        [JsonProperty("context")]
+        [JsonPropertyName("context")]
         public string? Context { get; set; }
     }
 }

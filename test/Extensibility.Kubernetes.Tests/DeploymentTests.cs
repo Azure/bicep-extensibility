@@ -2,12 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Extensibility.Tests;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json.Linq;
 
 namespace Extensibility.Kubernetes.Tests
 {
@@ -22,7 +21,7 @@ namespace Extensibility.Kubernetes.Tests
         private static readonly string Base64KubeConfig = Environment.GetEnvironmentVariable("KUBECONFIG_BASE64") ?? 
             throw new InvalidOperationException($"You must set the KUBECONFIG_BASE64 env variable before running this test. Try running:\nexport KUBECONFIG_BASE64=$(base64 -w 0 ./path/to/kubeconfig)");
 
-        private static readonly JObject AzureVoteBackService = JObject.Parse(@"
+        private static readonly JsonObject AzureVoteBackService = JsonObject.Parse(@"
 {
   ""metadata"": {
     ""name"": ""azure-vote-back""
@@ -38,9 +37,9 @@ namespace Extensibility.Kubernetes.Tests
     }
   }
 }
-");
+")!.AsObject();
 
-        private static readonly JObject AzureVoteBackDeployment = JObject.Parse(@"
+        private static readonly JsonObject AzureVoteBackDeployment = JsonObject.Parse(@"
 {
   ""metadata"": {
     ""name"": ""azure-vote-back""
@@ -91,7 +90,7 @@ namespace Extensibility.Kubernetes.Tests
     }
   }
 }
-");
+")!.AsObject();
 
         [TestMethod]
         public async Task Save_AzureVoteBackService()
@@ -102,7 +101,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "default",
@@ -121,7 +120,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "default",
@@ -131,14 +130,14 @@ namespace Extensibility.Kubernetes.Tests
             }, CancellationToken.None);
         }
 
-        private static JObject GetNamespace(string name) => JObject.Parse($@"
+        private static JsonObject GetNamespace(string name) => JsonObject.Parse($@"
 {{
   ""metadata"": {{
     ""name"": ""{name}""
   }},
   ""spec"": {{}}
 }}
-");
+")!.AsObject();
 
         [TestMethod]
         public async Task Save_and_get_Namespace()
@@ -149,7 +148,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                     },
@@ -163,7 +162,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                     },
@@ -171,17 +170,17 @@ namespace Extensibility.Kubernetes.Tests
                 Properties = GetNamespace("save-and-get-namespace"),
             }, CancellationToken.None);
 
-            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+            Assert.AreEqual(JsonValue.Create("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
         }
 
-              private static readonly JObject TestSecret = JObject.Parse(@"
+              private static readonly JsonObject TestSecret = JsonObject.Parse(@"
 {
   ""metadata"": {
     ""name"": ""test""
   },
   ""data"": {}
 }
-");
+")!.AsObject();
 
         [TestMethod]
         public async Task PreviewSave_with_existing_namespace()
@@ -192,7 +191,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                     },
@@ -206,7 +205,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "test",
@@ -215,7 +214,7 @@ namespace Extensibility.Kubernetes.Tests
                 Properties = TestSecret,
             }, CancellationToken.None);
 
-            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+            Assert.AreEqual(JsonValue.Create("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
         }
 
         [TestMethod]
@@ -227,7 +226,7 @@ namespace Extensibility.Kubernetes.Tests
                 Import = new()
                 {
                     Provider = "Kubernetes",
-                    Config = new JObject()
+                    Config = new JsonObject()
                     {
                         ["kubeConfig"] = Base64KubeConfig,
                         ["namespace"] = "preview-save-without-existing-namespace",
@@ -236,8 +235,8 @@ namespace Extensibility.Kubernetes.Tests
                 Properties = TestSecret,
             }, CancellationToken.None);
 
-            Assert.AreEqual(new JValue("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
-            Assert.AreEqual(new JValue("preview-save-without-existing-namespace"), (dynamic)(body.Properties!)["metadata"]["namespace"]);
+            Assert.AreEqual(JsonValue.Create("test"), (dynamic)(body.Properties!)["metadata"]["name"]);
+            Assert.AreEqual(JsonValue.Create("preview-save-without-existing-namespace"), (dynamic)(body.Properties!)["metadata"]["namespace"]);
         }
     }
 }

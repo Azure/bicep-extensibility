@@ -3,8 +3,8 @@
 
 namespace Extensibility.AzureStorage.Tests
 {
+    using System.Text.Json.Nodes;
     using Extensibility.Core.Data;
-    using Newtonsoft.Json.Linq;
 
     public static class TestHelper
     {
@@ -15,7 +15,7 @@ namespace Extensibility.AzureStorage.Tests
             {
                 Provider = "AzureStorage",
                 Version = "0.1",
-                Config = new JObject
+                Config = new JsonObject
                 {
                     ["connectionString"] = connectionString,
                 },

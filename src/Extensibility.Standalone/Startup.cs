@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Converters;
 
 namespace Extensibility.Standalone
 {
@@ -20,8 +20,8 @@ namespace Extensibility.Standalone
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddNewtonsoftJson(opts => {
-                opts.SerializerSettings.Converters.Add(new StringEnumConverter());
+            services.AddMvc().AddJsonOptions(opts => {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStrin());
             });
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
