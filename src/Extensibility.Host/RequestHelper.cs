@@ -34,7 +34,7 @@ namespace Extensibility.Host
             var responseObj = await handleFunc(requestObj);
 
             var response = request.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(responseObj);
+            await response.WriteStringAsync(JsonConvert.SerializeObject(responseObj));
 
             return response;
         }
