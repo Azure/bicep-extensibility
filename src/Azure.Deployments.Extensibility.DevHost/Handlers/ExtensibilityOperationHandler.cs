@@ -27,7 +27,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Handlers
                 return new ExtensibilityOperationErrorResponse(
                     new ExtensibilityError(
                         "UnknownExtensibilityProvider",
-                        JsonPointer.Parse($"/imports/{request.Import.SymbolicName}/provider"),
+                        JsonPointer.Parse($"/imports/provider"),
                         @$"Unknown extensibility provider: ""{providerName}""."));
             }
 
