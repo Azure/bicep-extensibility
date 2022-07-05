@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Handlers
     public class PreviewSaveRequestHandler : ExtensibilityRequestHandler
     {
         public PreviewSaveRequestHandler()
-            : base("/previewSave")
+            : base("/api/previewSave")
         {
         }
 

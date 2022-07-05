@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Handlers
     public class GetRequestHandler : ExtensibilityRequestHandler
     {
         public GetRequestHandler()
-            : base("/get")
+            : base("/api/get")
         {
         }
 

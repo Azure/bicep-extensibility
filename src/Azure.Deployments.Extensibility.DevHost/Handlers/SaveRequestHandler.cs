@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Handlers
     public class SaveRequestHandler : ExtensibilityRequestHandler
     {
         public SaveRequestHandler()
-            : base("/save")
+            : base("/api/save")
         {
         }
 

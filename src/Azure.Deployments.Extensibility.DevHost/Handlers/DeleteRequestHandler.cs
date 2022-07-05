@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Handlers
     public class DeleteRequestHandler : ExtensibilityRequestHandler
     {
         public DeleteRequestHandler()
-            : base("/delete")
+            : base("/api/delete")
         {
         }
 
