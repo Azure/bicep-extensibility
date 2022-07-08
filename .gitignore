@@ -355,3 +355,5 @@ MigrationBackup/
 # deployment artifacts
 deploy/package/
 deploy/package.zip
+deploy/dev-host
+deploy/dev-host.zip
