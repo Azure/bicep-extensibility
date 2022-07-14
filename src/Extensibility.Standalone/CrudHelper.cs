@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Extensibility.Core.Contract;
+using Extensibility.Core.Data;
+
 namespace Extensibility.Standalone
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Extensibility.Core.Contract;
-    using Extensibility.Core.Data;
-
     public static class CrudHelper
     {
         private static IExtensibilityProvider GetResourceOperations(ExtensibleResourceBody resource)

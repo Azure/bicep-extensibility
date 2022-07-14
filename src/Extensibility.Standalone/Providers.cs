@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using Extensibility.AzureStorage;
+using Extensibility.Kubernetes;
+using Extensibility.Core.Contract;
+
 namespace Extensibility.Standalone
 {
-    using System.Collections.Generic;
-    using Extensibility.AzureStorage;
-    using Extensibility.Kubernetes;
-    using Extensibility.Core.Contract;
-    using System;
-
     public static class Providers
     {
         private static readonly IReadOnlyDictionary<string, IExtensibilityProvider> ProvidersLookup = new Dictionary<string, IExtensibilityProvider>
