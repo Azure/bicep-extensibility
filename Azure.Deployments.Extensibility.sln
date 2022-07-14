@@ -25,9 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevHost", "DevHost", "{D067
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.DevHost", "src\Azure.Deployments.Extensibility.DevHost\Azure.Deployments.Extensibility.DevHost.csproj", "{33BEB45A-04F9-4824-AFE1-2B20B439EA67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Providers.Graph", "src\Azure.Deployments.Extensibility.Providers.Graph\Azure.Deployments.Extensibility.Providers.Graph.csproj", "{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Graph", "src\Azure.Deployments.Extensibility.Providers.Graph\Azure.Deployments.Extensibility.Providers.Graph.csproj", "{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graph", "Graph", "{150A6B27-AC73-4377-A2C6-2A8B650207FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit", "src\Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit\Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit.csproj", "{5F717407-B00D-417F-9221-D95D9532965F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,6 +69,10 @@ Global
 		{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F717407-B00D-417F-9221-D95D9532965F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F717407-B00D-417F-9221-D95D9532965F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F717407-B00D-417F-9221-D95D9532965F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F717407-B00D-417F-9221-D95D9532965F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{33BEB45A-04F9-4824-AFE1-2B20B439EA67} = {D067770F-49EE-4374-B878-C624450A7329}
 		{C2A30D1B-4DF6-4AD4-8C6A-CAAC27EF2B89} = {150A6B27-AC73-4377-A2C6-2A8B650207FA}
 		{150A6B27-AC73-4377-A2C6-2A8B650207FA} = {71A5B95E-429D-4E5A-BCDD-69E963D79962}
+		{5F717407-B00D-417F-9221-D95D9532965F} = {150A6B27-AC73-4377-A2C6-2A8B650207FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3073660-079C-482C-ABB4-E970087314E7}

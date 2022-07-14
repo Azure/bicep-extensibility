@@ -13,56 +13,38 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
     public class GraphHttpClient
     {
         private HttpClient _httpClient;
-        private string _graphToken;
-        private CancellationToken _cancellationToken;
         private string _baseUri;
-        public GraphHttpClient(string graphToken, CancellationToken cancellationToken)
+
+        public GraphHttpClient()
         {
             _httpClient = new HttpClient();
-            _graphToken = graphToken;
-            _cancellationToken = cancellationToken;
             _baseUri = "https://graph.microsoft.com/v1.0";
         }
 
-        public async Task<HttpResponseMessage> SendRequest(HttpRequestMessage request)
-        {
-            return await this._httpClient.SendAsync(request);
-        }
-
-        public string CallGraph(string uri, HttpMethod method)
-        {
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(method, uri);
-
-            HttpResponseMessage response = SendRequest(httpRequestMessage).Result;
-            string responseJson = response.Content.ReadAsStringAsync().Result;
-
-            return responseJson.ToString();
-        }
-
-        public async Task<string> GetAsync(string uri)
+        public virtual async Task<string> GetAsync(string uri, string graphToken, CancellationToken cancellationToken)
         {
             var completeUri = $"{this._baseUri}/{uri}";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, completeUri);
-            httpRequestMessage.Headers.Add("Authorization", $"Bearer {this._graphToken}");
+            httpRequestMessage.Headers.Add("Authorization", $"Bearer {graphToken}");
 
-            var response = await SendAsync(httpRequestMessage);
+            var response = await SendAsync(httpRequestMessage, cancellationToken);
             return HandleResponse(response);
         }
 
-        public async Task<string> PutAsync(string uri, JsonObject properties)
+        public virtual async Task<string> PutAsync(string uri, JsonObject properties, string graphToken, CancellationToken cancellationToken)
         {
             var completeUri = $"{this._baseUri}/{uri}";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, completeUri);
-            httpRequestMessage.Headers.Add("Authorization", $"Bearer {this._graphToken}");
+            httpRequestMessage.Headers.Add("Authorization", $"Bearer {graphToken}");
             httpRequestMessage.Content = new StringContent(properties.ToJsonString(), Encoding.UTF8, "application/json");
 
-            var response = await SendAsync(httpRequestMessage);
+            var response = await SendAsync(httpRequestMessage, cancellationToken);
             return HandleResponse(response);
         }
 
-        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage)
+        public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
-            return await _httpClient.SendAsync(httpRequestMessage, this._cancellationToken);
+            return await _httpClient.SendAsync(httpRequestMessage, cancellationToken);
         }
 
         private string HandleResponse(HttpResponseMessage response)

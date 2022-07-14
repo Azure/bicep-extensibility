@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.Core.Exceptions;
+using Json.Pointer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http.Headers;
-using Azure.Deployments.Extensibility.Core.Exceptions;
-using Json.Pointer;
 
 namespace Azure.Deployments.Extensibility.Providers.Graph
 {
