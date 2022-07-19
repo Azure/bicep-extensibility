@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -21,43 +22,38 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             _baseUri = "https://graph.microsoft.com/v1.0";
         }
 
-        public virtual async Task<string> GetAsync(string uri, string graphToken, CancellationToken cancellationToken)
+        public virtual async Task<HttpResponseMessage> GetAsync(string uri, string graphToken, CancellationToken cancellationToken)
         {
             var completeUri = $"{this._baseUri}/{uri}";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, completeUri);
             httpRequestMessage.Headers.Add("Authorization", $"Bearer {graphToken}");
 
-            var response = await SendAsync(httpRequestMessage, cancellationToken);
-            return HandleResponse(response);
+            return await SendAsync(httpRequestMessage, cancellationToken);
         }
 
-        public virtual async Task<string> PutAsync(string uri, JsonObject properties, string graphToken, CancellationToken cancellationToken)
+        public virtual async Task<HttpResponseMessage> PatchAsync(string uri, JsonObject properties, string graphToken, CancellationToken cancellationToken)
         {
             var completeUri = $"{this._baseUri}/{uri}";
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Put, completeUri);
-            httpRequestMessage.Headers.Add("Authorization", $"Bearer {graphToken}");
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Patch, completeUri);
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
             httpRequestMessage.Content = new StringContent(properties.ToJsonString(), Encoding.UTF8, "application/json");
 
-            var response = await SendAsync(httpRequestMessage, cancellationToken);
-            return HandleResponse(response);
+            return await SendAsync(httpRequestMessage, cancellationToken);
+        }
+
+        public virtual async Task<HttpResponseMessage> PostAsync(string uri, JsonObject properties, string graphToken, CancellationToken cancellationToken)
+        {
+            var completeUri = $"{this._baseUri}/{uri}";
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, completeUri);
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
+            httpRequestMessage.Content = new StringContent(properties.ToJsonString(), Encoding.UTF8, "application/json");
+
+            return await SendAsync(httpRequestMessage, cancellationToken);
         }
 
         public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage httpRequestMessage, CancellationToken cancellationToken)
         {
             return await _httpClient.SendAsync(httpRequestMessage, cancellationToken);
-        }
-
-        private string HandleResponse(HttpResponseMessage response)
-        {
-            var content = response.Content.ReadAsStringAsync().Result;
-            if (response.IsSuccessStatusCode)
-            {
-                return content;
-            }
-            else
-            {
-                throw new GraphHttpException((int)response.StatusCode, content);
-            }
         }
     }
 }
