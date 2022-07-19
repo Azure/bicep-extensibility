@@ -102,7 +102,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
             // Return properties in request if none returned in response
             var content = HandleHttpResponse(response);
-            var resultProperties = string.IsNullOrEmpty(content) ? resource.Properties : JsonSerializer.Deserialize<JsonElement>(content);
+            var resultProperties = response.StatusCode == HttpStatusCode.NoContent ? resource.Properties : JsonSerializer.Deserialize<JsonElement>(content);
 
             return new ExtensibilityOperationSuccessResponse(
                 request.Resource with
