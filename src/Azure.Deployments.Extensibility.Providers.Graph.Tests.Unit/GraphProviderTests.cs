@@ -77,7 +77,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var postUri = GraphProvider.GeneratePostUri(resourceType, properties);
             var getResponseContent = ConstructResponseIdContent(getUri, "");
             var getStatusCode = getUri.StartsWith("users") ? HttpStatusCode.NotFound : HttpStatusCode.OK;
-            var mockHttpClient = Repository.Create<GraphHttpClient>(); 
+            var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
                 .Setup(c => c.GetAsync(getUri, graphToken, CancellationToken.None))
                 .Returns(Task.FromResult(ConstructResponse(getStatusCode, getResponseContent)));
@@ -99,7 +99,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
                 It.Is<JsonObject>(p => p.ToString() == propertiesString),
                 graphToken,
                 CancellationToken.None
-                ),Times.Once
+                ), Times.Once
             );
             response.Should().NotBeNull();
             response.Resource.Should().NotBeNull();
@@ -250,41 +250,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             Assert.Throws<IndexOutOfRangeException>(testAction);
         }
 
-        [Fact(Skip ="Figure out password update")]
-        /*
-         * Status:
-         * 1. Can create user
-         */
-        public async void CreateUser_ShouldSucceed()
-        {
-            var graphToken = "";
-            var principalName = "testUser4PrincipalName@xgk22.onmicrosoft.com";
-            var resourceType = "Microsoft.Graph/users@2022-06-15-preview";
-
-            var request = ConstructRequest(graphToken, principalName, resourceType);
-            var properties = request.Resource.Properties;
-
-            var provider = new GraphProvider();
-            var response = await provider.SaveAsync(request, CancellationToken.None);
-        }
-
-        [Fact(Skip = "This seems to be working")]
-        /*
-         * Status:
-         */
-        public async void CreateOrUpdateGroups_ShouldSucceed()
-        {
-            var graphToken = "";
-            var name = "TestGroup2";
-            var resourceType = "Microsoft.Graph/groups@2022-06-15-preview";
-
-            var request = ConstructRequest(graphToken, name, resourceType);
-            var properties = request.Resource.Properties;
-
-            var provider = new GraphProvider();
-            var response = await provider.SaveAsync(request, CancellationToken.None);
-        }
-
         private ExtensibilityOperationRequest ConstructRequest(string graphToken = "", string name = "", string resourceType = "")
         {
             var config = new JsonObject();
@@ -299,34 +264,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
                 properties.Add("name", name);
                 properties.Add("displayName", name);
             }
-/*            var groupPropertiesObject = new
-            {
-                name = name,
-                displayName = name,
-                mailEnabled = false,
-                mailNickname = $"{name}NickName222",
-                securityEnabled = true
-            };
-        var userPropertiesObject = new
-            {
-                name = name,
-                accountEnabled = true,
-                displayName = $"{name}DisplayNameUpdated222",
-                mailNickname = "testmainnickname",
-                onPremisesImmutableId = $"{name}onPremisesImmutableId",
-                userPrincipalName = name,
-                passwordProfile = new
-                {
-                    forceChangePasswordNextSignIn = false,
-                    forceChangePasswordNextSignInWithMfa = false,
-                    password = "userTest4Password"
-                }
-            };*/
+
             var import = new ExtensibleImport<JsonElement>("provider", "version", JsonSerializer.SerializeToElement(config));
             var resource = new ExtensibleResource<JsonElement>(resourceType, JsonSerializer.SerializeToElement(properties));
             var request = new ExtensibilityOperationRequest(import, resource);
 
-            
             return request;
         }
 

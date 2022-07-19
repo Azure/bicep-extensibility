@@ -135,14 +135,14 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 else
                 {
                     var value = contentElement.GetProperty("value");
-      
+
                     if (value.GetArrayLength() > 0)
                     {
                         var firstValue = value.EnumerateArray().First();
                         id = firstValue.GetProperty("id").ToString();
                     }
                 }
-                
+
             }
             else if (response.StatusCode != HttpStatusCode.NotFound || !uri.StartsWith("users"))
             {
@@ -172,7 +172,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
             // Select id only in response
             uri = $"{uri}$select=id";
-            
+
             return uri;
         }
 
@@ -203,7 +203,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             {
                 uri = $"{uri}/{names[i - 2]}/{types[i]}";
             }
-            
+
             if (uri.EndsWith("members"))
             {
                 uri = $"{uri}/$ref";
