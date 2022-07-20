@@ -19,7 +19,7 @@ using Azure.Deployments.Extensibility.Core.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Set default JsonOptions.
-builder.Services.Configure<JsonOptions>(options =>
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
     var properties = typeof(JsonSerializerOptions).GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
@@ -28,7 +28,7 @@ builder.Services.Configure<JsonOptions>(options =>
         if (property is not null && property.CanWrite)
         {
             var defaultValue = property.GetValue(ExtensibilityJsonSerializer.Default.Options);
-            property.SetValue(options.SerializerOptions, defaultValue);
+            property.SetValue(options.JsonSerializerOptions, defaultValue);
         }
     }
 });
@@ -109,6 +109,6 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseExtensibilityExceptionHandler();
-app.MapHandlers();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.Run();

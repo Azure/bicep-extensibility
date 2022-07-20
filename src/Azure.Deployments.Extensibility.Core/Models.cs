@@ -14,7 +14,7 @@ namespace Azure.Deployments.Extensibility.Core
     /// <param name="Provider">The unique extensibility provider name.</param>
     /// <param name="Version">The version of the named extensibility provider.</param>
     /// <param name="Config">Provider-specific configuration.</param>
-    public record ExtensibleImport<T>(string Provider, string Version,  T Config);
+    public record ExtensibleImport<T>(string Provider, string Version, T Config);
 
     /// <summary>
     /// Provides information about an extensible resource.
@@ -56,7 +56,7 @@ namespace Azure.Deployments.Extensibility.Core
     /// <typeparam name="TProperties">The extensible resource properties type parameter.</typeparam>
     /// <param name="Import">The extensible import.</param>
     /// <param name="Resource">The extensible resource.</param>
-    public record ExtensibilityOperationRequest<TConfig, TProperties>( ExtensibleImport<TConfig> Import,  ExtensibleResource<TProperties> Resource);
+    public record ExtensibilityOperationRequest<TConfig, TProperties>(ExtensibleImport<TConfig> Import, ExtensibleResource<TProperties> Resource);
 
     /// <summary>
     /// Provides information about an extensibility operation request.
