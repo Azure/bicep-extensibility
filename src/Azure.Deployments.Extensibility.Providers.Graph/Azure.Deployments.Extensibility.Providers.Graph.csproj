@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -7,8 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Graph.Core" Version="1.21.0" />
-		<ProjectReference Include="..\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj" />
+		<PackageReference Include="Azure.Deployments.Extensibility.Core" Version="0.1.6" />
 	</ItemGroup>
 </Project>
 
