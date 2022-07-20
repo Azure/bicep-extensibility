@@ -1,0 +1,490 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Deployments Extensibility Provider API",
+    "description": "Deployments extensibility provider OpenAPI specification.",
+    "version": "v1"
+  },
+  "paths": {
+    "/save": {
+      "post": {
+        "tags": ["Resource operations"],
+        "summary": "Save operation",
+        "description": "Saves an extensible resource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtensibilityOperationRequest"
+              },
+              "example": {
+                "Import": {
+                  "Provider": "SampleProvider",
+                  "Version": "v1",
+                  "Config": { "configOne": "Foo", "configTwo": "Bar" }
+                },
+                "Resource": {
+                  "Type": "sampleNamespace/sampleResourceType@v1",
+                  "Properties": {
+                    "propA": "valueA",
+                    "propB": "valueB",
+                    "propC": "valueC"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationSuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationErrorResponse"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Success response": {
+                    "value": {
+                      "Resource": {
+                        "Type": "sampleNamespace/sampleResourceType@v1",
+                        "Properties": {
+                          "propA": "valueA",
+                          "propB": "valueB",
+                          "propC": "valueC"
+                        }
+                      },
+                      "ResourceMetadata": null
+                    }
+                  },
+                  "Error response": {
+                    "value": {
+                      "Errors": [
+                        {
+                          "Code": "InvalidProviderConfig",
+                          "Target": "/import/config/foo",
+                          "Message": "Configuration value is invalid."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/previewSave": {
+      "post": {
+        "tags": ["Resource operations"],
+        "summary": "PreviewSave operation",
+        "description": "Previews the result of saving an extensible resource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtensibilityOperationRequest"
+              },
+              "example": {
+                "Import": {
+                  "Provider": "SampleProvider",
+                  "Version": "v1",
+                  "Config": { "configOne": "Foo", "configTwo": "Bar" }
+                },
+                "Resource": {
+                  "Type": "sampleNamespace/sampleResourceType@v1",
+                  "Properties": {
+                    "propA": "valueA",
+                    "propB": "valueB",
+                    "propC": "valueC"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationSuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationErrorResponse"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Success response": {
+                    "value": {
+                      "Resource": {
+                        "Type": "sampleNamespace/sampleResourceType@v1",
+                        "Properties": {
+                          "propA": "valueA",
+                          "propB": "valueB",
+                          "propC": "valueC"
+                        }
+                      },
+                      "ResourceMetadata": {
+                        "ReadOnlyProperties": [
+                          "$.properties.propA",
+                          "$.properties.propB"
+                        ],
+                        "ImmutableProperties": null,
+                        "DynamicProperties": null
+                      }
+                    }
+                  },
+                  "Error response": {
+                    "value": {
+                      "Errors": [
+                        {
+                          "Code": "InvalidProperty",
+                          "Target": "/resource/properties/propC",
+                          "Message": "Value is invalid."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get": {
+      "post": {
+        "tags": ["Resource operations"],
+        "summary": "Get operation",
+        "description": "Gets an extensible resource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtensibilityOperationRequest"
+              },
+              "example": {
+                "Import": {
+                  "Provider": "SampleProvider",
+                  "Version": "v1",
+                  "Config": { "configOne": "Foo", "configTwo": "Bar" }
+                },
+                "Resource": {
+                  "Type": "sampleNamespace/sampleResourceType@v1",
+                  "Properties": {
+                    "propA": "valueA",
+                    "propB": "valueB",
+                    "propC": "valueC"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationSuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationErrorResponse"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Success response": {
+                    "value": {
+                      "Resource": {
+                        "Type": "sampleNamespace/sampleResourceType@v1",
+                        "Properties": {
+                          "propA": "valueA",
+                          "propB": "valueB",
+                          "propC": "valueC"
+                        }
+                      },
+                      "ResourceMetadata": null
+                    }
+                  },
+                  "Error response": {
+                    "value": {
+                      "Errors": [
+                        {
+                          "Code": "InvalidProviderConfig",
+                          "Target": "/import/config/foo",
+                          "Message": "Configuration value is invalid."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete": {
+      "post": {
+        "tags": ["Resource operations"],
+        "summary": "Delete operation",
+        "description": "Deletes an extensible resource",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExtensibilityOperationRequest"
+              },
+              "example": {
+                "Import": {
+                  "Provider": "SampleProvider",
+                  "Version": "v1",
+                  "Config": { "configOne": "Foo", "configTwo": "Bar" }
+                },
+                "Resource": {
+                  "Type": "sampleNamespace/sampleResourceType@v1",
+                  "Properties": {
+                    "propA": "valueA",
+                    "propB": "valueB",
+                    "propC": "valueC"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationSuccessResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ExtensibilityOperationErrorResponse"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Success response": {
+                    "value": {
+                      "Resource": {
+                        "Type": "sampleNamespace/sampleResourceType@v1",
+                        "Properties": {
+                          "propA": "valueA",
+                          "propB": "valueB",
+                          "propC": "valueC"
+                        }
+                      },
+                      "ResourceMetadata": null
+                    }
+                  },
+                  "Error response": {
+                    "value": {
+                      "Errors": [
+                        {
+                          "Code": "InvalidProviderConfig",
+                          "Target": "/import/config/foo",
+                          "Message": "Configuration value is invalid."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExtensibilityError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "The error code."
+          },
+          "target": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/JsonPointer"
+              }
+            ],
+            "description": "The JSON Pointer to the property causing the error. Must start with \"/import\" or \"/resource\" depending on\r\nwhich top level request property the error is on. When the error response is received by the deployments\r\nextensibility host, the JSON Pointer will be augumented with the import alias or resource symbolic name\r\nto make it easier for users to map the error to a location in the deployment template. For example,\r\n\"/resource/properties/foo\" will be converted to \"resources/myResource/properties/foo\"."
+          },
+          "message": {
+            "type": "string",
+            "description": "The error message."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides error details of a failed extensibility operation."
+      },
+      "ExtensibilityOperationErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtensibilityError"
+            },
+            "description": "Errors to return."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information about a failed extensibility operation."
+      },
+      "ExtensibilityOperationRequest": {
+        "type": "object",
+        "properties": {
+          "import": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtensibleImport"
+              }
+            ],
+            "description": "The extensible import."
+          },
+          "resource": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtensibleResource"
+              }
+            ],
+            "description": "The extensible resource."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information about an extensibility operation."
+      },
+      "ExtensibilityOperationSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtensibleResource"
+              }
+            ],
+            "description": "The updated extensible resource after the operation is complete."
+          },
+          "resourceMetadata": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExtensibleResourceMetadata"
+              }
+            ],
+            "description": "The extensible resource metadata. The metadata is needed by ARM template What-If to produce clean results. It should only be set for the \"previewSave\" operation.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information about a successful extensibility operation."
+      },
+      "ExtensibleImport": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "description": "The unique extensibility provider name."
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the named extensibility provider."
+          },
+          "config": {
+            "type": "object",
+            "description": "Provider-specific configuration."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information about an imported extensibility provider."
+      },
+      "ExtensibleResource": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of the extensible resource."
+          },
+          "properties": {
+            "type": "object",
+            "description": "The properties of the extensible resource."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides information about an extensible resource."
+      },
+      "ExtensibleResourceMetadata": {
+        "type": "object",
+        "properties": {
+          "readOnlyProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JsonPath"
+            },
+            "description": "Read-only properties of the extensible resource. A read-only property cannot be set by users.",
+            "nullable": true
+          },
+          "immutableProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JsonPath"
+            },
+            "description": "Immutable properties of the extensible resource. An immutable property cannot be updated after the resource is created.",
+            "nullable": true
+          },
+          "dynamicProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JsonPath"
+            },
+            "description": "Dynamic properties of the resource. A dynamic property's value is calculated at runtime.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Provides metadata of an extensible resource."
+      },
+      "JsonPath": {
+        "type": "string",
+        "description": "JSON Path is a query language for JSON documents, which can select parts of JSON structures in the same way as XPath expressions select nodes of XML documents. See \"https://goessner.net/articles/JsonPath\" and \"https://github.com/ietf-wg-jsonpath/draft-ietf-jsonpath-base\" for details.",
+        "format": "json-path",
+        "example": "$.books[?(@.price<10)]"
+      },
+      "JsonPointer": {
+        "type": "string",
+        "description": "JSON Pointer defines a string syntax for identifying a specific value within a JSON document. See \"https://datatracker.ietf.org/doc/html/rfc6901\" for details.",
+        "format": "json-pointer",
+        "example": "/objects/foo/arrays/bar/2"
+      }
+    }
+  }
+}
