@@ -24,8 +24,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
+            response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
         [Theory, AzureVoteBackServiceRequestAutoData]
@@ -33,8 +32,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
+            response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
         [Theory, RandomNamespaceRequestAutoData]
@@ -44,9 +42,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 
             var response = await sut.GetAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.GetProperty("metadata").TryGetProperty("uid", out _).Should().BeTrue();
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.GetProperty("metadata").TryGetProperty("uid", out _).Should().BeTrue();
         }
 
         [Theory, RandomNamespaceRequestAutoData]
@@ -61,10 +59,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 
             var response = await sut.PreviewSaveAsync(secretRequest, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-
-            var metadata = response.Resource!.Properties.GetProperty("metadata");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+            var metadata = successResponse.Resource.Properties.GetProperty("metadata");
 
             metadata.TryGetProperty("uid", out _).Should().BeTrue();
             metadata.TryGetProperty("namespace", out var namespaceInResponse).Should().BeTrue();
@@ -81,10 +77,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 
             var response = await sut.PreviewSaveAsync(secretRequest, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-
-            var metadata = response.Resource!.Properties.GetProperty("metadata");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+            var metadata = successResponse.Resource.Properties.GetProperty("metadata");
 
             metadata.TryGetProperty("uid", out _).Should().BeFalse();
             metadata.TryGetProperty("namespace", out var namespaceInResponse).Should().BeTrue();
