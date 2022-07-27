@@ -484,6 +484,12 @@
         "type": "Transitive",
         "resolved": "11.2.1",
         "contentHash": "tBt8K+korVfrjH9wyDEhiLKxbs8qoLCLIFwvYgkSUuMC9//w3z0cFQ8LQAI/5MCKq+BMil0cfRTRvPeE7eXhQw=="
+      },
+      "azure.deployments.extensibility.providers.graph": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Deployments.Extensibility.Core": "0.1.6"
+        }
       }
     }
   }
