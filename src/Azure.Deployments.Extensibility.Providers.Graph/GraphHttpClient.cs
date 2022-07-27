@@ -26,7 +26,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         {
             var completeUri = $"{this._baseUri}/{uri}";
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, completeUri);
-            httpRequestMessage.Headers.Add("Authorization", $"Bearer {graphToken}");
+            httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", graphToken);
 
             return await SendAsync(httpRequestMessage, cancellationToken);
         }
