@@ -49,11 +49,12 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
 
             var provider = new GraphProvider(mockHttpClient.Object);
             var response = await provider.GetAsync(request, CancellationToken.None);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
             mockHttpClient.Verify(c => c.GetAsync(expectedUri, graphToken, CancellationToken.None), Times.Once);
-            response.Should().NotBeNull();
-            response.Resource.Should().NotBeNull();
-            Assert.Equal(properties.ToString(), response.Resource!.Properties.ToString());
+            successResponse.Should().NotBeNull();
+            successResponse.Resource.Should().NotBeNull();
+            Assert.Equal(properties.ToString(), successResponse.Resource!.Properties.ToString());
         }
 
         [Theory]
@@ -111,6 +112,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
 
             var provider = new GraphProvider(mockHttpClient.Object);
             var response = await provider.SaveAsync(request, CancellationToken.None);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
             mockHttpClient.Verify(c => c.GetAsync(getUri, graphToken, CancellationToken.None), Times.Once);
             mockHttpClient.Verify(c => c.PostAsync(
@@ -120,9 +122,9 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
                 CancellationToken.None
                 ), Times.Exactly(postTimes)
             );
-            response.Should().NotBeNull();
-            response.Resource.Should().NotBeNull();
-            Assert.Equal(properties.ToString(), response.Resource!.Properties.ToString());
+            successResponse.Should().NotBeNull();
+            successResponse.Resource.Should().NotBeNull();
+            Assert.Equal(properties.ToString(), successResponse.Resource!.Properties.ToString());
         }
 
         [Theory]
@@ -152,6 +154,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
 
             var provider = new GraphProvider(mockHttpClient.Object);
             var response = await provider.SaveAsync(request, CancellationToken.None);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
             mockHttpClient.Verify(c => c.GetAsync(getUri, graphToken, CancellationToken.None), Times.Exactly(2));
             mockHttpClient.Verify(c => c.PatchAsync(
@@ -161,9 +164,9 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
                 CancellationToken.None
                 ), Times.Once
             );
-            response.Should().NotBeNull();
-            response.Resource.Should().NotBeNull();
-            Assert.Equal(getResponseContent.ToString(), response.Resource!.Properties.ToString());
+            successResponse.Should().NotBeNull();
+            successResponse.Resource.Should().NotBeNull();
+            Assert.Equal(getResponseContent.ToString(), successResponse.Resource!.Properties.ToString());
         }
 
         [Theory]
