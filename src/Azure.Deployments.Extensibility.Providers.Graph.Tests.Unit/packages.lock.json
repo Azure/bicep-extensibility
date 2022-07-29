@@ -96,15 +96,6 @@
         "resolved": "2.4.3",
         "contentHash": "kZZSmOmKA8OBlAJaquPXnJJLM9RwQ27H7BMVqfMLUcTi9xHinWGJiWksa3D4NEtz0wZ/nxd2mogObvBgJKCRhQ=="
       },
-      "Azure.Deployments.Extensibility.Core": {
-        "type": "Transitive",
-        "resolved": "0.1.6",
-        "contentHash": "8y8QIVSQBbozecWkgRvU6zny2J1FH7Hr19dHHuKYloi0LS+Wa6r6Ofs3q4kY7fA1/Cpc++XQs9CxVDNQfofYYg==",
-        "dependencies": {
-          "JsonPath.Net": "0.2.1",
-          "JsonSchema.Net": "3.1.0"
-        }
-      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "4.0.0",
@@ -1471,10 +1462,17 @@
           "xunit.extensibility.core": "[2.4.1]"
         }
       },
+      "azure.deployments.extensibility.core": {
+        "type": "Project",
+        "dependencies": {
+          "JsonPath.Net": "0.2.1",
+          "JsonSchema.Net": "3.1.0"
+        }
+      },
       "azure.deployments.extensibility.providers.graph": {
         "type": "Project",
         "dependencies": {
-          "Azure.Deployments.Extensibility.Core": "0.1.6"
+          "Azure.Deployments.Extensibility.Core": "1.0.0"
         }
       }
     }

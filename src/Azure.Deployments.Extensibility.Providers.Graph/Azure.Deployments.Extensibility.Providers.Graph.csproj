@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Deployments.Extensibility.Core" Version="0.1.6" />
+		<ProjectReference Include="..\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj" />
 	</ItemGroup>
 </Project>
 
