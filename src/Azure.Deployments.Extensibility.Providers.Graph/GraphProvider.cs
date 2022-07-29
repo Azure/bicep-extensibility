@@ -29,7 +29,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
         // This is a temporary solution for POC to recognize operations on entity collections
         // TODO: Find a more consistent way and type generic way to handle the cases
-        //       Waiting on https://identitydivision.visualstudio.com/Engineering/_workitems/edit/1997031
         private static readonly IReadOnlySet<string> NavigationPropertyByType = new HashSet<string>()
         {
             "Microsoft.Graph/groups/members@2022-06-15-preview",
@@ -229,7 +228,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         ///     Generate uri to send GET request to
         ///     
         ///     TODO: Update logic when we know what format the name has
-        ///             https://identitydivision.visualstudio.com/Engineering/_workitems/edit/1998150
         /// </summary>
         /// <returns> 
         ///     if type2 has alternate key: "type1/name1/type2/type2AlternateKey"
@@ -277,7 +275,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         ///     Generate uri to send PATCH request to
         ///     
         ///     TODO: Update logic when we know what format the name has
-        ///             https://identitydivision.visualstudio.com/Engineering/_workitems/edit/1998150
         /// </summary>
         /// <returns> "type1/name1/type2/id" </returns>
         public static string GeneratePatchUri(string resourceType, JsonElement properties, string id)
@@ -292,7 +289,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         ///     Generate uri to send POST request to
         ///     
         ///     TODO: Update logic when we know what format the name has
-        ///             https://identitydivision.visualstudio.com/Engineering/_workitems/edit/1998150
         /// </summary>
         /// <returns> 
         ///     "type1/name1/members/$ref" for the last type is "members"
