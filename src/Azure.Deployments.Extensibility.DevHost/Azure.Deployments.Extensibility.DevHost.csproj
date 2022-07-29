@@ -19,4 +19,7 @@
     <ProjectReference Include="..\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	<ProjectReference Include="..\Azure.Deployments.Extensibility.Providers.Graph\Azure.Deployments.Extensibility.Providers.Graph.csproj" />
+  </ItemGroup>
 </Project>

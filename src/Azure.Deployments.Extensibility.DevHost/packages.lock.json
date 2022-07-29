@@ -522,6 +522,12 @@
           "JsonSchema.Net": "3.1.0"
         }
       },
+      "azure.deployments.extensibility.providers.graph": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Deployments.Extensibility.Core": "1.0.0"
+        }
+      },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
