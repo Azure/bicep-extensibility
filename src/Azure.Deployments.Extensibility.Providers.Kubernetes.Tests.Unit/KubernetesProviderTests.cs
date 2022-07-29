@@ -41,8 +41,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.DeleteAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().Be(request.Resource);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Should().Be(request.Resource);
         }
 
         [Theory, ClusterRequestAutoData]
@@ -61,8 +62,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.DeleteAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().Be(request.Resource);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Should().Be(request.Resource);
         }
 
         [Theory, NamespacedRequestAutoData]
@@ -81,9 +83,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.GetAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.ToString().Should().Be("{}");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.ToString().Should().Be("{}");
         }
 
         [Theory, ClusterRequestAutoData]
@@ -102,9 +104,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.GetAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.ToString().Should().Be("{}");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.ToString().Should().Be("{}");
         }
 
         [Theory, ClusterRequestAutoData]
@@ -123,10 +125,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
-            var resource = ModelMapper.MapToConcrete<KubernetesResourceProperties>(response.Resource!);
+            var resource = ModelMapper.MapToConcrete<KubernetesResourceProperties>(successResponse.Resource);
             var import = ModelMapper.MapToConcrete<KubernetesConfig>(request.Import);
 
             // PreviewSave should patch the namespace property.
@@ -150,9 +151,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.GetBoolean().Should().BeTrue();
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.GetBoolean().Should().BeTrue();
         }
 
         [Theory, ClusterRequestAutoData]
@@ -171,9 +172,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.GetBoolean().Should().BeTrue();
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.GetBoolean().Should().BeTrue();
         }
 
 
@@ -193,9 +194,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.SaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.ToString().Should().Be("{}");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.ToString().Should().Be("{}");
         }
 
         [Theory, ClusterRequestAutoData]
@@ -214,9 +215,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
 
             var response = await sut.SaveAsync(request, CancellationToken.None);
 
-            response.Errors.Should().BeNull();
-            response.Resource.Should().NotBeNull();
-            response.Resource!.Properties.ToString().Should().Be("{}");
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Resource.Properties.ToString().Should().Be("{}");
         }
     }
 }

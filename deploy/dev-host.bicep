@@ -19,7 +19,7 @@ resource webApp 'Microsoft.Web/sites@2021-03-01' = {
   properties: {
     serverFarmId: webAppPlan.id
     siteConfig: {
-      linuxFxVersion: 'DOTNET|6.0'
+      linuxFxVersion: 'DOTNETCORE|6.0'
     }
   }
 }
