@@ -3,6 +3,7 @@
 
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Providers.Kubernetes;
+using Azure.Deployments.Extensibility.Providers.Graph;
 
 namespace Azure.Deployments.Extensibility.DevHost.Registries
 {
@@ -11,6 +12,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Registries
         private static readonly IReadOnlyDictionary<string, IExtensibilityProvider> ProvidersByName = new Dictionary<string, IExtensibilityProvider>()
         {
             [KubernetesProvider.ProviderName] = new KubernetesProvider(),
+            [GraphProvider.ProviderName] = new GraphProvider(),
         };
 
         public IExtensibilityProvider? TryGetExtensibilityProvider(string providerName) =>
