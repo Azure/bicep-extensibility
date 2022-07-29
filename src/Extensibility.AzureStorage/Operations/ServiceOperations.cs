@@ -34,9 +34,9 @@ namespace Extensibility.AzureStorage.Operations
             var resource = request.Body!;
             var connectionString = resource.Import!.Config!["connectionString"]!.ToString();
 
-            var staticWebsiteEnabled = resource.Properties!["staticWebsiteEnabled"].ToObject<bool>();
-            var staticWebsiteIndexDocument = resource.Properties!["staticWebsiteIndexDocument"].ToObject<string>();
-            var staticWebsiteErrorDocument404Path = resource.Properties!["staticWebsiteErrorDocument404Path"].ToObject<string>();
+            var staticWebsiteEnabled = resource.Properties!["staticWebsiteEnabled"]!.GetValue<bool>();
+            var staticWebsiteIndexDocument = resource.Properties!["staticWebsiteIndexDocument"]!.GetValue<string>();
+            var staticWebsiteErrorDocument404Path = resource.Properties!["staticWebsiteErrorDocument404Path"]!.GetValue<string>();
 
             var client = new BlobServiceClient(connectionString);
             await client.SetPropertiesAsync(new Azure.Storage.Blobs.Models.BlobServiceProperties

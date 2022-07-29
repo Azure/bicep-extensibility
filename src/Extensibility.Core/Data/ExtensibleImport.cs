@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Newtonsoft.Json.Linq;
+using System.Text.Json.Nodes;
 
 namespace Extensibility.Core.Data
 {
@@ -11,6 +11,6 @@ namespace Extensibility.Core.Data
 
         public string? Version { get; set; }
 
-        public JObject? Config { get; set; }
+        public JsonObject? Config { get; set; }
     }
 }

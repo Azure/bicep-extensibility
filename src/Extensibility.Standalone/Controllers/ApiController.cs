@@ -7,7 +7,6 @@ using Extensibility.Core.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Rest;
-using Newtonsoft.Json;
 
 namespace Extensibility.Standalone
 {

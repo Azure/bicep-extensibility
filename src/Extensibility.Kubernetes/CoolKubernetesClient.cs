@@ -1,15 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using k8s.Models;
 using Microsoft.Rest;
-using Microsoft.Rest.Serialization;
-using Newtonsoft.Json;
 
 namespace Extensibility.Kubernetes
 {
@@ -20,6 +16,13 @@ namespace Extensibility.Kubernetes
     // HACK THE PLANET
     public class CoolKubernetesClient : k8s.Kubernetes
     {
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+        };
+
         public CoolKubernetesClient(k8s.KubernetesClientConfiguration clientConfig)
             : base(clientConfig)
         {
@@ -142,7 +145,7 @@ namespace Extensibility.Kubernetes
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = SafeJsonConvert.DeserializeObject<V1APIResourceList>(_responseContent, DeserializationSettings);
+                    _result.Body = JsonSerializer.Deserialize<V1APIResourceList>(_responseContent, JsonSerializerOptions)!;
                 }
                 catch (JsonException ex)
                 {
