@@ -19,17 +19,36 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
     {
         private static readonly MockRepository Repository = new MockRepository(MockBehavior.Strict);
 
-        [Fact]
-        public async void GetGraphToken_ThrowsError()
+        [Theory]
+        [InlineData("graphToken", "userName", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData("graphToken", "spName/appRoleName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
+        public async void PreviewSaveAsync_ShouldSucceed(string graphToken, string name, string resourceType)
         {
-            var resourceType = "Microsoft.Graph/users@2022-06-15-preview";
-            var request = ConstructRequest("", "userName", resourceType);
+            var request = ConstructRequest(graphToken, name, resourceType);
 
             var provider = new GraphProvider(Repository.Create<GraphHttpClient>().Object);
-            var testAction = async () => await provider.GetAsync(request, CancellationToken.None);
+            var response = await provider.PreviewSaveAsync(request, CancellationToken.None);
+            var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            successResponse.Should().NotBeNull();
+            successResponse.Resource.Should().NotBeNull();
+            Assert.Equal(request.Resource.Properties.ToString(), successResponse.Resource!.Properties.ToString());
+        }
+
+        [Theory]
+        [InlineData("", "userName", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"graphToken\"] were not present.")]
+        [InlineData("graphToken", "", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"name\"] were not present.")]
+        [InlineData("graphToken", "userName", "Microsoft.Graph@2022-06-15-preview", "Value does not match the regular expression")]
+        [InlineData("graphToken", "userName", "Microsoft.Graph/user", "Value does not match the regular expression")]
+        public async void PreviewSaveAsync_ThrowsError(string graphToken, string name, string resourceType, string errorMessage)
+        {
+            var request = ConstructRequest(graphToken, name, resourceType);
+
+            var provider = new GraphProvider(Repository.Create<GraphHttpClient>().Object);
+            var testAction = async () => await provider.PreviewSaveAsync(request, CancellationToken.None);
             var exception = await Assert.ThrowsAsync<ExtensibilityException>(testAction);
 
-            exception.Errors.First().Message.Should().Be("graphToken is required in config.");
+            exception.Errors.First().Message.Should().StartWith(errorMessage);
         }
 
         [Theory]

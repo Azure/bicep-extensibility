@@ -5,6 +5,7 @@ using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Core.Json;
 using Azure.Deployments.Extensibility.Core.Exceptions;
 using Azure.Deployments.Extensibility.Core.Validators;
+using Azure.Deployments.Extensibility.Providers.Graph.Extensions;
 using Json.Pointer;
 using System.Net;
 using System.Text.Json;
@@ -59,7 +60,8 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
         public Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Execute(ProcessPreviewSaveAsync)(request, cancellationToken);
+            
         }
 
         public Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
@@ -69,7 +71,8 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
         public async Task<ExtensibilityOperationResponse> ProcessGetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var (graphToken, resource) = GetTokenAndResource(request);
+            var (import, resource) = request.ProcessAsync();
+            var graphToken = import.Config.GetProperty(GraphToken).ToString();
             var uri = GenerateGetUri(resource.Type, resource.Properties);
 
             var response = await GraphHttpClient.GetAsync(uri, graphToken, cancellationToken);
@@ -78,6 +81,12 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = JsonSerializer.Deserialize<JsonElement>(responseContent) });
         }
 
+        public Task<ExtensibilityOperationResponse> ProcessPreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
+        {
+            request.ProcessAsync();
+
+            return Task.FromResult((ExtensibilityOperationResponse) new ExtensibilityOperationSuccessResponse(request.Resource));
+        }
 
         /// <summary>
         ///     1. Get resource
@@ -89,7 +98,8 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         /// </summary>
         public async Task<ExtensibilityOperationResponse> ProcessSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var (graphToken, resource) = GetTokenAndResource(request);
+            var (import, resource) = request.ProcessAsync();
+            var graphToken = import.Config.GetProperty(GraphToken).ToString();
             var properties = JsonSerializer.SerializeToNode(resource.Properties)!.AsObject();
             HttpResponseMessage response;
 
@@ -161,23 +171,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                     Properties = resultProperties
                 }
             );
-        }
-
-        private (string, ExtensibleResource<JsonElement>) GetTokenAndResource(ExtensibilityOperationRequest request)
-        {
-            var resource = ModelMapper.MapToGeneric(request.Resource);
-            var import = ModelMapper.MapToGeneric(request.Import);
-
-            if (!import.Config.TryGetProperty(GraphToken, out var graphToken))
-            {
-                throw new ExtensibilityException(
-                        InternalError,
-                        JsonPointer.Empty,
-                        "graphToken is required in config."
-                    );
-            }           
-
-            return (graphToken.ToString(), resource);
         }
 
         /// <summary>
@@ -267,7 +260,6 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 }
             }
                      
-
             return uri;
         }
 
