@@ -18,12 +18,12 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Extensions
 {
     public static class ExtensibilityOperationRequestExtensions
     {
-        public readonly static string GraphToken = "graphToken";
+        public readonly static string GraphInternalData = "graphInternalData";
         public readonly static string Name = "name";
 
         public readonly static JsonSchema ConfigSchema = new JsonSchemaBuilder()
-            .Properties((GraphToken, new JsonSchemaBuilder().Type(SchemaValueType.String)))
-            .Required(GraphToken)
+            .Properties((GraphInternalData, new JsonSchemaBuilder().Type(SchemaValueType.String)))
+            .Required(GraphInternalData)
             .AdditionalProperties(false);
         public readonly static Regex ResourceTypeRegex = new(@"^((?<group>[\w.]+)/)?(?<kind>[\w/]+)@(?<version>.+)$", RegexOptions.Compiled);
         public readonly static JsonSchema ResourcePropertiesSchema = new JsonSchemaBuilder()

@@ -19,7 +19,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
         private static readonly string InternalError = "InternalError";
         private static readonly string DisplayName = "displayName";
-        private static readonly string GraphToken = "graphToken";
+        private static readonly string GraphInternalData = "graphInternalData";
         private static readonly string Name = "name"; // name is required in Bicep template for Graph extensible types
         private static readonly string Id = "id";
         private static readonly string Value = "value";
@@ -72,10 +72,10 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         public async Task<ExtensibilityOperationResponse> ProcessGetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (import, resource) = request.ProcessAsync();
-            var graphToken = import.Config.GetProperty(GraphToken).ToString();
+            var graphInternalData = import.Config.GetProperty(GraphInternalData).ToString();
             var uri = GenerateGetUri(resource.Type, resource.Properties);
 
-            var response = await GraphHttpClient.GetAsync(uri, graphToken, cancellationToken);
+            var response = await GraphHttpClient.GetAsync(uri, graphInternalData, cancellationToken);
             var responseContent = HandleHttpResponse(response);
 
             return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = JsonSerializer.Deserialize<JsonElement>(responseContent) });
@@ -99,7 +99,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         public async Task<ExtensibilityOperationResponse> ProcessSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
             var (import, resource) = request.ProcessAsync();
-            var graphToken = import.Config.GetProperty(GraphToken).ToString();
+            var graphInternalData = import.Config.GetProperty(GraphInternalData).ToString();
             var properties = JsonSerializer.SerializeToNode(resource.Properties)!.AsObject();
             HttpResponseMessage response;
 
@@ -108,7 +108,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
             // 1. Get resource
             var getUri = GenerateGetUri(resource.Type, resource.Properties);
-            var getResourceResponse = await GraphHttpClient.GetAsync(getUri, graphToken, cancellationToken);
+            var getResourceResponse = await GraphHttpClient.GetAsync(getUri, graphInternalData, cancellationToken);
 
             // 2. Try to get resource id from response if exists
             var id = GetIdIfExists(getResourceResponse, getUri, resource.Type);
@@ -131,14 +131,14 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 // 2.1 Create if id is null or empty
                 //2.1.1 Get POST uri and POST to create resource
                 var postUri = GeneratePostUri(resource.Type, resource.Properties);
-                response = await GraphHttpClient.PostAsync(postUri, properties, graphToken, cancellationToken);
+                response = await GraphHttpClient.PostAsync(postUri, properties, graphInternalData, cancellationToken);
             }
             else
             {
                 // 2.2 Update resource if successfully get id
                 // 2.2.1 Get PATCH uri and PATCH to update resource
                 var patchUri = GeneratePatchUri(resource.Type, resource.Properties, id);
-                response = await GraphHttpClient.PatchAsync(patchUri, properties, graphToken, cancellationToken);
+                response = await GraphHttpClient.PatchAsync(patchUri, properties, graphInternalData, cancellationToken);
             }
 
             // Return properties in request if none returned in response
@@ -155,7 +155,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 else
                 {
                     // PATCH doesn't return a body. Send another request to GET the full body of the resource
-                    var resourseResponse = await GraphHttpClient.GetAsync(getUri, graphToken, cancellationToken);
+                    var resourseResponse = await GraphHttpClient.GetAsync(getUri, graphInternalData, cancellationToken);
                     var resourceContent = HandleHttpResponse(resourseResponse);
                     resultProperties = JsonSerializer.Deserialize<JsonElement>(resourceContent);
                 }

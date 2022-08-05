@@ -20,11 +20,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         private static readonly MockRepository Repository = new MockRepository(MockBehavior.Strict);
 
         [Theory]
-        [InlineData("graphToken", "userName", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData("graphToken", "spName/appRoleName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
-        public async void PreviewSaveAsync_ShouldSucceed(string graphToken, string name, string resourceType)
+        [InlineData("graphInternalData", "userName", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData("graphInternalData", "spName/appRoleName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
+        public async void PreviewSaveAsync_ShouldSucceed(string graphInternalData, string name, string resourceType)
         {
-            var request = ConstructRequest(graphToken, name, resourceType);
+            var request = ConstructRequest(graphInternalData, name, resourceType);
 
             var provider = new GraphProvider(Repository.Create<GraphHttpClient>().Object);
             var response = await provider.PreviewSaveAsync(request, CancellationToken.None);
@@ -36,13 +36,13 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         }
 
         [Theory]
-        [InlineData("", "userName", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"graphToken\"] were not present.")]
-        [InlineData("graphToken", "", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"name\"] were not present.")]
-        [InlineData("graphToken", "userName", "Microsoft.Graph@2022-06-15-preview", "Value does not match the regular expression")]
-        [InlineData("graphToken", "userName", "Microsoft.Graph/user", "Value does not match the regular expression")]
-        public async void PreviewSaveAsync_ThrowsError(string graphToken, string name, string resourceType, string errorMessage)
+        [InlineData("", "userName", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"graphInternalData\"] were not present.")]
+        [InlineData("graphInternalData", "", "Microsoft.Graph/users@2022-06-15-preview", "Required properties [\"name\"] were not present.")]
+        [InlineData("graphInternalData", "userName", "Microsoft.Graph@2022-06-15-preview", "Value does not match the regular expression")]
+        [InlineData("graphInternalData", "userName", "Microsoft.Graph/user", "Value does not match the regular expression")]
+        public async void PreviewSaveAsync_ThrowsError(string graphInternalData, string name, string resourceType, string errorMessage)
         {
-            var request = ConstructRequest(graphToken, name, resourceType);
+            var request = ConstructRequest(graphInternalData, name, resourceType);
 
             var provider = new GraphProvider(Repository.Create<GraphHttpClient>().Object);
             var testAction = async () => await provider.PreviewSaveAsync(request, CancellationToken.None);
@@ -57,20 +57,20 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         [InlineData("spName/appRoleAssignmentsName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
         public async void GetAsync_Succeed(string name, string resourceType)
         {
-            var graphToken = "graphToken";
-            var request = ConstructRequest(graphToken, name, resourceType);
+            var graphInternalData = "graphInternalData";
+            var request = ConstructRequest(graphInternalData, name, resourceType);
             var properties = request.Resource.Properties;
             var expectedUri = GraphProvider.GenerateGetUri(resourceType, properties);
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
-                .Setup(c => c.GetAsync(expectedUri, graphToken, CancellationToken.None))
+                .Setup(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None))
                 .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.Accepted, properties.ToString())));
 
             var provider = new GraphProvider(mockHttpClient.Object);
             var response = await provider.GetAsync(request, CancellationToken.None);
             var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
-            mockHttpClient.Verify(c => c.GetAsync(expectedUri, graphToken, CancellationToken.None), Times.Once);
+            mockHttpClient.Verify(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None), Times.Once);
             successResponse.Should().NotBeNull();
             successResponse.Resource.Should().NotBeNull();
             Assert.Equal(properties.ToString(), successResponse.Resource!.Properties.ToString());
@@ -81,13 +81,13 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         [InlineData(HttpStatusCode.InternalServerError, "Internal Error", "Microsoft.Graph/groups@2022-06-15-preview")]
         public async void GetAsync_ShouldThrowException(HttpStatusCode errorCode, string errorMessage, string resourceType)
         {
-            var graphToken = "graphToken";
-            var request = ConstructRequest(graphToken, "name", resourceType);
+            var graphInternalData = "graphInternalData";
+            var request = ConstructRequest(graphInternalData, "name", resourceType);
             var properties = request.Resource.Properties;
             var expectedUri = GraphProvider.GenerateGetUri(resourceType, properties);
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
-                .Setup(c => c.GetAsync(expectedUri, graphToken, CancellationToken.None))
+                .Setup(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None))
                 .Returns(Task.FromResult(ConstructResponse(errorCode, errorMessage)));
 
             var provider = new GraphProvider(mockHttpClient.Object);
@@ -105,8 +105,8 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         [InlineData("groupName/userid", "", "Microsoft.Graph/groups/members@2022-06-15-preview", 1)]
         public async void SaveAsync_CreateShouldSucceed(string name, string id, string resourceType, int postTimes)
         {
-            var graphToken = "graphToken";
-            var request = ConstructRequest(graphToken, name, resourceType);
+            var graphInternalData = "graphInternalData";
+            var request = ConstructRequest(graphInternalData, name, resourceType);
             var properties = request.Resource.Properties;
             var propertiesObject = BuildPropertiesObject(name, resourceType);
             propertiesObject.Remove("name");
@@ -118,13 +118,13 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var postResponseContent = postStatusCode == HttpStatusCode.NoContent ? "" : properties.ToString();
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
-                .Setup(c => c.GetAsync(getUri, graphToken, CancellationToken.None))
+                .Setup(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None))
                 .Returns(Task.FromResult(ConstructResponse(getStatusCode, getResponseContent)));
             mockHttpClient
                 .Setup(c => c.PostAsync(
                     postUri,
                     It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
-                    graphToken,
+                    graphInternalData,
                     CancellationToken.None
                 ))
                 .Returns(Task.FromResult(ConstructResponse(postStatusCode, postResponseContent)));
@@ -133,11 +133,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var response = await provider.SaveAsync(request, CancellationToken.None);
             var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
-            mockHttpClient.Verify(c => c.GetAsync(getUri, graphToken, CancellationToken.None), Times.Once);
+            mockHttpClient.Verify(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None), Times.Once);
             mockHttpClient.Verify(c => c.PostAsync(
                 postUri,
                 It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
-                graphToken,
+                graphInternalData,
                 CancellationToken.None
                 ), Times.Exactly(postTimes)
             );
@@ -147,11 +147,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         }
 
         [Theory]
-        [InlineData("graphToken", "userName", "userid", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData("graphToken", "groupName", "groupid", "Microsoft.Graph/groups@2022-06-15-preview")]
-        public async void SaveAsync_UpdateShouldSucceed(string graphToken, string name, string id, string resourceType)
+        [InlineData("graphInternalData", "userName", "userid", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData("graphInternalData", "groupName", "groupid", "Microsoft.Graph/groups@2022-06-15-preview")]
+        public async void SaveAsync_UpdateShouldSucceed(string graphInternalData, string name, string id, string resourceType)
         {
-            var request = ConstructRequest(graphToken, name, resourceType);
+            var request = ConstructRequest(graphInternalData, name, resourceType);
             var properties = request.Resource.Properties;
             var propertiesObject = BuildPropertiesObject(name, resourceType);
             propertiesObject.Remove("name");
@@ -160,13 +160,13 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var getResponseContent = ConstructResponseIdContent(getUri, id);
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
-                .Setup(c => c.GetAsync(getUri, graphToken, CancellationToken.None))
+                .Setup(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None))
                 .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.OK, getResponseContent)));
             mockHttpClient
                 .Setup(c => c.PatchAsync(
                     patchUri,
                     It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
-                    graphToken,
+                    graphInternalData,
                     CancellationToken.None)
                 )
                 .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.NoContent, "{}")));
@@ -175,11 +175,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var response = await provider.SaveAsync(request, CancellationToken.None);
             var successResponse = response.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
 
-            mockHttpClient.Verify(c => c.GetAsync(getUri, graphToken, CancellationToken.None), Times.Exactly(2));
+            mockHttpClient.Verify(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None), Times.Exactly(2));
             mockHttpClient.Verify(c => c.PatchAsync(
                 patchUri,
                 It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
-                graphToken,
+                graphInternalData,
                 CancellationToken.None
                 ), Times.Once
             );
@@ -278,11 +278,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             exception.Errors.First().Message.Should().Be(errorMessage);
         }
 
-        private ExtensibilityOperationRequest ConstructRequest(string graphToken, string name, string resourceType)
+        private ExtensibilityOperationRequest ConstructRequest(string graphInternalData, string name, string resourceType)
         {
-            var config = string.IsNullOrEmpty(graphToken) ?
+            var config = string.IsNullOrEmpty(graphInternalData) ?
                 JsonSerializer.SerializeToElement(new { randomKey = "random" }) :
-                JsonSerializer.SerializeToElement(new { graphToken = graphToken });
+                JsonSerializer.SerializeToElement(new { graphInternalData = graphInternalData });
             var properties = BuildPropertiesObject(name, resourceType);
             
             var import = new ExtensibleImport<JsonElement>("provider", "version", config);
