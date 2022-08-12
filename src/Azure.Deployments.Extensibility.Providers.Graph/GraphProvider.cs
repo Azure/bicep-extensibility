@@ -168,9 +168,9 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 else
                 {
                     // PATCH doesn't return a body. Send another request to GET the full body of the resource
-                    var resourseResponse = await GraphHttpClient.GetAsync(getUri, graphInternalData, cancellationToken);
-                    var resourceContent = HandleHttpResponse(resourseResponse);
-                    resultProperties = JsonSerializer.Deserialize<JsonElement>(resourceContent);
+                    var resultResourseResponse = await GraphHttpClient.GetAsync(getUri, graphInternalData, cancellationToken);
+                    var resultResourceObject = GetResourceObjectIfExists(resultResourseResponse, getUri, resource.Type);
+                    resultProperties = JsonSerializer.Deserialize<JsonElement>(resultResourceObject);
                 }
             }
             else
@@ -187,7 +187,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         }
 
         /// <summary>
-        ///     Returns actual id from response when
+        ///     Returns actual object from response when
         ///     Response returns successfully
         ///     AND
         ///         there is an attribute "id" in response (for users)

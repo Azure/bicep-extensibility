@@ -81,7 +81,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         [Theory]
         [InlineData(HttpStatusCode.BadRequest, "This is a bad request", "Microsoft.Graph/users@2022-06-15-preview")]
         [InlineData(HttpStatusCode.InternalServerError, "Internal Error", "Microsoft.Graph/groups@2022-06-15-preview")]
-        public async void GetAsync_ShouldThrowException(HttpStatusCode errorCode, string errorMessage, string resourceType)
+        public async void GetAsync_ShouldThrowExceptionIfHttpError(HttpStatusCode errorCode, string errorMessage, string resourceType)
         {
             var graphInternalData = "graphInternalData";
             var request = ConstructRequest(graphInternalData, "name", resourceType);
@@ -98,6 +98,30 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
 
             exception.Errors.First().Message.Should().Be(errorMessage);
             exception.Errors.First().Code.Should().Be(((int)errorCode).ToString());
+        }
+
+        [Theory]
+        [InlineData("groupName", "Microsoft.Graph/groups@2022-06-15-preview")]
+        [InlineData("spName/appRoleAssignmentsName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
+        public async void GetAsync_ShouldThrowExceptionIfEmptyResource(string name, string resourceType)
+        {
+            var graphInternalData = "graphInternalData";
+            var request = ConstructRequest(graphInternalData, name, resourceType);
+            var properties = request.Resource.Properties;
+            var expectedUri = GraphProvider.GenerateGetUri(resourceType, properties);
+            var propertiesObject = BuildPropertiesObject(name, resourceType);
+            var responseContent = ConstructResponseContent(expectedUri, "", propertiesObject);
+            var mockHttpClient = Repository.Create<GraphHttpClient>();
+            mockHttpClient
+                .Setup(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None))
+                .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.Accepted, responseContent)));
+
+            var provider = new GraphProvider(mockHttpClient.Object);
+            var testAction = async () => await provider.GetAsync(request, CancellationToken.None);
+            var exception = await Assert.ThrowsAsync<ExtensibilityException>(testAction);
+
+            exception.Errors.First().Code.Should().Be("ResourceNotFound");
+            exception.Errors.First().Message.Should().Be("Cannot find requested resource.");
         }
 
         [Theory]
@@ -149,10 +173,11 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         }
 
         [Theory]
-        [InlineData("graphInternalData", "userName", "userid", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData("graphInternalData", "groupName", "groupid", "Microsoft.Graph/groups@2022-06-15-preview")]
-        public async void SaveAsync_UpdateShouldSucceed(string graphInternalData, string name, string id, string resourceType)
+        [InlineData("userName", "userid", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData("groupName", "groupid", "Microsoft.Graph/groups@2022-06-15-preview")]
+        public async void SaveAsync_UpdateShouldSucceed(string name, string id, string resourceType)
         {
+            var graphInternalData = "graphInternalData";
             var request = ConstructRequest(graphInternalData, name, resourceType);
             var properties = request.Resource.Properties;
             var propertiesObject = BuildPropertiesObject(name, resourceType);
@@ -188,7 +213,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             );
             successResponse.Should().NotBeNull();
             successResponse.Resource.Should().NotBeNull();
-            Assert.Equal(getResponseContent.ToString(), successResponse.Resource!.Properties.ToString());
+            Assert.Equal(propertiesObject.ToJsonString(), successResponse.Resource!.Properties.ToString());
         }
 
         [Theory]
