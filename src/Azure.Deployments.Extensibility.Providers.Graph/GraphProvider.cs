@@ -18,6 +18,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         public static readonly string ProviderName = "Graph";
 
         private static readonly string InternalError = "InternalError";
+        private static readonly string ResourceNotFound = "ResourceNotFound";
         private static readonly string DisplayName = "displayName";
         private static readonly string GraphInternalData = "graphInternalData";
         private static readonly string Name = "name"; // name is required in Bicep template for Graph extensible types
@@ -76,9 +77,19 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             var uri = GenerateGetUri(resource.Type, resource.Properties);
 
             var response = await GraphHttpClient.GetAsync(uri, graphInternalData, cancellationToken);
-            var responseContent = HandleHttpResponse(response);
+            var resourceObject = GetResourceObjectIfExists(response, uri, resource.Type);
 
-            return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = JsonSerializer.Deserialize<JsonElement>(responseContent) });
+            if (resourceObject.ValueKind == JsonValueKind.Undefined)
+            {
+                throw new ExtensibilityException(ResourceNotFound, JsonPointer.Empty, "Cannot find requested resource.");
+            }
+            else
+            {
+                return new ExtensibilityOperationSuccessResponse(request.Resource with
+                {
+                    Properties = resourceObject
+                });
+            }
         }
 
         public Task<ExtensibilityOperationResponse> ProcessPreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
@@ -90,7 +101,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
         /// <summary>
         ///     1. Get resource
-        ///     2. Try to get resource id from response (GetIdIfExists)
+        ///     2. Try to get resource object from response (GetResourceObjectIfExists)
         ///     2.1 Create if id is null or empty
         ///         2.1.1 Get POST uri and POST to create resource
         ///     2.2 Update resource if successfully get id
@@ -111,11 +122,12 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             var getResourceResponse = await GraphHttpClient.GetAsync(getUri, graphInternalData, cancellationToken);
 
             // 2. Try to get resource id from response if exists
-            var id = GetIdIfExists(getResourceResponse, getUri, resource.Type);
+            var resourceObject = GetResourceObjectIfExists(getResourceResponse, getUri, resource.Type);
+            var resourceFound = resourceObject.ValueKind != JsonValueKind.Undefined;
 
             // Entity already exists in collection so no update.
             // TODO: Need to handle more cases when necessary
-            if (!string.IsNullOrEmpty(id) && NavigationPropertyByType.Contains(resource.Type))
+            if (resourceFound && NavigationPropertyByType.Contains(resource.Type))
             {
                 return new ExtensibilityOperationSuccessResponse(
                     request.Resource with
@@ -125,7 +137,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 );
             }
 
-            var shouldPost = string.IsNullOrEmpty(id) || NavigationPropertyByType.Contains(resource.Type);
+            var shouldPost = !resourceFound || NavigationPropertyByType.Contains(resource.Type);
             if (shouldPost)
             {
                 // 2.1 Create if id is null or empty
@@ -137,6 +149,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
             {
                 // 2.2 Update resource if successfully get id
                 // 2.2.1 Get PATCH uri and PATCH to update resource
+                var id = resourceObject.GetProperty("id").ToString();
                 var patchUri = GeneratePatchUri(resource.Type, resource.Properties, id);
                 response = await GraphHttpClient.PatchAsync(patchUri, properties, graphInternalData, cancellationToken);
             }
@@ -183,18 +196,18 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
         /// <exception cref="GraphHttpException">
         ///     Throws exception if not success or 404 for resources other than users
         /// </exception>
-        public static string GetIdIfExists(HttpResponseMessage response, string uri, string resourceType)
+        public static JsonElement GetResourceObjectIfExists(HttpResponseMessage response, string uri, string resourceType)
         {
             var content = response.Content.ReadAsStringAsync().Result;
-            var id = "";
+            var resourceObject = new JsonElement();
 
             if (response.IsSuccessStatusCode)
             {
                 var contentElement = JsonSerializer.Deserialize<JsonElement>(content);
 
-                if (contentElement.TryGetProperty(Id, out JsonElement idElement))
+                if (contentElement.TryGetProperty(Id, out JsonElement _))
                 {
-                    id = idElement.ToString();
+                    resourceObject = contentElement;
                 }
                 else
                 {
@@ -202,8 +215,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
 
                     if (value.GetArrayLength() > 0)
                     {
-                        var firstValue = value.EnumerateArray().First();
-                        id = firstValue.GetProperty(Id).ToString();
+                        resourceObject = value.EnumerateArray().First();
                     }
                 }
 
@@ -214,7 +226,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph
                 throw new GraphHttpException((int)response.StatusCode, content);
             }
 
-            return id;
+            return resourceObject;
         }
 
         /// <summary>

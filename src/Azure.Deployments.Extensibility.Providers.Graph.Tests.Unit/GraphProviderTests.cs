@@ -52,19 +52,21 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         }
 
         [Theory]
-        [InlineData("userName", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData("groupName", "Microsoft.Graph/groups@2022-06-15-preview")]
-        [InlineData("spName/appRoleAssignmentsName", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
-        public async void GetAsync_Succeed(string name, string resourceType)
+        [InlineData("userName", "userId", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData("groupName", "groupId", "Microsoft.Graph/groups@2022-06-15-preview")]
+        [InlineData("spName/appRoleAssignmentsName", "spId/appRoleId", "Microsoft.Graph/servicePrincipals/appRoleAssignments@2022-06-15-preview")]
+        public async void GetAsync_Succeed(string name, string id, string resourceType)
         {
             var graphInternalData = "graphInternalData";
             var request = ConstructRequest(graphInternalData, name, resourceType);
             var properties = request.Resource.Properties;
             var expectedUri = GraphProvider.GenerateGetUri(resourceType, properties);
+            var propertiesObject = BuildPropertiesObject(name, resourceType);
+            var responseContent = ConstructResponseContent(expectedUri, id, propertiesObject);
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
                 .Setup(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None))
-                .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.Accepted, properties.ToString())));
+                .Returns(Task.FromResult(ConstructResponse(HttpStatusCode.Accepted, responseContent)));
 
             var provider = new GraphProvider(mockHttpClient.Object);
             var response = await provider.GetAsync(request, CancellationToken.None);
@@ -73,7 +75,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             mockHttpClient.Verify(c => c.GetAsync(expectedUri, graphInternalData, CancellationToken.None), Times.Once);
             successResponse.Should().NotBeNull();
             successResponse.Resource.Should().NotBeNull();
-            Assert.Equal(properties.ToString(), successResponse.Resource!.Properties.ToString());
+            Assert.Equal(propertiesObject.ToJsonString(), successResponse.Resource!.Properties.ToString());
         }
 
         [Theory]
@@ -112,7 +114,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             propertiesObject.Remove("name");
             var getUri = GraphProvider.GenerateGetUri(resourceType, properties);
             var postUri = GraphProvider.GeneratePostUri(resourceType, properties);
-            var getResponseContent = ConstructResponseIdContent(getUri, id);
+            var getResponseContent = ConstructResponseContent(getUri, id, propertiesObject);
             var getStatusCode = getUri.StartsWith("users") ? HttpStatusCode.NotFound : HttpStatusCode.OK;
             var postStatusCode = postUri.EndsWith("$ref") ? HttpStatusCode.NoContent : HttpStatusCode.Created;
             var postResponseContent = postStatusCode == HttpStatusCode.NoContent ? "" : properties.ToString();
@@ -155,9 +157,10 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             var properties = request.Resource.Properties;
             var propertiesObject = BuildPropertiesObject(name, resourceType);
             propertiesObject.Remove("name");
+            var propertiesNoIdString = propertiesObject.ToString();
             var getUri = GraphProvider.GenerateGetUri(resourceType, properties);
             var patchUri = GraphProvider.GeneratePatchUri(resourceType, properties, id);
-            var getResponseContent = ConstructResponseIdContent(getUri, id);
+            var getResponseContent = ConstructResponseContent(getUri, id, propertiesObject);
             var mockHttpClient = Repository.Create<GraphHttpClient>();
             mockHttpClient
                 .Setup(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None))
@@ -165,7 +168,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             mockHttpClient
                 .Setup(c => c.PatchAsync(
                     patchUri,
-                    It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
+                    It.Is<JsonObject>(p => p.ToString() == propertiesNoIdString),
                     graphInternalData,
                     CancellationToken.None)
                 )
@@ -178,7 +181,7 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             mockHttpClient.Verify(c => c.GetAsync(getUri, graphInternalData, CancellationToken.None), Times.Exactly(2));
             mockHttpClient.Verify(c => c.PatchAsync(
                 patchUri,
-                It.Is<JsonObject>(p => p.ToString() == propertiesObject.ToString()),
+                It.Is<JsonObject>(p => p.ToString() == propertiesNoIdString),
                 graphInternalData,
                 CancellationToken.None
                 ), Times.Once
@@ -189,29 +192,34 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
         }
 
         [Theory]
-        [InlineData(HttpStatusCode.OK, "users/userName", "userId", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData(HttpStatusCode.NotFound, "users/userName", "", "Microsoft.Graph/users@2022-06-15-preview")]
-        [InlineData(HttpStatusCode.OK, "groups/groupName", "groupId", "Microsoft.Graph/groups@2022-06-15-preview")]
-        [InlineData(HttpStatusCode.OK, "groups/groupName", "", "Microsoft.Graph/groups@2022-06-15-preview")]
-        [InlineData(HttpStatusCode.NotFound, "groups/groupName/members", "", "Microsoft.Graph/groups/members@2022-06-15-preview")]
-        public void GetIdIfExists_ShouldSucceed(HttpStatusCode statusCode, string uri, string expectedId, string resourceType)
+        [InlineData(HttpStatusCode.OK, "users/userName", JsonValueKind.Object, "userId", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData(HttpStatusCode.NotFound, "users/userName", JsonValueKind.Undefined, "", "Microsoft.Graph/users@2022-06-15-preview")]
+        [InlineData(HttpStatusCode.OK, "groups/groupName", JsonValueKind.Object, "groupId", "Microsoft.Graph/groups@2022-06-15-preview")]
+        [InlineData(HttpStatusCode.OK, "groups/groupName", JsonValueKind.Undefined, "", "Microsoft.Graph/groups@2022-06-15-preview")]
+        [InlineData(HttpStatusCode.NotFound, "groups/groupName/members", JsonValueKind.Undefined, "", "Microsoft.Graph/groups/members@2022-06-15-preview")]
+        public void GetResourceObjectIfExists_ShouldSucceed(HttpStatusCode statusCode, string uri, JsonValueKind valueKind, string expectedId, string resourceType)
         {
-            string content = ConstructResponseIdContent(uri, expectedId);
+            string content = ConstructResponseContent(uri, expectedId, new JsonObject());
             var response = ConstructResponse(statusCode, content);
 
-            var resultId = GraphProvider.GetIdIfExists(response, uri, resourceType);
+            var resultResourceObject = GraphProvider.GetResourceObjectIfExists(response, uri, resourceType);
 
-            resultId.Should().Be(expectedId);
+            resultResourceObject.Should().NotBeNull();
+            resultResourceObject.ValueKind.Should().Be(valueKind);
+            Assert.True(
+                resultResourceObject.ValueKind == JsonValueKind.Undefined ||
+                resultResourceObject.GetProperty("id").ToString() == expectedId
+            );
         }
 
         [Theory]
         [InlineData(HttpStatusCode.InternalServerError, "users/userName", "Microsoft.Graph/users@2022-06-15-preview", "Internal Server Error")]
         [InlineData(HttpStatusCode.NotFound, "groups/groupName", "Microsoft.Graph/groups@2022-06-15-preview", "Resource Not Found")]
-        public void GetIdIfExists_ShouldThrowException(HttpStatusCode statusCode, string uri, string resourceType, string errorMessage)
+        public void GetResourceObjectIfExists_ShouldThrowException(HttpStatusCode statusCode, string uri, string resourceType, string errorMessage)
         {
             var response = ConstructResponse(statusCode, errorMessage);
 
-            void testAction() => GraphProvider.GetIdIfExists(response, uri, resourceType);
+            void testAction() => GraphProvider.GetResourceObjectIfExists(response, uri, resourceType);
 
             var exception = Assert.Throws<GraphHttpException>(testAction);
             exception.StatusCode.Should().Be((int)statusCode);
@@ -321,20 +329,24 @@ namespace Azure.Deployments.Extensibility.Providers.Graph.Tests.Unit
             return response;
         }
 
-        private string ConstructResponseIdContent(string uri, string id)
+        private string ConstructResponseContent(string uri, string id, JsonObject properties)
         {
-            string content;
-            var idObject = new { id = id };
+            string content = "";
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                properties.Add("id", id);
+            }
 
             if (uri.StartsWith("users"))
             {
-                content = string.IsNullOrEmpty(id) ? "" : JsonSerializer.Serialize(idObject);
+                content = string.IsNullOrEmpty(id) ? "" : JsonSerializer.Serialize(properties);
             }
             else
             {
                 var body = string.IsNullOrEmpty(id) ?
                     new { value = new object[] { } } :
-                    new { value = new object[] { idObject } };
+                    new { value = new object[] { properties } };
                 content = JsonSerializer.Serialize(body);
             }
 
