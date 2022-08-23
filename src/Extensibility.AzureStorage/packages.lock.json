@@ -125,7 +125,7 @@
       "extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
+          "Newtonsoft.Json": "[11.0.2, )"
         }
       }
     }

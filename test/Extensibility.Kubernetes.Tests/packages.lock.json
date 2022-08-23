@@ -1249,30 +1249,30 @@
       "extensibility.azurestorage": {
         "type": "Project",
         "dependencies": {
-          "Azure.Storage.Blobs": "12.9.1",
-          "Extensibility.Core": "1.0.0"
+          "Azure.Storage.Blobs": "[12.9.1, )",
+          "Extensibility.Core": "[1.0.0, )"
         }
       },
       "extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "Newtonsoft.Json": "11.0.2"
+          "Newtonsoft.Json": "[11.0.2, )"
         }
       },
       "extensibility.kubernetes": {
         "type": "Project",
         "dependencies": {
-          "Extensibility.Core": "1.0.0",
-          "KubernetesClient": "6.0.23",
-          "Microsoft.Bcl.HashCode": "1.1.1"
+          "Extensibility.Core": "[1.0.0, )",
+          "KubernetesClient": "[6.0.23, )",
+          "Microsoft.Bcl.HashCode": "[1.1.1, )"
         }
       },
       "extensibility.tests": {
         "type": "Project",
         "dependencies": {
-          "Extensibility.AzureStorage": "1.0.0",
-          "Extensibility.Core": "1.0.0",
-          "Extensibility.Kubernetes": "1.0.0"
+          "Extensibility.AzureStorage": "[1.0.0, )",
+          "Extensibility.Core": "[1.0.0, )",
+          "Extensibility.Kubernetes": "[1.0.0, )"
         }
       }
     }
