@@ -25,9 +25,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
                 .PatchProperty("apiVersion", resourceType.ApiVersion)
                 .PatchProperty("kind", resourceType.Kind);
 
-            var config = await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(
+            var config = import.Config.KubeConfig != null && import.Config.KubeConfig.Length != 0 ? await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(
                 new MemoryStream(import.Config.KubeConfig),
-                currentContext: import.Config.Context);
+                currentContext: import.Config.Context) : KubernetesClientConfiguration.BuildDefaultConfig();
 
             var kubernetes = new k8s.Kubernetes(config);
             var client = new GenericClient(kubernetes, resourceType.Group, resourceType.Version, plural: "");
