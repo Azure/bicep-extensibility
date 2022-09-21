@@ -26,6 +26,8 @@ namespace Azure.Deployments.Extensibility.Core.Json
 
             public TValue? Deserialize<TValue>(string json) => JsonSerializer.Deserialize<TValue>(json, this.Options);
 
+            public TValue? Deserialize<TValue>(Stream json) => JsonSerializer.Deserialize<TValue>(json, this.Options);
+
             public TValue? Deserialize<TValue>(JsonElement element) => JsonSerializer.Deserialize<TValue>(element, this.Options);
 
             public string Serialize<TValue>(TValue value) => JsonSerializer.Serialize(value, this.Options);
