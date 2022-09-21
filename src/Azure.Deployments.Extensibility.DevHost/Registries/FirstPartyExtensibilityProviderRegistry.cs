@@ -13,15 +13,15 @@ namespace Azure.Deployments.Extensibility.DevHost.Registries
             [KubernetesProvider.ProviderName] = new KubernetesProvider(),
         };
 
-        private static readonly IReadOnlyDictionary<string, string> ProvidersByContainerRegistry = new Dictionary<string, string>(comparer: StringComparer.OrdinalIgnoreCase)
+        private static readonly IReadOnlyDictionary<string, ExtensibilityProviderContainerRegistry> ProvidersByContainerRegistry = new Dictionary<string, ExtensibilityProviderContainerRegistry>(comparer: StringComparer.OrdinalIgnoreCase)
         {
-            ["github"] = "bicepprovidersregistry.azurecr.io/github/server:{0}",
+            ["github"] = new ExtensibilityProviderContainerRegistry(ContainerRegistry: "bicepprovidersregistry.azurecr.io/github/server", ExternalPort: 8080),
         };
 
         public IExtensibilityProvider? TryGetExtensibilityProvider(string providerName) =>
             ProvidersByName.TryGetValue(providerName, out var provider) ? provider : null;
 
-        public string? TryGetExtensibilityProviderContainerRegistry(string providerName) =>
+        public ExtensibilityProviderContainerRegistry? TryGetExtensibilityProviderContainerRegistry(string providerName) =>
             ProvidersByContainerRegistry.TryGetValue(providerName, out var providerContainerRegistry) ? providerContainerRegistry : null;
     }
 }

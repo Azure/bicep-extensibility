@@ -20,9 +20,14 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
 {
     public interface IAzureContainerInstanceHost
     {
+        Task DeleteContainerGroupAsync(
+            string resourceGroupName,
+            string containerGroupName,
+            CancellationToken cancellation);
+
         Task<string> CreateContainerGroupAsync(
             string resourceGroupName,
-            string containerGroupPrefix,
+            string containerGroupName,
             string image,
             int externalPort,
             CancellationToken cancellation);
@@ -37,9 +42,20 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
             this.AzureContext = requestContext.GetAzureRequestContext();
         }
 
+        public async Task DeleteContainerGroupAsync(
+            string resourceGroupName,
+            string containerGroupName,
+            CancellationToken cancellation)
+        {
+            await this.AzureContext.ContainerGroups.DeleteByResourceGroupAsync(
+                resourceGroupName: resourceGroupName,
+                name: containerGroupName,
+                cancellationToken: cancellation);
+        }
+
         public async Task<string> CreateContainerGroupAsync(
             string resourceGroupName,
-            string containerGroupPrefix,
+            string containerGroupName,
             string image,
             int externalPort,
             CancellationToken cancellation)
@@ -48,21 +64,19 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
             IResourceGroup resGroup = AzureContext.ResourceGroups.GetByName(name: resourceGroupName);
             Region azureRegion = resGroup.Region;
 
-            var containerGroupName = $"{containerGroupPrefix}-aci";
-
             await this.AzureContext.ContainerGroups.Define(containerGroupName)
                     .WithRegion(azureRegion)
                     .WithExistingResourceGroup(resourceGroupName)
                     .WithLinux()
                     .WithPublicImageRegistryOnly()
                     .WithoutVolume()
-                    .DefineContainerInstance(containerGroupPrefix + "-1")
+                    .DefineContainerInstance(containerGroupName + "-1")
                         .WithImage(image)
                         .WithExternalTcpPort(externalPort)
                         .WithCpuCoreCount(1.0)
                         .WithMemorySizeInGB(1)
                         .Attach()
-                    .WithDnsPrefix(containerGroupPrefix)
+                    .WithDnsPrefix(containerGroupName)
                     .CreateAsync(cancellation);
 
             // Poll for the container group
@@ -70,7 +84,7 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
 
             while (containerGroup == null)
             {
-                await Task.Delay(millisecondsDelay: 1000);
+                await Task.Delay(millisecondsDelay: 1000, cancellationToken: cancellation);
 
                 containerGroup = this.AzureContext.ContainerGroups.GetByResourceGroup(resourceGroupName, containerGroupName);
             }
@@ -78,7 +92,7 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
             // Poll until the container group is running
             while (containerGroup.State != "Running")
             {
-                await Task.Delay(millisecondsDelay: 1000);
+                await Task.Delay(millisecondsDelay: 1000, cancellationToken: cancellation);
             }
 
             return containerGroup.Fqdn;

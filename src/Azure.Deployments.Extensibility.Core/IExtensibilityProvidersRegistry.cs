@@ -7,6 +7,6 @@ namespace Azure.Deployments.Extensibility.Core
     {
         IExtensibilityProvider? TryGetExtensibilityProvider(string providerName);
 
-        string? TryGetExtensibilityProviderContainerRegistry(string providerName);
+        ExtensibilityProviderContainerRegistry? TryGetExtensibilityProviderContainerRegistry(string providerName);
     }
 }
