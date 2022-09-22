@@ -94,7 +94,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<ExtensibilityOperationResponseExampleProvider>();
-builder.Services.AddSingleton<IExtensibilityProviderRegistry, FirstPartyExtensibilityProviderRegistry>();
+builder.Services.AddScoped<IExtensibilityProviderRegistry, FirstPartyExtensibilityProviderRegistry>();
 builder.Services.ConfigureThirdPartyExtensibility();
 
 var app = builder.Build();

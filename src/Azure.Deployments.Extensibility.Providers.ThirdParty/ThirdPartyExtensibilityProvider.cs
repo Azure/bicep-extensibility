@@ -31,16 +31,16 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
             this.containerInstanceHost = containerInstanceHost;
         }
 
-        public Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public Task<object> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             this.HandleRequestByContainerRegistryAsync(operation: "get", request: request, cancellation: cancellationToken);
 
-        public Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public Task<object> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             this.HandleRequestByContainerRegistryAsync(operation: "previewSave", request: request, cancellation: cancellationToken);
 
-        public Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public Task<object> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             this.HandleRequestByContainerRegistryAsync(operation: "save", request: request, cancellation: cancellationToken);
 
-        public Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public Task<object> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             this.HandleRequestByContainerRegistryAsync(operation: "delete", request: request, cancellation: cancellationToken);
 
 
@@ -56,7 +56,7 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
             return new ExtensibilityProviderContainerRegistry(ContainerRegistry: $"bicepprovidersregistry.azurecr.io/{providerName}/server", ExternalPort: 8080);
         }
 
-        private async Task<ExtensibilityOperationResponse> HandleRequestByContainerRegistryAsync(
+        private async Task<object> HandleRequestByContainerRegistryAsync(
             string operation,
             ExtensibilityOperationRequest request,
             CancellationToken cancellation)
@@ -100,14 +100,13 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
             }
         }
 
-        private static async Task<ExtensibilityOperationResponse> CallExtensibilityProviderAsync(
+        private static async Task<JsonElement> CallExtensibilityProviderAsync(
             Uri uri,
             ExtensibilityOperationRequest request,
             CancellationToken cancellation)
         {
             var response = await CallAsync(uri, request, cancellation);
-            return ExtensibilityJsonSerializer.Default.Deserialize<ExtensibilityOperationResponse>(await response.Content.ReadAsStreamAsync())
-                ?? throw new InvalidOperationException($"Failed to deserialize response from provider.");
+            return ExtensibilityJsonSerializer.Default.Deserialize<JsonElement>(await response.Content.ReadAsStreamAsync());
         }
 
         private static async Task<HttpResponseMessage> CallAsync(Uri uri, ExtensibilityOperationRequest request, CancellationToken cancellation)

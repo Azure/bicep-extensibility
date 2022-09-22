@@ -53,7 +53,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
         public Task<object> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
             this.HandleRequestAsync(request, provider => provider.DeleteAsync, cancellation);
 
-        private async Task<object> HandleRequestAsync(ExtensibilityOperationRequest request, Func<IExtensibilityProvider, ExtensibilityOperation> operationSelector, CancellationToken cancellationToken)
+        private async Task<object> HandleRequestAsync(ExtensibilityOperationRequest request, Func<IExtensibilityProvider, ExtensibilityOperation<object>> operationSelector, CancellationToken cancellationToken)
         {
             var providerName = request.Import.Provider;
             var provider = registry.TryGetExtensibilityProvider(providerName);
