@@ -3,25 +3,32 @@
 
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Providers.Kubernetes;
+using Azure.Deployments.Extensibility.Providers.ThirdParty;
 
 namespace Azure.Deployments.Extensibility.DevHost.Registries
 {
     public class FirstPartyExtensibilityProviderRegistry : IExtensibilityProviderRegistry
     {
+        private readonly IThirdPartyExtensibilityProvider thirdPartyProvider;
+
+        public FirstPartyExtensibilityProviderRegistry(IThirdPartyExtensibilityProvider thirdPartyProvider)
+        {
+            this.thirdPartyProvider = thirdPartyProvider;
+        }
+
         private static readonly IReadOnlyDictionary<string, IExtensibilityProvider> ProvidersByName = new Dictionary<string, IExtensibilityProvider>()
         {
             [KubernetesProvider.ProviderName] = new KubernetesProvider(),
         };
 
-        private static readonly IReadOnlyDictionary<string, ExtensibilityProviderContainerRegistry> ProvidersByContainerRegistry = new Dictionary<string, ExtensibilityProviderContainerRegistry>(comparer: StringComparer.OrdinalIgnoreCase)
+        public IExtensibilityProvider? TryGetExtensibilityProvider(string providerName)
         {
-            ["github"] = new ExtensibilityProviderContainerRegistry(ContainerRegistry: "bicepprovidersregistry.azurecr.io/github/server", ExternalPort: 8080),
-        };
+            if (ProvidersByName.TryGetValue(providerName, out var provider))
+            {
+                return provider;
+            }
 
-        public IExtensibilityProvider? TryGetExtensibilityProvider(string providerName) =>
-            ProvidersByName.TryGetValue(providerName, out var provider) ? provider : null;
-
-        public ExtensibilityProviderContainerRegistry? TryGetExtensibilityProviderContainerRegistry(string providerName) =>
-            ProvidersByContainerRegistry.TryGetValue(providerName, out var providerContainerRegistry) ? providerContainerRegistry : null;
+            return thirdPartyProvider;
+        }
     }
 }

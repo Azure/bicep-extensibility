@@ -93,6 +93,4 @@ namespace Azure.Deployments.Extensibility.Core
         {
         }
     }
-
-    public record ExtensibilityProviderContainerRegistry(string ContainerRegistry, int ExternalPort);
 }
