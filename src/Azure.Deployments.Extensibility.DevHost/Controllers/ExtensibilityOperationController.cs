@@ -128,7 +128,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
             }
             finally
             {
-                await DeleteContainerGroupAsync(containerGroupName: containerGroupName, cancellation: cancellation);
+                // TODO: Tear down ACI
             }
         }
 
