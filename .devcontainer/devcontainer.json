@@ -1,10 +1,17 @@
 {
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-	"extensions": [
-		"ms-azuretools.vscode-azurefunctions",
-		"ms-dotnettools.csharp",
-		"ms-azuretools.vscode-bicep"
-	]
+  "name": "Bicep Development Environment",
+  "extensions": [
+    "ms-vscode.azure-account",
+    "ms-azuretools.vscode-bicep",
+    "ms-dotnettools.csharp",
+    "editorconfig.editorconfig",
+    "github.vscode-pull-request-github"
+  ],
+  "features": {
+    "github-cli": "latest",
+    "azure-cli": "latest",
+    "dotnet": {
+      "version": "6.0"
+    }
+  }
 }

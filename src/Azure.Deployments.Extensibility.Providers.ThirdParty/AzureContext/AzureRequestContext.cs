@@ -5,16 +5,17 @@ using Azure.Identity;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Authentication;
+using Microsoft.Extensions.Configuration;
 using static Microsoft.Azure.Management.Fluent.Azure;
 
-namespace Azure.Deployments.Extensibility.DevHost.AzureContext
+namespace Azure.Deployments.Extensibility.Providers.ThirdParty.AzureContext
 {
     public interface IAzureRequestContext
     {
         IAzure GetAzureRequestContext();
     }
 
-    public class AzureRequestContext : IAzureRequestContext
+    internal class AzureRequestContext : IAzureRequestContext
     {
         // TODO: Create AppSettingsReader
         private IConfiguration Configuration { get; }

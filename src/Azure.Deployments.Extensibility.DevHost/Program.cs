@@ -15,8 +15,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Deployments.Extensibility.Core.Json;
-using Azure.Deployments.Extensibility.DevHost.AzureContext;
-using Azure.Deployments.Extensibility.DevHost.ACI;
+using Azure.Deployments.Extensibility.Providers.ThirdParty;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -95,9 +94,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblyOf<ExtensibilityOperationResponseExampleProvider>();
-builder.Services.AddSingleton<IExtensibilityProviderRegistry, FirstPartyExtensibilityProviderRegistry>();
-builder.Services.AddScoped<IAzureRequestContext, AzureRequestContext>();
-builder.Services.AddScoped<IAzureContainerInstanceHost, AzureContainerInstanceHost>();
+builder.Services.AddScoped<IExtensibilityProviderRegistry, FirstPartyExtensibilityProviderRegistry>();
+builder.Services.ConfigureThirdPartyExtensibility();
 
 var app = builder.Build();
 

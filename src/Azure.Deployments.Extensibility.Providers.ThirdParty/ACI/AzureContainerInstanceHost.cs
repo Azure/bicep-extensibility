@@ -10,9 +10,9 @@ using Microsoft.Azure.Management.ResourceManager.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
 using Microsoft.Azure.Management.ContainerInstance.Fluent;
 using Microsoft.Azure.Management.ContainerInstance.Fluent.Models;
-using Azure.Deployments.Extensibility.DevHost.AzureContext;
+using Azure.Deployments.Extensibility.Providers.ThirdParty.AzureContext;
 
-namespace Azure.Deployments.Extensibility.DevHost.ACI
+namespace Azure.Deployments.Extensibility.Providers.ThirdParty.ACI
 {
     public interface IAzureContainerInstanceHost
     {
@@ -29,7 +29,7 @@ namespace Azure.Deployments.Extensibility.DevHost.ACI
             CancellationToken cancellation);
     }
 
-    public class AzureContainerInstanceHost : IAzureContainerInstanceHost
+    internal class AzureContainerInstanceHost : IAzureContainerInstanceHost
     {
         private IAzure AzureContext { get; }
 
