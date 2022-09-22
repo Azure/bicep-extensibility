@@ -4,11 +4,11 @@
     "net6.0": {
       "Azure.Containers.ContainerRegistry": {
         "type": "Direct",
-        "requested": "[1.1.0-beta.4, )",
-        "resolved": "1.1.0-beta.4",
-        "contentHash": "GhTCm4Hh2Hs+MUQL5ocIn+dqcfPzyTkCjkIji/IuATZ/Nyr1FZHCaHm44P3Mj0uuXbBLgXejFlypDlTyKMJcsw==",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "AsnLpJqXUtVKEYFp3SJeRY9S+O4jfJtCb8o6BwkTHuY7i/U9uKdAaVCXMcXqtXuTUJCOk20lZ3oK8FWNMiiqkg==",
         "dependencies": {
-          "Azure.Core": "1.24.0",
+          "Azure.Core": "1.22.0",
           "System.Text.Json": "4.7.2"
         }
       },

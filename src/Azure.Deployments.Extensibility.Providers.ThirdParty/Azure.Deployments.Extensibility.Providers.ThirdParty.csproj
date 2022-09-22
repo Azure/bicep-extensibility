@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.7.0" />
-    <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.1.0-beta.4" />
+    <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.ContainerInstance" Version="7.0.0" />
     <PackageReference Include="Microsoft.Azure.Management.ContainerInstance.Fluent" Version="1.38.1" />
     <PackageReference Include="Microsoft.Azure.Management.Fluent" Version="1.38.1" />

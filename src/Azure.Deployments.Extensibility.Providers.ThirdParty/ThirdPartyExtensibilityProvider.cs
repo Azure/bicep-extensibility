@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Containers.ContainerRegistry;
+using Azure.Identity;
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Core.Json;
 using Azure.Deployments.Extensibility.Providers.ThirdParty.ACI;
@@ -11,6 +13,7 @@ using System;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Rest;
 
 namespace Azure.Deployments.Extensibility.Providers.ThirdParty
 {
@@ -22,7 +25,9 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
 
     internal class ThirdPartyExtensibilityProvider : IThirdPartyExtensibilityProvider
     {
-        private static string ContainerInstanceResourceGroupName => "bicep-extensibility-dev-host-rg";
+        private const string ContainerInstanceResourceGroupName = "bicep-extensibility-dev-host-rg";
+        private const string ContainerRegistryHostname = "bicepprovidersregistry.azurecr.io";
+        private const int ExtensibilityContainerPort = 8080;
 
         private readonly IAzureContainerInstanceHost containerInstanceHost;
 
@@ -44,16 +49,24 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
             this.HandleRequestByContainerRegistryAsync(operation: "delete", request: request, cancellation: cancellationToken);
 
 
-        private async Task <ExtensibilityProviderContainerRegistry?> TryGetExtensibilityProviderContainerRegistry(string providerName)
+        private async Task<ExtensibilityProviderContainerRegistry?> TryGetExtensibilityProviderContainerRegistry(string providerName, string tag, CancellationToken cancellation)
         {
-            if (providerName != "github")
+            var client = new ContainerRegistryClient(new($"https://{ContainerRegistryHostname}"), new ContainerRegistryClientOptions
             {
-                // TODO check the registry dynamically here
-                await Task.Yield();
+                Audience = ContainerRegistryAudience.AzureResourceManagerPublicCloud,
+            });
+
+            var serverRepo = $"{providerName}/server";
+            try
+            {
+                await client.GetRepository(serverRepo).GetArtifact(tag).GetManifestPropertiesAsync(cancellation);
+
+                return new ExtensibilityProviderContainerRegistry(ContainerRegistry: $"{ContainerRegistryHostname}/{serverRepo}", ExternalPort: ExtensibilityContainerPort);
+            }
+            catch (RequestFailedException ex) when (ex.Status == 404)
+            {
                 return null;
             }
-
-            return new ExtensibilityProviderContainerRegistry(ContainerRegistry: $"bicepprovidersregistry.azurecr.io/{providerName}/server", ExternalPort: 8080);
         }
 
         private async Task<object> HandleRequestByContainerRegistryAsync(
@@ -65,15 +78,15 @@ namespace Azure.Deployments.Extensibility.Providers.ThirdParty
             var tag = request.Import.Version;
             var containerGroupName = GenerateContainerGroupName(providerName, tag);
 
-            var providerContainerRegistry = await TryGetExtensibilityProviderContainerRegistry(providerName);
+            var providerContainerRegistry = await TryGetExtensibilityProviderContainerRegistry(providerName, tag, cancellation);
 
             if (providerContainerRegistry is null)
             {
                 return new ExtensibilityOperationErrorResponse(
                     new ExtensibilityError(
                         "UnknownExtensibilityProvider",
-                        JsonPointer.Parse("/imports/provider"),
-                        @$"Unknown extensibility provider: ""{providerName}""."));
+                        JsonPointer.Parse("/imports"),
+                        @$"Unknown extensibility provider ""{providerName}"" with version ""{tag}""."));
             }
 
             try

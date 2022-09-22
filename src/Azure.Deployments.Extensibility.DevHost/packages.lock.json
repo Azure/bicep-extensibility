@@ -75,10 +75,10 @@
       },
       "Azure.Containers.ContainerRegistry": {
         "type": "Transitive",
-        "resolved": "1.1.0-beta.4",
-        "contentHash": "GhTCm4Hh2Hs+MUQL5ocIn+dqcfPzyTkCjkIji/IuATZ/Nyr1FZHCaHm44P3Mj0uuXbBLgXejFlypDlTyKMJcsw==",
+        "resolved": "1.0.0",
+        "contentHash": "AsnLpJqXUtVKEYFp3SJeRY9S+O4jfJtCb8o6BwkTHuY7i/U9uKdAaVCXMcXqtXuTUJCOk20lZ3oK8FWNMiiqkg==",
         "dependencies": {
-          "Azure.Core": "1.24.0",
+          "Azure.Core": "1.22.0",
           "System.Text.Json": "4.7.2"
         }
       },
@@ -2075,7 +2075,7 @@
       "azure.deployments.extensibility.providers.thirdparty": {
         "type": "Project",
         "dependencies": {
-          "Azure.Containers.ContainerRegistry": "[1.1.0-beta.4, )",
+          "Azure.Containers.ContainerRegistry": "[1.0.0, )",
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
           "Azure.Identity": "[1.7.0, )",
           "Microsoft.Azure.Management.ContainerInstance": "[7.0.0, )",
