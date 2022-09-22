@@ -1,10 +1,5 @@
 {
-    "azureFunctions.projectSubpath": "src/Extensibility.Host",
-    "azureFunctions.deploySubpath": "src/Extensibility.Host/bin/Release/net6.0/publish",
-    "azureFunctions.projectLanguage": "C#",
-    "azureFunctions.projectRuntime": "~3",
     "debug.internalConsoleOptions": "neverOpen",
-    "azureFunctions.preDeployTask": "publish (functions)",
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": "/.github/**/*.yml"
     }
