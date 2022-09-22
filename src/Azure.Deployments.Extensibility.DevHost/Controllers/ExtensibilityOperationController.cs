@@ -95,7 +95,7 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
         {
             var providerName = request.Import.Provider;
             var tag = request.Import.Version;
-            var containerGroupName = $"{providerName}-aci";
+            var containerGroupName = GenerateContainerGroupName(providerName, tag);
 
             var providerContainerRegistry = registry.TryGetExtensibilityProviderContainerRegistry(providerName);
 
@@ -167,5 +167,12 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
                     resourceGroupName: ContainerInstanceResourceGroupName,
                     containerGroupName: containerGroupName,
                     cancellation: cancellation);
+	
+        private static string GenerateContainerGroupName(string providerName, string providerVersion)
+        {
+            var desiredName = $"{providerName}-{providerVersion}".ToLowerInvariant();
+
+            return new string(desiredName.Select(x => char.IsLetterOrDigit(x) ? x : '-').ToArray());
+        }
     }
 }
