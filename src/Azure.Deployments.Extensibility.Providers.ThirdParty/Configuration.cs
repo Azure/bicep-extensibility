@@ -1,19 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Identity;
+using Azure.ResourceManager;
 using Microsoft.Extensions.DependencyInjection;
-using Azure.Deployments.Extensibility.Providers.ThirdParty.ACI;
-using Azure.Deployments.Extensibility.Providers.ThirdParty.AzureContext;
 
-namespace Azure.Deployments.Extensibility.Providers.ThirdParty
+namespace Azure.Deployments.Extensibility.Providers.ThirdParty;
+
+public static class ConfigurationExtensions
 {
-    public static class ConfigurationExtensions
+    public static void ConfigureThirdPartyExtensibility(this IServiceCollection  services)
     {
-        public static void ConfigureThirdPartyExtensibility(this IServiceCollection  services)
-        {
-            services.AddScoped<IAzureRequestContext, AzureRequestContext>();
-            services.AddScoped<IAzureContainerInstanceHost, AzureContainerInstanceHost>();
-            services.AddScoped<IThirdPartyExtensibilityProvider, ThirdPartyExtensibilityProvider>();
-        }
+        services.AddScoped<IAppSettings, AppSettings>();
+        services.AddScoped<IContainerManager, ContainerManager>();
+        services.AddScoped<IThirdPartyExtensibilityProvider, ThirdPartyExtensibilityProvider>();
+        services.AddSingleton<ArmClient>(s => new ArmClient(new DefaultAzureCredential()));
     }
 }
