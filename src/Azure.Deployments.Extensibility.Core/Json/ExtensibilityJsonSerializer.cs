@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -8,11 +9,19 @@ namespace Azure.Deployments.Extensibility.Core.Json
 {
     public class ExtensibilityJsonSerializer
     {
-        public static readonly JsonSerializerProxy Default = new(new JsonSerializerOptions
+        internal static readonly JsonSerializerProxy WithoutConverters = new(new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+
+            // We are not emitting JSON into an HTML page, so it's safe to use UnsafeRelaxedJsonEscaping.
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        });
+
+        public static readonly JsonSerializerProxy Default = new(new JsonSerializerOptions(WithoutConverters.Options)
+        {
+            Converters = { new ExtensibilityOperationResponseConverter() },
         });
 
         public class JsonSerializerProxy
@@ -33,6 +42,8 @@ namespace Azure.Deployments.Extensibility.Core.Json
             public string Serialize<TValue>(TValue value) => JsonSerializer.Serialize(value, this.Options);
 
             public JsonElement SerializeToElement<TValue>(TValue value) => JsonSerializer.SerializeToElement(value, this.Options);
+
+            public void Serialize<TValue>(Utf8JsonWriter writer, TValue value) => JsonSerializer.Serialize(writer, value, this.Options);
         }
     }
 }

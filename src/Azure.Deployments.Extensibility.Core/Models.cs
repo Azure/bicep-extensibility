@@ -4,6 +4,7 @@
 using Json.Path;
 using Json.Pointer;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Azure.Deployments.Extensibility.Core
 {
@@ -79,10 +80,14 @@ namespace Azure.Deployments.Extensibility.Core
     /// <summary>
     /// Provides information about a failed extensibility operation.
     /// </summary>
-    /// <param name="Errors">Errors to return.</param>
-    public record ExtensibilityOperationErrorResponse(IEnumerable<ExtensibilityError> Errors)
-        : ExtensibilityOperationResponse()
+    public record ExtensibilityOperationErrorResponse : ExtensibilityOperationResponse
     {
+        [JsonConstructor]
+        public ExtensibilityOperationErrorResponse(IEnumerable<ExtensibilityError> errors)
+        {
+            this.Errors = errors;
+        }
+
         /// <summary>
         /// The extensibility operation error response.
         /// </summary>
@@ -92,5 +97,7 @@ namespace Azure.Deployments.Extensibility.Core
             : this((new[] { error }).Concat(additionalErrors))
         {
         }
+
+        public IEnumerable<ExtensibilityError> Errors { get; }
     }
 }

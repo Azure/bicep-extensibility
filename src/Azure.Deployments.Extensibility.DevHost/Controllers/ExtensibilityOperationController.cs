@@ -28,14 +28,14 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
         [SwaggerOperation("Get operation", "Gets an extensible resource")]
         [SwaggerResponse(200, Type = typeof(ExtensibilityOperationResponse), ContentTypes = new[] { "application/json" })]
         [SwaggerResponseExample(200, typeof(ExtensibilityOperationResponseExampleProvider))]
-        public Task<object> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
+        public Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
             this.HandleRequestAsync(request, provider => provider.GetAsync, cancellation);
 
         [HttpPost("/previewSave")]
         [SwaggerOperation("PreviewSave operation", "Previews the result of saving an extensible resource")]
         [SwaggerResponse(200, Type = typeof(ExtensibilityOperationResponse), ContentTypes = new[] { "application/json" })]
         [SwaggerResponseExample(200, typeof(PreviewSaveResponseExampleProvider))]
-        public Task<object> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
+        public Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
             this.HandleRequestAsync(request, provider => provider.PreviewSaveAsync, cancellation);
 
 
@@ -43,17 +43,17 @@ namespace Azure.Deployments.Extensibility.DevHost.Controllers
         [SwaggerOperation("Save operation", "Saves an extensible resource")]
         [SwaggerResponse(200, Type = typeof(ExtensibilityOperationResponse), ContentTypes = new[] { "application/json" })]
         [SwaggerResponseExample(200, typeof(ExtensibilityOperationResponseExampleProvider))]
-        public Task<object> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
+        public Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
             this.HandleRequestAsync(request, provider => provider.SaveAsync, cancellation);
 
         [HttpPost("/delete")]
         [SwaggerOperation("Delete operation", "Deletes an extensible resource")]
         [SwaggerResponse(200, Type = typeof(ExtensibilityOperationResponse), ContentTypes = new[] { "application/json" })]
         [SwaggerResponseExample(200, typeof(ExtensibilityOperationResponseExampleProvider))]
-        public Task<object> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
+        public Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellation) =>
             this.HandleRequestAsync(request, provider => provider.DeleteAsync, cancellation);
 
-        private async Task<object> HandleRequestAsync(ExtensibilityOperationRequest request, Func<IExtensibilityProvider, ExtensibilityOperation<object>> operationSelector, CancellationToken cancellationToken)
+        private async Task<ExtensibilityOperationResponse> HandleRequestAsync(ExtensibilityOperationRequest request, Func<IExtensibilityProvider, ExtensibilityOperation> operationSelector, CancellationToken cancellationToken)
         {
             var providerName = request.Import.Provider;
             var provider = registry.TryGetExtensibilityProvider(providerName);

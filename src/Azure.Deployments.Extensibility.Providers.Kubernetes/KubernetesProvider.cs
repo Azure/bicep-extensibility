@@ -7,6 +7,7 @@ using Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions;
 using k8s;
 using k8s.Autorest;
 using System.Net;
+using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 {
@@ -14,16 +15,16 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
     {
         public const string ProviderName = "Kubernetes";
 
-        public async Task<object> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public async Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             await HandleHttpOperationException(this.ProcessDeleteRequestAsync)(request, cancellationToken);
 
-        public async Task<object> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public async Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             await HandleHttpOperationException(this.ProcessGetOperationAsync)(request, cancellationToken);
 
-        public async Task<object> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public async Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             await HandleHttpOperationException(this.ProcessPreviewSaveRequestAsync)(request, cancellationToken);
 
-        public async Task<object> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+        public async Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             await HandleHttpOperationException(this.ProcessSaveRequestAsync)(request, cancellationToken);
 
         private async Task<ExtensibilityOperationResponse> ProcessDeleteRequestAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
@@ -83,7 +84,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
             return new ExtensibilityOperationSuccessResponse(request.Resource with { Properties = properties });
         }
 
-        private static ExtensibilityOperation<ExtensibilityOperationResponse> HandleHttpOperationException(ExtensibilityOperation<ExtensibilityOperationResponse> operation)
+        private static ExtensibilityOperation HandleHttpOperationException(ExtensibilityOperation operation)
         {
             return async (ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
             {
