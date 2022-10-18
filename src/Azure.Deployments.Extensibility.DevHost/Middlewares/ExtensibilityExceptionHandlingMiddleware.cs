@@ -3,6 +3,7 @@
 
 using Azure.Deployments.Extensibility.Core;
 using Azure.Deployments.Extensibility.Core.Exceptions;
+using Azure.Deployments.Extensibility.Core.Json;
 
 namespace Azure.Deployments.Extensibility.DevHost.Middlewares
 {
@@ -24,6 +25,9 @@ namespace Azure.Deployments.Extensibility.DevHost.Middlewares
             catch (ExtensibilityException exception)
             {
                 var errorResponse = new ExtensibilityOperationErrorResponse(exception.Errors);
+                var res = ExtensibilityJsonSerializer.Default.Serialize(errorResponse);
+                var res2 = ExtensibilityJsonSerializer.Default.Deserialize<ExtensibilityOperationErrorResponse>(res);
+
 
                 await context.Response.WriteAsJsonAsync(errorResponse);
             }

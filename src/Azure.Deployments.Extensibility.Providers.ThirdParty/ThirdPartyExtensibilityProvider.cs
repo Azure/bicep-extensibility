@@ -28,16 +28,16 @@ internal class ThirdPartyExtensibilityProvider : IThirdPartyExtensibilityProvide
         this.containerManager = containerManager;
     }
 
-    public Task<object> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+    public Task<ExtensibilityOperationResponse> GetAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
         this.HandleRequestByContainerRegistryAsync(operation: "get", request: request, cancellation: cancellationToken);
 
-    public Task<object> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+    public Task<ExtensibilityOperationResponse> PreviewSaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
         this.HandleRequestByContainerRegistryAsync(operation: "previewSave", request: request, cancellation: cancellationToken);
 
-    public Task<object> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+    public Task<ExtensibilityOperationResponse> SaveAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
         this.HandleRequestByContainerRegistryAsync(operation: "save", request: request, cancellation: cancellationToken);
 
-    public Task<object> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
+    public Task<ExtensibilityOperationResponse> DeleteAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken) =>
         this.HandleRequestByContainerRegistryAsync(operation: "delete", request: request, cancellation: cancellationToken);
 
 
@@ -61,7 +61,7 @@ internal class ThirdPartyExtensibilityProvider : IThirdPartyExtensibilityProvide
         }
     }
 
-    private async Task<object> HandleRequestByContainerRegistryAsync(
+    private async Task<ExtensibilityOperationResponse> HandleRequestByContainerRegistryAsync(
         string operation,
         ExtensibilityOperationRequest request,
         CancellationToken cancellation)
@@ -106,13 +106,16 @@ internal class ThirdPartyExtensibilityProvider : IThirdPartyExtensibilityProvide
         }
     }
 
-    private static async Task<JsonElement> CallExtensibilityProviderAsync(
+    private static async Task<ExtensibilityOperationResponse> CallExtensibilityProviderAsync(
         Uri uri,
         ExtensibilityOperationRequest request,
         CancellationToken cancellation)
     {
         var response = await CallAsync(uri, request, cancellation);
-        return ExtensibilityJsonSerializer.Default.Deserialize<JsonElement>(await response.Content.ReadAsStreamAsync());
+        using var responseStream = await response.Content.ReadAsStreamAsync(cancellation);
+
+        return ExtensibilityJsonSerializer.Default.Deserialize<ExtensibilityOperationResponse>(responseStream)
+            ?? throw new InvalidOperationException($"Failed to deserialize the resposne to '{nameof(ExtensibilityOperationResponse)}'.");
     }
 
     private static async Task<HttpResponseMessage> CallAsync(Uri uri, ExtensibilityOperationRequest request, CancellationToken cancellation)
