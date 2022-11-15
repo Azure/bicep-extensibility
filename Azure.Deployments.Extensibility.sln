@@ -29,6 +29,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.ThirdParty", "src\Azure.Deployments.Extensibility.Providers.ThirdParty\Azure.Deployments.Extensibility.Providers.ThirdParty.csproj", "{C9AA69F5-2811-4F73-A559-1560150623B8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{B021F5BB-908A-4A29-B75B-5822094C64F1}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		global.json = global.json
+		version.json = version.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,8 +88,8 @@ Global
 		{CEA4E336-491B-4D1A-A578-776E380EF463} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{33BEB45A-04F9-4824-AFE1-2B20B439EA67} = {D067770F-49EE-4374-B878-C624450A7329}
-		{C9AA69F5-2811-4F73-A559-1560150623B8} = {A5D0B27B-E278-4619-863C-16EE38693FE2}
 		{A5D0B27B-E278-4619-863C-16EE38693FE2} = {71A5B95E-429D-4E5A-BCDD-69E963D79962}
+		{C9AA69F5-2811-4F73-A559-1560150623B8} = {A5D0B27B-E278-4619-863C-16EE38693FE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3073660-079C-482C-ABB4-E970087314E7}
