@@ -8,7 +8,11 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         public SecretRequestCustomization(string @namespace)
             : base(@namespace, "core/Secret@v1", @"{
   ""metadata"": {
-    ""name"": ""test-secret""
+    ""name"": ""test-secret"",
+    ""labels"": {
+      ""labelOne"": ""valueOne"",
+      ""labelTwo"": ""valueTwo""
+    }
   },
   ""data"": {}
 }")
