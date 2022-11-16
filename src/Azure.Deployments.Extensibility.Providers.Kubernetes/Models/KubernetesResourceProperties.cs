@@ -8,9 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 {
-    public readonly record struct KubernetesResourceMetadata(string Name, string? Namespace);
-
-    public record KubernetesResourceProperties
+    public record KubernetesResourceProperties(KubernetesResourceMetadata Metadata)
     {
         public readonly static JsonSchema Schema = new JsonSchemaBuilder()
             .Properties(
@@ -22,39 +20,32 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
             .Required("metadata")
             .AdditionalProperties(true);
 
-        public KubernetesResourceProperties()
-        {
-            // Adding the default constructor to make deserialization work.
-        }
-
-        public KubernetesResourceProperties(KubernetesResourceMetadata metadata, Dictionary<string, JsonElement>? additionalData)
-        {
-            this.Metadata = metadata;
-            this.AdditionalData = additionalData;
-        }
-
-        public KubernetesResourceMetadata Metadata { get; set; }
-
         // Ideally this should be an immutable dictionary, but it's not supported yet.
-        // See: https://github.com/dotnet/runtime/issues/31645.
+        // See: https://github.com/dotnet/runtime/issues/31645 for details.
         [JsonExtensionData]
-        public Dictionary<string, JsonElement>? AdditionalData { get; set; }
+        public Dictionary<string, JsonElement>? AdditionalData { get; init; }
 
         public KubernetesResourceProperties PatchProperty(string propertyName, JsonElementProxy value)
         {
             if (this.AdditionalData is null)
             {
-                return new(this.Metadata, new Dictionary<string, JsonElement>
+                return new(this.Metadata)
                 {
-                    [propertyName] = value,
-                });
+                    AdditionalData = new Dictionary<string, JsonElement>
+                    {
+                        [propertyName] = value,
+                    },
+                };
             }
 
             var updatedData = this.AdditionalData.ToDictionary(x => x.Key, x => x.Value);
 
             updatedData[propertyName] = value;
 
-            return new(this.Metadata, updatedData);
+            return new(this.Metadata)
+            {
+                AdditionalData = updatedData
+            };
         }
     }
 }

@@ -65,6 +65,12 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             metadata.TryGetProperty("uid", out _).Should().BeTrue();
             metadata.TryGetProperty("namespace", out var namespaceInResponse).Should().BeTrue();
             namespaceInResponse.GetString().Should().Be(@namespace);
+
+            metadata.TryGetProperty("labels", out var labels).Should().BeTrue();
+            labels.TryGetProperty("labelOne", out var labelOne).Should().BeTrue();
+            labelOne.GetString().Should().Be("valueOne");
+            labels.TryGetProperty("labelTwo", out var labelTwo).Should().BeTrue();
+            labelTwo.GetString().Should().Be("valueTwo");
         }
 
         [Theory, AutoData]
@@ -83,6 +89,12 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             metadata.TryGetProperty("uid", out _).Should().BeFalse();
             metadata.TryGetProperty("namespace", out var namespaceInResponse).Should().BeTrue();
             namespaceInResponse.GetString().Should().Be(nonexistentNamespace);
+
+            metadata.TryGetProperty("labels", out var labels).Should().BeTrue();
+            labels.TryGetProperty("labelOne", out var labelOne).Should().BeTrue();
+            labelOne.GetString().Should().Be("valueOne");
+            labels.TryGetProperty("labelTwo", out var labelTwo).Should().BeTrue();
+            labelTwo.GetString().Should().Be("valueTwo");
         }
     }
 }
