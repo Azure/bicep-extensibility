@@ -22,9 +22,9 @@ internal class AppSettings : IAppSettings
         this.configuration = configuration;
     }
 
-    public string ThirdPartySubId => configuration.GetValue<string>("THIRD_PARTY_SUB_ID");
+    public string ThirdPartySubId => configuration.GetValue<string>("THIRD_PARTY_SUB_ID") ?? throw new InvalidOperationException("Configuration THIRD_PARTY_SUB_ID not found.");
 
-    public string ThirdPartyRgName => configuration.GetValue<string>("THIRD_PARTY_RG_NAME");
+    public string ThirdPartyRgName => configuration.GetValue<string>("THIRD_PARTY_RG_NAME") ?? throw new InvalidOperationException("Configuration THIRD_PARTY_RG_NAME not found.");
 
-    public string ThirdPartyRgLocation => configuration.GetValue<string>("THIRD_PARTY_RG_LOCATION");
+    public string ThirdPartyRgLocation => configuration.GetValue<string>("THIRD_PARTY_RG_LOCATION") ?? throw new InvalidOperationException("Configuration THIRD_PARTY_RG_LOCATION not found.");
 }
