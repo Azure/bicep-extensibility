@@ -26,10 +26,12 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
         }
 
         [Theory]
+        [InlineData(null)]
+        [InlineData("")]
         [InlineData("foobar")]
         [InlineData("bicep")]
         [InlineData("The quick brown fox jumps over the lazy dog")]
-        public void IsBase64Encoded_NotBase64EncodedString_ReturnsTrue(string value)
+        public void IsBase64Encoded_NotBase64EncodedString_ReturnsTrue(string? value)
         {
             var result = value.IsBase64Encoded();
 
