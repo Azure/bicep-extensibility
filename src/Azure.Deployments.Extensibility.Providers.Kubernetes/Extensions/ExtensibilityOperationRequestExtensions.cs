@@ -14,26 +14,20 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
     {
         public async static Task<KubernetesResource> ProcessAsync(this ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var (import, resource) = request.Validate<KubernetesConfig, KubernetesResourceProperties>(
-                KubernetesConfig.Schema,
-                KubernetesResourceType.Regex,
-                KubernetesResourceProperties.Schema);
-
+            var (import, resource) = Validate(request);
             var resourceType = KubernetesResourceType.Parse(resource.Type);
 
             var properties = resource.Properties
                 .PatchProperty("apiVersion", resourceType.ApiVersion)
                 .PatchProperty("kind", resourceType.Kind);
 
-            var config = await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(
-                new MemoryStream(import.Config.KubeConfig),
-                currentContext: import.Config.Context);
+            var clientConfiguration = await CreateClientConfigurationAsync(import);
 
             IKubernetes? kubernetes = null;
 
             try
             {
-                kubernetes = new k8s.Kubernetes(config);
+                kubernetes = new k8s.Kubernetes(clientConfiguration);
                 var client = new GenericClient(kubernetes, resourceType.Group, resourceType.Version, plural: "");
 
                 var apiResouceList = await client.ListAsync<V1APIResourceList>(cancellationToken);
@@ -66,6 +60,43 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
                 kubernetes?.Dispose();
 
                 throw;
+            }
+        }
+
+        private static ExtensibilityOperationRequest<KubernetesConfig, KubernetesResourceProperties> Validate(ExtensibilityOperationRequest request)
+        {
+            // Validate kubeConfig format.
+            if (request.Import.Config.TryGetProperty("kubeConfig", out var kubeConfig) && !kubeConfig.GetString().IsBase64Encoded())
+            {
+                throw new ExtensibilityException(
+                    "InvalidKubeConfig",
+                    request.Import.GetJsonPointer(x => x.Config).Combine("kubeConfig"),
+                    @$"Value must be a Base64-encoded string.");
+            }
+
+            // Run JSON schema validation.
+            return request.Validate<KubernetesConfig, KubernetesResourceProperties>(
+                KubernetesConfig.Schema,
+                KubernetesResourceType.Regex,
+                KubernetesResourceProperties.Schema);
+        }
+
+        private static async Task<KubernetesClientConfiguration> CreateClientConfigurationAsync(ExtensibleImport<KubernetesConfig> import)
+        {
+            try
+            {
+                return await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(
+                    new MemoryStream(import.Config.KubeConfig),
+                    currentContext: import.Config.Context);
+            }
+            catch (Exception exception)
+            {
+                exception = exception.GetBaseException();
+
+                throw new ExtensibilityException(
+                    "InvalidImportConfig",
+                    import.GetJsonPointer(x => x.Config),
+                    exception.Message ?? exception.ToString());
             }
         }
     }
