@@ -29,33 +29,44 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
                 new MemoryStream(import.Config.KubeConfig),
                 currentContext: import.Config.Context);
 
-            var kubernetes = new k8s.Kubernetes(config);
-            var client = new GenericClient(kubernetes, resourceType.Group, resourceType.Version, plural: "");
+            IKubernetes? kubernetes = null;
 
-            var apiResouceList = await client.ListAsync<V1APIResourceList>(cancellationToken);
-            var apiResource = apiResouceList.Resources.FirstOrDefault(x => x.Kind.Equals(resourceType.Kind, StringComparison.Ordinal));
-
-            if (apiResource is null)
+            try
             {
-                throw new ExtensibilityException(
-                    "UnknownResourceKind",
-                    resource.GetJsonPointer(x => x.Type),
-                    @$"Unknown resource kind ""{resourceType.Kind}"" in resource type ""{resource.Type}"".");
-            }
+                kubernetes = new k8s.Kubernetes(config);
+                var client = new GenericClient(kubernetes, resourceType.Group, resourceType.Version, plural: "");
 
-            if (!apiResource.Namespaced && properties.Metadata.Namespace is not null)
+                var apiResouceList = await client.ListAsync<V1APIResourceList>(cancellationToken);
+                var apiResource = apiResouceList.Resources.FirstOrDefault(x => x.Kind.Equals(resourceType.Kind, StringComparison.Ordinal));
+
+                if (apiResource is null)
+                {
+                    throw new ExtensibilityException(
+                        "UnknownResourceKind",
+                        resource.GetJsonPointer(x => x.Type),
+                        @$"Unknown resource kind ""{resourceType.Kind}"" in resource type ""{resource.Type}"".");
+                }
+
+                if (!apiResource.Namespaced && properties.Metadata.Namespace is not null)
+                {
+                    throw new ExtensibilityException(
+                        "NamespaceSpecifiedForClusterResource",
+                        resource.GetJsonPointer(x => x.Properties.Metadata.Namespace!),
+                        "A namespace should not be specified for a cluster-scoped resource.");
+                }
+
+                var @namespace = apiResource.Namespaced
+                    ? resource.Properties.Metadata.Namespace ?? import.Config.Namespace
+                    : null;
+
+                return new(kubernetes, resourceType.Group, resourceType.Version, @namespace, apiResource.Name, properties);
+            }
+            catch
             {
-                throw new ExtensibilityException(
-                    "NamespaceSpecifiedForClusterResource",
-                    resource.GetJsonPointer(x => x.Properties.Metadata.Namespace!),
-                    "A namespace should not be specified for a cluster-scoped resource.");
+                kubernetes?.Dispose();
+
+                throw;
             }
-
-            var @namespace = apiResource.Namespaced
-                ? resource.Properties.Metadata.Namespace ?? import.Config.Namespace
-                : null;
-
-            return new(kubernetes, resourceType.Group, resourceType.Version, @namespace, apiResource.Name, properties);
         }
     }
 }

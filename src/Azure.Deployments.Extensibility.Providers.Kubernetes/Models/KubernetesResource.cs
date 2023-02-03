@@ -8,8 +8,10 @@ using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 {
-    public class KubernetesResource
+    public class KubernetesResource : IDisposable
     {
+        private volatile bool disposed;
+
         public KubernetesResource(IKubernetes kubernetes, string group, string version, string? @namespace, string plural, KubernetesResourceProperties properties)
         {
             this.Kubernetes = kubernetes;
@@ -98,6 +100,22 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
                     cancellationToken: cancellationToken);
 
             return ExtensibilityJsonSerializer.Default.SerializeToElement(result);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing && !this.disposed)
+            {
+                this.disposed = true;
+
+                this.Kubernetes.Dispose();
+            }
         }
     }
 }

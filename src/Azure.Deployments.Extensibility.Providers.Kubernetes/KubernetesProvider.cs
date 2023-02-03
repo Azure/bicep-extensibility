@@ -29,7 +29,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 
         private async Task<ExtensibilityOperationResponse> ProcessDeleteRequestAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var resource = await request.ProcessAsync(cancellationToken);
+            using var resource = await request.ProcessAsync(cancellationToken);
 
             await resource.DeleteAsync(cancellationToken);
 
@@ -38,7 +38,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 
         private async Task<ExtensibilityOperationResponse> ProcessGetOperationAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var resource = await request.ProcessAsync(cancellationToken);
+            using var resource = await request.ProcessAsync(cancellationToken);
 
             var properties = await resource.GetAsync(cancellationToken);
 
@@ -47,7 +47,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 
         private async Task<ExtensibilityOperationResponse> ProcessPreviewSaveRequestAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var resource = await request.ProcessAsync(cancellationToken);
+            using var resource = await request.ProcessAsync(cancellationToken);
 
             if (resource.Namespace is not null)
             {
@@ -77,7 +77,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes
 
         private async Task<ExtensibilityOperationResponse> ProcessSaveRequestAsync(ExtensibilityOperationRequest request, CancellationToken cancellationToken)
         {
-            var resource = await request.ProcessAsync(cancellationToken);
+            using var resource = await request.ProcessAsync(cancellationToken);
 
             var properties = await resource.PatchAsync(dryRun: null, cancellationToken);
 
