@@ -69,15 +69,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Mocks
             return new(app);
         }
 
-        public ExtensibilityOperationRequest InjectKubeConfig(ExtensibilityOperationRequest request)
+        public ExtensibilityOperationRequest InjectKubeConfig(ExtensibilityOperationRequest request, string? kubeConfig = null)
         {
-            var import = ModelMapper.MapToConcrete<KubernetesConfig>(request.Import);
-
-            import = import with
-            {
-                Config = import.Config with
-                {
-                    KubeConfig = Encoding.UTF8.GetBytes($@"
+            kubeConfig ??= $@"
 apiVersion: v1
 clusters:
 - cluster:
@@ -89,7 +83,15 @@ contexts:
   name: test-context
 current-context: test-context
 kind: Config
-"),
+";
+
+            var import = ModelMapper.MapToConcrete<KubernetesConfig>(request.Import);
+
+            import = import with
+            {
+                Config = import.Config with
+                {
+                    KubeConfig = Encoding.UTF8.GetBytes(kubeConfig),
                 },
             };
 
