@@ -9,4 +9,7 @@
     <PackageReference Include="JsonSchema.Net" Version="3.3.2" />
   </ItemGroup>
 
+  <!-- Need to sign the assembly with a strong name in Official Build. -->
+  <Import Project="$(EnlistmentRoot)\StrongName.props" />
+
 </Project>
