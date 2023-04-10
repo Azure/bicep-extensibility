@@ -33,7 +33,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		src\35MSSharedLib1024.snk = src\35MSSharedLib1024.snk
+		src\BannedSymbols.txt = src\BannedSymbols.txt
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		global.json = global.json
+		src\StrongName.props = src\StrongName.props
 		version.json = version.json
 	EndProjectSection
 EndProject
