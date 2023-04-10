@@ -12,7 +12,4 @@
     <ProjectReference Include="..\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj" />
   </ItemGroup>
 
-  <!-- Need to sign the assembly with a strong name in Official Build. -->
-  <Import Project="$(EnlistmentRoot)\StrongName.props" />
-
 </Project>
