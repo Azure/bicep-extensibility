@@ -2,5 +2,6 @@
     "debug.internalConsoleOptions": "neverOpen",
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": "/.github/**/*.yml"
-    }
+    },
+    "dotnet.defaultSolution": "Azure.Deployments.Extensibility.sln"
 }
