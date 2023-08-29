@@ -21,7 +21,7 @@ paths:
         Generate a reference to a resource comprising a reference ID, regardless the existence of the resource.
       operationId: createResourceReference
       parameters:
-        - $ref: '#/components/parameters/HeaderAcceptedLanguage'
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -56,13 +56,12 @@ paths:
         Should the simulation encounter failure due to inadequate provider or resource properties, the response must detail the errors encountered.
       operationId: previewResourceCreateOrUpdate
       parameters:
-        - $ref: '#/components/parameters/HeaderAcceptedLanguage'
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
         - $ref: '#/components/parameters/HeaderTraceState'
         - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
       requestBody:
         content:
           application/json:
@@ -86,7 +85,7 @@ paths:
         If the opeartion is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
       operationId: createOrUpdateResource
       parameters:
-        - $ref: '#/components/parameters/HeaderAcceptedLanguage'
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -109,10 +108,16 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
     get:
-      summary: Create or update a resource
-      description: Create or update a resource.
+      summary: Get a resource
+      description: Get a resource by reference ID.
       operationId: getResource
       parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
         - $ref: '#/components/parameters/ReferenceId'
       responses:
         '200':
@@ -125,7 +130,7 @@ paths:
       description: Delete a resource by reference ID.
       operationId: deleteResource
       parameters:
-        - $ref: '#/components/parameters/HeaderAcceptedLanguage'
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -139,8 +144,8 @@ paths:
           $ref: '#/components/responses/Accepted'
 components:
   parameters:
-    HeaderAcceptedLanguage:
-      name: Accepted-Header
+    HeaderAcceptLanguage:
+      name: Accept-Language
       in: header
       required: false
       description: Specifies the preferred language for the response Providers should use this header when generating client facing text, such as error messages.

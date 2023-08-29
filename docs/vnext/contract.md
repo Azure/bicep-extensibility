@@ -17,7 +17,7 @@ The timeout value for each request is 60 seconds. If the provider failed to resp
 
 ### Request Throttling
 
-The Extensibility Host does not implement throttling for incoming request from the deployments RP, and it's up to extensibility providers to apply their own throttling limits. However, since the extensible resources are deployed through ARM, the [general ARM request throttling limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) still apply.
+The Extensibility Host does not implement throttling for incoming request from the deployments RP, and it's up to extensibility providers to apply their own throttling limits. However, since the extensible resources are deployed through ARM, the [general ARM request throttling limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) still apply to deployments that contain extensible resources.
 
 ### Maximum Request Body Size
 
