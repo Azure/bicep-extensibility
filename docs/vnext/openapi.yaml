@@ -13,9 +13,16 @@ servers:
       providerApiEndpoint:
         default: 'api.example-provider.com'
         description: Extensibility provider API endpoint.
+tags:
+  - name: Resource
+    description: Resource API
+  - name: ResourceOperation
+    description: Resource Operation API
 paths:
   /{providerVersion}/resources/reference:
     post:
+      tags:
+        - Resource
       summary: Create a resource reference
       description: |
         Generate a reference to a resource comprising a reference ID, regardless the existence of the resource.
@@ -47,6 +54,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /{providerVersion}/resources/preview:
     post:
+      tags:
+       - Resource
       summary: Create a preview of a resource create or update operation
       description: |
         Preview a resource creation or update operation by simulating the process.
@@ -76,6 +85,8 @@ paths:
 
   /{providerVersion}/resources/{referenceId}:
     put:
+      tags:
+       - Resource
       summary: Create or update a resource
       description: |
         Create or update a resource with a reference ID.
@@ -108,6 +119,8 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
     get:
+      tags:
+       - Resource
       summary: Get a resource
       description: Get a resource by reference ID.
       operationId: getResource
@@ -126,6 +139,8 @@ paths:
           description: Resource not found
 
     delete:
+      tags:
+       - Resource
       summary: Delete a resource
       description: Delete a resource by reference ID.
       operationId: deleteResource
@@ -142,6 +157,27 @@ paths:
           description: Successful operation
         '202':
           $ref: '#/components/responses/Accepted'
+  /{resourceOperationPath}:
+    get:
+      tags:
+       - ResourceOperation
+      summary: Get a resource operation
+      description: Get a long-running resource operation.
+      operationId: getResourceOperation
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ResourceOperationPath'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongRunningOperation'
 components:
   parameters:
     HeaderAcceptLanguage:
@@ -198,6 +234,13 @@ components:
       description: Reference ID of the resource.
       schema:
         type: string
+    ResourceOperationPath:
+      name: resourceOperationPath
+      in: path
+      required: true
+      description: relative path to the resource operation.
+      schema:
+        type: string
   headers:
     Date:
       description: The date that the request was processed, in [RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2) format.
@@ -226,7 +269,7 @@ components:
       content: 
         application/json: 
           schema:
-            $ref: '#/components/schemas/OperationFailure'
+            $ref: '#/components/schemas/ErrorResponse'
     ResourceResponse:
       description: Succesful operation
       headers:
@@ -247,11 +290,14 @@ components:
               readOnlyProp: false
               propWithDefaultValue: foobar
   schemas:
-    OperationFailure:
+    ErrorResponse:
+      description: Schema for error responses that is compliant with Microsoft REST API Guideline and OData 4.0.
       type: object
+      required:
+        - status
       properties:
-        errors:
-          $ref: '#/components/schemas/Errors'
+        error:
+          $ref: '#/components/schemas/Error'
     LongRunningOperation:
       type: object
       required:
@@ -259,13 +305,35 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/Status'
-        errors:
-          $ref: '#/components/schemas/Errors'
-    Errors:
-      type: array
-      items:
-        $ref: '#/components/schemas/Error' 
+        error:
+          $ref: '#/components/schemas/Error'
     Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: A short unlocalized string which can be used to identify a particular class of error. The code should be Pascal-cased.
+          example: InvalidResource
+        message:
+          type: string
+          description: Describes the error in detail and provides debugging information. If the Accept-Language header is set in the request, it must be localized accordingly.
+          example: The specified resource is invalid.
+        target:
+          type: string
+          description: An absolute JSON Pointer (see [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) to the property causing the error.
+          example: null
+        details:
+          description: An array of details about specific errors that led to this reported error.
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+        innererror:
+          description: An object containing more specific information than the current object about the error.
+          type: object
+    ErrorDetail:
       type: object
       required:
         - code
@@ -282,9 +350,11 @@ components:
         target:
           type: string
           description: An absolute JSON Pointer (see [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) to the property causing the error.
-          example: /type 
+          example: /properties/foo
     ResourceReference:
       type: object
+      required:
+        - referenceId
       properties:
         referenceId:
           $ref: '#/components/schemas/ResourceReferenceId'
@@ -296,6 +366,9 @@ components:
       description: A free-form string which is derived through computation utilizing the supplied resource configuration, resource type, and resource properties. **A reference ID should never be based on properties containing confidential data, such as a password or connection string**.
     Resource:
       type: object
+      required:
+        - type
+        - properties
       properties:
         config:
           type: object

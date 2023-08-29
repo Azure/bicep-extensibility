@@ -67,4 +67,4 @@ The LRO pattern serves as an alternative for executing asynchronous resource cre
 3. The Extensibility Host employs a GET request on the URL specified within the `Location` header.
 4. Subsequent polling by the Extensibility Host should respect the `Retry-After` interval if it was provided, or adhere to the default interval of 60 seconds if not.
 5. While the delete operation remains incomplete, the extensibility provider returns a 200 OK response containing a non-terminal `status` property in the response body.
-6. Upon the operation's completion, the extensibility provider issues a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`).
+6. Upon the operation's completion, the extensibility provider issues a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`). If the status is `Failed` or `Canceled`, an `error` property must be included in the response.
