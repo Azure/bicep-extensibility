@@ -363,6 +363,8 @@ components:
     ResourceReferenceId:
       type: string
       readOnly: true
+      minLength: 1
+      maxLength: 2000
       description: A free-form string which is derived through computation utilizing the supplied resource configuration, resource type, and resource properties. **A reference ID should never be based on properties containing confidential data, such as a password or connection string**.
     Resource:
       type: object
