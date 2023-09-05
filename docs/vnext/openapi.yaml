@@ -42,16 +42,22 @@ paths:
         required: true
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation.
           headers: 
             Date:
               $ref: '#/components/headers/Date'
+            x-ms-request-id:
+              $ref: '#/components/headers/RequestId'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResourceReference'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
   /{providerVersion}/resources/preview:
     post:
       tags:
@@ -82,7 +88,10 @@ paths:
           $ref: '#/components/responses/ResourceResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
-
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
   /{providerVersion}/resources/{referenceId}:
     put:
       tags:
@@ -118,6 +127,10 @@ paths:
           $ref: '#/components/responses/Accepted'
         '400':
           $ref: '#/components/responses/BadRequest'
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
     get:
       tags:
        - Resource
@@ -136,8 +149,11 @@ paths:
         '200':
           $ref: '#/components/responses/ResourceResponse'
         '404':
-          description: Resource not found
-
+          description: Resource not found.
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
     delete:
       tags:
        - Resource
@@ -157,6 +173,10 @@ paths:
           description: Successful operation
         '202':
           $ref: '#/components/responses/Accepted'
+        '4XX':
+          description: Client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
   /{resourceOperationPath}:
     get:
       tags:
@@ -173,11 +193,15 @@ paths:
         - $ref: '#/components/parameters/ResourceOperationPath'
       responses:
         '200':
-          description: Successful operation
+          description: Successful operation.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/LongRunningOperation'
+        '4XX':
+          description: Client errors not related to the operation itself, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
 components:
   parameters:
     HeaderAcceptLanguage:
@@ -247,12 +271,19 @@ components:
       schema:
         type: string
         format: date
+    RequestId:
+      description: A unique identifier for the current operation, service generated. Extensibility providers *must* return this value in the response headers to facilitate debugging.
+      schema:
+        type: string
+        format: uuid
   responses:
     Accepted:
       description: Accepted
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
         Location:
           description: An absolute and public facing URI pointing to an operation resource which can be used to monitor the status of the delete operation.
           schema:
@@ -262,19 +293,23 @@ components:
           schema:
             type: integer
     BadRequest:
-      description: Failed operation
+      description: Failed operation.
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
       content: 
         application/json: 
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     ResourceResponse:
-      description: Succesful operation
+      description: Successful operation.
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
       content: 
         application/json: 
           schema:
