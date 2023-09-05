@@ -1,0 +1,440 @@
+openapi: 3.0.3
+info:
+  title: Azure Deployments Extensibility Provider API
+  description: |-
+    This is the OpenAPI 3.0 based specification for Azure Deployments Extensibility Provider API.
+  version: 2.0.0
+externalDocs:
+  description: Find out more about OpenAPI.
+  url: https://www.openapis.org/
+servers:
+  - url: https://{providerApiEndpoint}
+    variables:
+      providerApiEndpoint:
+        default: 'api.example-provider.com'
+        description: Extensibility provider API endpoint.
+tags:
+  - name: Resource
+    description: Resource API
+  - name: ResourceOperation
+    description: Resource Operation API
+paths:
+  /{providerVersion}/resources/reference:
+    post:
+      tags:
+        - Resource
+      summary: Create a resource reference
+      description: |
+        Generate a reference to a resource comprising a reference ID, regardless the existence of the resource.
+      operationId: createResourceReference
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+        required: true
+      responses:
+        '200':
+          description: Successful operation.
+          headers: 
+            Date:
+              $ref: '#/components/headers/Date'
+            x-ms-request-id:
+              $ref: '#/components/headers/RequestId'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResourceReference'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+  /{providerVersion}/resources/preview:
+    post:
+      tags:
+       - Resource
+      summary: Create a preview of a resource create or update operation
+      description: |
+        Preview a resource creation or update operation by simulating the process.
+
+        Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
+
+        Should the simulation encounter failure due to inadequate provider or resource properties, the response must detail the errors encountered.
+      operationId: previewResourceCreateOrUpdate
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+  /{providerVersion}/resources/{referenceId}:
+    put:
+      tags:
+       - Resource
+      summary: Create or update a resource
+      description: |
+        Create or update a resource with a reference ID.
+
+        If the operation is synchronus or a resource based long-running operation (RELO), the response status code must be 201 Created for nonexistent resource or 200 OK for existing resource.
+
+        If the opeartion is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
+      operationId: createOrUpdateResource
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ReferenceId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceResponse'
+        '201':
+          $ref: '#/components/responses/ResourceResponse'
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+    get:
+      tags:
+       - Resource
+      summary: Get a resource
+      description: Get a resource by reference ID.
+      operationId: getResource
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ReferenceId'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceResponse'
+        '404':
+          description: Resource not found.
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+    delete:
+      tags:
+       - Resource
+      summary: Delete a resource
+      description: Delete a resource by reference ID.
+      operationId: deleteResource
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ReferenceId'
+      responses:
+        '204':
+          description: Successful operation
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '4XX':
+          description: Client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+  /{resourceOperationPath}:
+    get:
+      tags:
+       - ResourceOperation
+      summary: Get a resource operation
+      description: Get a long-running resource operation.
+      operationId: getResourceOperation
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ResourceOperationPath'
+      responses:
+        '200':
+          description: Successful operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LongRunningOperation'
+        '4XX':
+          description: Client errors not related to the operation itself, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+components:
+  parameters:
+    HeaderAcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      description: Specifies the preferred language for the response Providers should use this header when generating client facing text, such as error messages.
+      schema:
+        type: string
+        example: en-US
+    HeaderRequestId:
+      name: x-ms-client-request-id
+      in: header
+      required: true
+      description: Client generated GUID identifying a single request. Should be include in logs and traces.
+      schema:
+        type: string
+        format: uuid
+        example: 00000000-0000-0000-0000-000000000000
+    HeaderCorrelationId:
+      name: x-ms-correlation-request-id
+      in: header
+      required: true
+      description: Client or ARM generated GUID identifying a set of related operations. Should be included in logs and traces.
+      schema:
+        type: string
+        format: uuid
+        example: 00000000-0000-0000-0000-000000000000
+    HeaderTraceParent:
+      name: traceparent
+      required: true
+      description: Standard W3C trace context header generated by OpenTelemetry. Providers should use the header if they support OpenTelemetry.
+      in: header
+      schema:
+        type: string
+    HeaderTraceState:
+      name: tracestate
+      required: true
+      description: Standard W3C trace context header generated by OpenTelemetry. Providers should use the header if they support OpenTelemetry.
+      in: header
+      schema:
+        type: string
+    ProviderVersion:
+      name: providerVersion
+      in: path
+      required: true
+      description: Version of the provider. This is specified by the user with the provider import syntax in the Bicep or ARM template file. It is recommended for the extensibility provider to validate the request payload against the provider version, but it's not mandatory.
+      schema:
+        type: string
+    ReferenceId:
+      name: referenceId
+      in: path
+      required: true
+      description: Reference ID of the resource.
+      schema:
+        type: string
+    ResourceOperationPath:
+      name: resourceOperationPath
+      in: path
+      required: true
+      description: relative path to the resource operation.
+      schema:
+        type: string
+  headers:
+    Date:
+      description: The date that the request was processed, in [RFC 7231](https://datatracker.ietf.org/doc/html/rfc7231#section-7.1.1.2) format.
+      schema:
+        type: string
+        format: date
+    RequestId:
+      description: A unique identifier for the current operation, service generated. Extensibility providers *must* return this value in the response headers to facilitate debugging.
+      schema:
+        type: string
+        format: uuid
+  responses:
+    Accepted:
+      description: Accepted
+      headers:
+        Date:
+          $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
+        Location:
+          description: An absolute and public facing URI pointing to an operation resource which can be used to monitor the status of the delete operation.
+          schema:
+            type: string
+        Retry-After:
+          description: Indicates how long the client should wait before making a follow-up request. The value must only be specified in seconds, with a minimum of 10 seconds and a maximum of 10 minutes.
+          schema:
+            type: integer
+    BadRequest:
+      description: Failed operation.
+      headers:
+        Date:
+          $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
+      content: 
+        application/json: 
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ResourceResponse:
+      description: Successful operation.
+      headers:
+        Date:
+          $ref: '#/components/headers/Date'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
+      content: 
+        application/json: 
+          schema:
+            $ref: '#/components/schemas/Resource'
+          example:
+            referenceId: 'application-v1-myApp'
+            status: Succeeded
+            type: application@v1
+            properties:
+              name: 'myApp'
+              propOne: true
+              propTwo: 42
+              readOnlyProp: false
+              propWithDefaultValue: foobar
+  schemas:
+    ErrorResponse:
+      description: Schema for error responses that is compliant with Microsoft REST API Guideline and OData 4.0.
+      type: object
+      required:
+        - status
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+    LongRunningOperation:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        error:
+          $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: A short unlocalized string which can be used to identify a particular class of error. The code should be Pascal-cased.
+          example: InvalidResource
+        message:
+          type: string
+          description: Describes the error in detail and provides debugging information. If the Accept-Language header is set in the request, it must be localized accordingly.
+          example: The specified resource is invalid.
+        target:
+          type: string
+          description: An absolute JSON Pointer (see [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) to the property causing the error.
+          example: null
+        details:
+          description: An array of details about specific errors that led to this reported error.
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+        innererror:
+          description: An object containing more specific information than the current object about the error.
+          type: object
+    ErrorDetail:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: A short unlocalized string which can be used to identify a particular class of error. The code should be Pascal-cased.
+          example: InvalidResourceType
+        message:
+          type: string
+          description: Describes the error in detail and provides debugging information. If the Accept-Language header is set in the request, it must be localized accordingly.
+          example: The specified resource type is invalid.
+        target:
+          type: string
+          description: An absolute JSON Pointer (see [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) to the property causing the error.
+          example: /properties/foo
+    ResourceReference:
+      type: object
+      required:
+        - referenceId
+      properties:
+        referenceId:
+          $ref: '#/components/schemas/ResourceReferenceId'
+      example:
+        referenceId: application-v1-myApp
+    ResourceReferenceId:
+      type: string
+      readOnly: true
+      minLength: 1
+      maxLength: 2000
+      description: A free-form string which is derived through computation utilizing the supplied resource configuration, resource type, and resource properties. **A reference ID should never be based on properties containing confidential data, such as a password or connection string**.
+    Resource:
+      type: object
+      required:
+        - type
+        - properties
+      properties:
+        config:
+          type: object
+          writeOnly: true
+          description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied provider configuration in the Bicep or ARM template file.
+        referenceId:
+          $ref: '#/components/schemas/ResourceReferenceId'
+        status:
+          $ref: '#/components/schemas/Status'
+        type:
+          type: string
+          description: The type of the resource.
+          example: application@v1
+        properties:
+          description: The properties of the resource.
+          type: object
+          example:
+            name: myApp
+            propOne: true
+            propTwo: 42
+            writeOnlyProp: secret
+
+    Status:
+      readOnly: true
+      description: 'Indicates the provisioning status of the resource or long-running operation. There are three terminal status: defined Succeeded, Failed, and Canceled. A null or undefined status property is treated as Succeeded. Any other status is a non-terminal state and is defined by each extensibility provider (e.g., Running).'
+      oneOf:
+        - type: string
+        - type: string
+          enum:
+            - Succeeded
+            - Failed
+            - Canceled
