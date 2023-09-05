@@ -31,7 +31,7 @@ To keep it consistent with ARM's limit, the extensibility host does not accept a
 
 ## Resource API Reference
 
-For details about resource APIs, Refer to the OpenAPI 3.0 based resource API [specification](openapi.yaml). You may view it in the ReDoc UI [here](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Azure/bicep-extensibility/master/docs/vnext/openapi.yaml) for better experience.
+For details about resource APIs, Refer to the OpenAPI 3.0 based resource API [specification](openapi.yaml). You may view it in the ReDoc UI [here](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/Azure/bicep-extensibility/main/docs/vnext/openapi.yaml&nocors) for better experience.
 
 ## Long-running Operation Reference
 
