@@ -52,7 +52,7 @@ jobs:
         run: dotnet publish src/Azure.Deployments.Extensibility.DevHost --configuration Release --output ${{ env.WEBAPP_PACKAGE_PATH }}
           
       - name: Deploy host
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with: 
           app-name: ${{ env.WEBAPP_NAME }}
           package: ${{ env.WEBAPP_PACKAGE_PATH }}
