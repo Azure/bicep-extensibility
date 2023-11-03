@@ -11,7 +11,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Extensions
 {
     public static class IServiceCollectionExtensions
     {
-        public static IServiceCollection AddExtensibilityDefaultJsonSerializerOptions(this IServiceCollection services)
+        public static IServiceCollection AddDefaultJsonSerializerOptions(this IServiceCollection services)
         {
             services.Configure<JsonOptions>(options =>
             {
