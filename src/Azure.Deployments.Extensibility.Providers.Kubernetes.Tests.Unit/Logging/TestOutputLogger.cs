@@ -66,6 +66,6 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Loggin
 
         public bool IsEnabled(LogLevel logLevel) => logLevel >= this.MinLogLevel;
 
-        public IDisposable BeginScope<TState>(TState state) => Disposable.Empty;
+        public IDisposable BeginScope<TState>(TState state) where TState : notnull => Disposable.Empty;
     }
 }
