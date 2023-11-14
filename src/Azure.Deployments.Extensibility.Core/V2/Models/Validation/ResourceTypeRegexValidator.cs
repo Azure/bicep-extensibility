@@ -1,23 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
 using Json.Pointer;
 using System.Text.RegularExpressions;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Validation
+namespace Azure.Deployments.Extensibility.Core.V2.Models.Validation
 {
     public class ResourceTypeRegexValidator : IValidator<string, IReadOnlyList<ErrorDetail>>
     {
         private readonly static JsonPointer Target = JsonPointer.Create("type");
 
         private readonly Regex typePattern;
-        private readonly string? errorMessage;
+        private readonly string? customErrorMessage;
 
-        public ResourceTypeRegexValidator(Regex typePattern, string? errorMessage = null)
+        public ResourceTypeRegexValidator(Regex typePattern, string? customErrorMessage = null)
         {
             this.typePattern = typePattern;
-            this.errorMessage = errorMessage;
+            this.customErrorMessage = customErrorMessage;
         }
 
         public IReadOnlyList<ErrorDetail> Validate(string value)
@@ -29,7 +28,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
 
             return new[]
             {
-                new ErrorDetail("InvalidType", this.errorMessage ?? $"Expected type to match the regular expression {this.typePattern}.", Target)
+                new ErrorDetail("InvalidType", this.customErrorMessage ?? $"Expected type to match the regular expression {this.typePattern}.", Target)
             };
         }
     }

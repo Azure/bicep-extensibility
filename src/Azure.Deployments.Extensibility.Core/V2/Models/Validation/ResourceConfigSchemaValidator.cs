@@ -1,16 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Utils;
 using Json.Pointer;
 using Json.Schema;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Validation
+namespace Azure.Deployments.Extensibility.Core.V2.Models.Validation
 {
-    public class ResourceConfigSchemaValidator : IValidator<JsonObject?, IReadOnlyList<ErrorDetail>>
+    public class ResourceConfigSchemaValidator : IResourceConfigValidator
     {
-        private readonly static JsonPointer BaseJsonPointer = JsonPointer.Create("properties");
+        private readonly static JsonPointer BaseJsonPointer = JsonPointerBuilder.Build<ResourceRequestBody>(x => x.Config!);
 
         private readonly JsonSchemaValidator validator;
 
@@ -28,7 +28,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             {
                 if (this.configRequired)
                 {
-                    return new[] { new ErrorDetail("NullOrUndefinedConfig", "Expected config to be not null or undefined.", BaseJsonPointer) };
+                    return new[] { new ErrorDetail("InvalidConfig", "Config cannot be null or undefined.", BaseJsonPointer) };
                 }
 
                 return Array.Empty<ErrorDetail>();
@@ -37,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             var schemaViolations = this.validator.Validate(config);
 
             return schemaViolations
-                .Select(x => new ErrorDetail("InvalidConfig", x.ErrorMessage, BaseJsonPointer.Combine(x.Target)))
+                .Select(x => new ErrorDetail("InvalidConfig", x.ErrorMessage, BaseJsonPointer.Combine(x.InstanceLocation)))
                 .ToList();
         }
     }

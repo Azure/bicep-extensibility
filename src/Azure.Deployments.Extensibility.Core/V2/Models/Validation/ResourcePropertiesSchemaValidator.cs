@@ -1,17 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Utils;
 using Json.Pointer;
 using Json.Schema;
-using System.Collections.Immutable;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Validation
+namespace Azure.Deployments.Extensibility.Core.V2.Models.Validation
 {
-    public class ResourcePropertiesSchemaValidator : IValidator<JsonObject, IReadOnlyList<ErrorDetail>>
+    public class ResourcePropertiesSchemaValidator : IResourcePropertiesValidator
     {
-        private readonly static JsonPointer BaseJsonPointer = JsonPointer.Create("properties");
+        private readonly static JsonPointer BaseJsonPointer = JsonPointerBuilder.Build<ResourceRequestBody>(x => x.Properties);
 
         private readonly JsonSchemaValidator validator;
 
@@ -30,7 +29,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             }
 
             return schemaViolations
-                .Select(x => new ErrorDetail("InvalidProperty", x.ErrorMessage, BaseJsonPointer.Combine(x.Target)))
+                .Select(x => new ErrorDetail("InvalidProperty", x.ErrorMessage, BaseJsonPointer.Combine(x.InstanceLocation)))
                 .ToList();
         }
     }
