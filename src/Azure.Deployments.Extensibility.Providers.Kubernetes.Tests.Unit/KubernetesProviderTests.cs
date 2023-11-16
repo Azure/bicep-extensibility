@@ -119,7 +119,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
             await using var server = await MockKubernetesApiServer.StartAsync(
                 this.testOutput,
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
-                httpContext => Task.Run(() => httpContext.Response.StatusCode = 404));
+                httpContext => Task.Run(() => { httpContext.Response.StatusCode = 404; }));
 
             request = server.InjectKubeConfig(request);
 
