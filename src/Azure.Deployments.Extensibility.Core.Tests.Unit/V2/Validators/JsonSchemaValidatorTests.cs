@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models.Validation;
+using Azure.Deployments.Extensibility.Core.V2.Validators;
 using FluentAssertions;
 using Json.Schema;
 using System.Text.Json.Nodes;
 using Xunit;
 
-namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Models.Validation
+namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validators
 {
     public class JsonSchemaValidatorTests
     {

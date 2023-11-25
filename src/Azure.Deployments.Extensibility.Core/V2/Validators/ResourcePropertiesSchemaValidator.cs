@@ -1,25 +1,21 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Core.V2.Utils;
 using Json.Pointer;
 using Json.Schema;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Models.Validation
+namespace Azure.Deployments.Extensibility.Core.V2.Validators
 {
-    public class ResourcePropertiesSchemaValidator : IResourcePropertiesValidator
+    public class ResourcePropertiesSchemaValidator(JsonSchema propertiesSchema) : IResourcePropertiesValidator
     {
         private readonly static JsonPointer BaseJsonPointer = JsonPointerBuilder.Build<ResourceRequestBody>(x => x.Properties);
 
-        private readonly JsonSchemaValidator validator;
+        private readonly JsonSchemaValidator validator = new(propertiesSchema);
 
-        public ResourcePropertiesSchemaValidator(JsonSchema propertiesSchema)
-        {
-            this.validator = new JsonSchemaValidator(propertiesSchema);
-        }
-
-        public IReadOnlyList<ErrorDetail> Validate(JsonObject value)
+        public virtual IReadOnlyList<ErrorDetail> Validate(JsonObject value)
         {
             var schemaViolations = this.validator.Validate(value);
 

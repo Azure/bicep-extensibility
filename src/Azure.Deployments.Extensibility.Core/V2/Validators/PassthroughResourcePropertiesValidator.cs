@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.Core.V2.Models;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Models.Validation
+namespace Azure.Deployments.Extensibility.Core.V2.Validators
 {
-    public class PassthroughResourcePropertiesValidator : IResourcePropertiesValidator
+    public sealed class PassthroughResourcePropertiesValidator : IResourcePropertiesValidator
     {
         private static readonly Lazy<PassthroughResourcePropertiesValidator> LazyInstance = new(() => new());
 

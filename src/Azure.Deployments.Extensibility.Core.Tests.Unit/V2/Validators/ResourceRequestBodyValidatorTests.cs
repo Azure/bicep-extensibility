@@ -4,14 +4,14 @@
 using AutoFixture.Xunit2;
 using Azure.Deployments.Extensibility.Core.Tests.Unit.Fixtures.Attributes;
 using Azure.Deployments.Extensibility.Core.V2.Models;
-using Azure.Deployments.Extensibility.Core.V2.Models.Validation;
+using Azure.Deployments.Extensibility.Core.V2.Validators;
 using FluentAssertions;
 using Json.Pointer;
 using Moq;
 using System.Text.Json.Nodes;
 using Xunit;
 
-namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Models.Validation
+namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validators
 {
     public class ResourceRequestBodyValidatorTests
     {
@@ -80,7 +80,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Models.Validation
 
             var error = result.Should().BeOfType<Error>().Subject;
             error.Target.Should().BeNull();
-            error.Message.Should().Be("Multiple error occurred. Please see details.");
+            error.Message.Should().Be("Multiple error occurred. Please see details for more information.");
             error.Details.Should().HaveCount(5);
 
             var errorDetails = error.Details!;
