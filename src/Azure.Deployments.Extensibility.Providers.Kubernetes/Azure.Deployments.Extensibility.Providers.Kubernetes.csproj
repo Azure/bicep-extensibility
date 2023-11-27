@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="V2\Schemas\K8sClusterAccessConfig.schema.json" />
+    <None Remove="V2\Schemas\K8sResourceProperties.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="V2\Schemas\K8sClusterAccessConfig.schema.json" />
+    <EmbeddedResource Include="V2\Schemas\K8sResourceProperties.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="12.1.1" />
   </ItemGroup>
 

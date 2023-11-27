@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.Core.V2.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validators
@@ -20,11 +21,19 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validators
         {
         }
 
-        public virtual Error? Validate(ResourceRequestBody resourceRequestBody)
+        public void ValidateAndThrow(ResourceRequestBody requestBody)
         {
-            var typeErrorDetails = typeValidator.Validate(resourceRequestBody.Type);
-            var propertiesErrorDetails = propertiesValidatorSelector(resourceRequestBody.Type).Validate(resourceRequestBody.Properties);
-            var configErrorDetails = this.configValidator.Validate(resourceRequestBody.Config);
+            if (this.Validate(requestBody) is { } error)
+            {
+                throw new ErrorResponseException(error);
+            }
+        }
+
+        public virtual Error? Validate(ResourceRequestBody requestBody)
+        {
+            var typeErrorDetails = typeValidator.Validate(requestBody.Type);
+            var propertiesErrorDetails = propertiesValidatorSelector(requestBody.Type).Validate(requestBody.Properties);
+            var configErrorDetails = this.configValidator.Validate(requestBody.Config);
 
             return Aggregate(
                 typeErrorDetails.Concat(propertiesErrorDetails).Concat(configErrorDetails),
