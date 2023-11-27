@@ -28,7 +28,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2
             var act = () => Sut.CreateResourceReferenceAsync(new DefaultHttpContext(), providerVersion, requestBody, CancellationToken.None);
 
             var exception = (await act.Should().ThrowAsync<ErrorResponseException>()).Which;
-            AssertMultipleErrorOccurred(exception.Error);
+            AssertMultipleErrorsOccurred(exception.Error);
         }
 
         [Theory, AutoData]
@@ -39,7 +39,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2
             var act = () => Sut.PreviewResourceCreateOrUpdateAsync(new DefaultHttpContext(), providerVersion, requestBody, CancellationToken.None);
 
             var exception = (await act.Should().ThrowAsync<ErrorResponseException>()).Which;
-            AssertMultipleErrorOccurred(exception.Error);
+            AssertMultipleErrorsOccurred(exception.Error);
         }
 
         [Theory, AutoData]
@@ -50,13 +50,13 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2
             var act = () => Sut.CreateOrUpdateResourceAsync(new DefaultHttpContext(), providerVersion, referenceId, requestBody, CancellationToken.None);
 
             var exception = (await act.Should().ThrowAsync<ErrorResponseException>()).Which;
-            AssertMultipleErrorOccurred(exception.Error);
+            AssertMultipleErrorsOccurred(exception.Error);
         }
 
-        private static void AssertMultipleErrorOccurred(Error error)
+        private static void AssertMultipleErrorsOccurred(Error error)
         {
-            error.Code.Should().Be("MultipleErrorOccurred");
-            error.Message.Should().Be("Multiple error occurred. Please see details for more information.");
+            error.Code.Should().Be("MultipleErrorsOccurred");
+            error.Message.Should().Be("Multiple errors occurred. Please see details for more information.");
             error.Details.Should().NotBeNull();
             error.Details.Should().HaveCount(3);
 

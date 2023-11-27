@@ -80,7 +80,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validators
 
             var error = result.Should().BeOfType<Error>().Subject;
             error.Target.Should().BeNull();
-            error.Message.Should().Be("Multiple error occurred. Please see details for more information.");
+            error.Message.Should().Be("Multiple errors occurred. Please see details for more information.");
             error.Details.Should().HaveCount(5);
 
             var errorDetails = error.Details!;

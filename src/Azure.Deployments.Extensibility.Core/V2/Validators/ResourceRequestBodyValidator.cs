@@ -44,7 +44,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validators
         {
             0 => null,
             1 => errorDetails.Single().AsError(),
-            _ => new Error("MultipleErrorOccurred", "Multiple error occurred. Please see details for more information.", details: errorDetails.ToArray()),
+            _ => new Error("MultipleErrorsOccurred", "Multiple errors occurred. Please see details for more information.", details: errorDetails.ToArray()),
         };
     }
 }
