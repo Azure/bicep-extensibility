@@ -17,9 +17,11 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
     // You must start Docker before running the tests. When the tests are not executed in CI,
     // MinikubeFixture will take care of starting and deleting the minikube cluster before
     // and after running all test cases.
-    public class KubernetesProviderTests : IClassFixture<MinikubeFixture>
+    public class KubernetesProviderTests
     {
-        [Theory, AzureVoteBackDeploymentRequestAutoData]
+        private const string SkipReason = "V1 Implementation is being deprecated";
+
+        [Theory(Skip = SkipReason), AzureVoteBackDeploymentRequestAutoData]
         public async Task SaveAsync_AzureVoteBackDeployment_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
@@ -27,7 +29,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
-        [Theory, AzureVoteBackServiceRequestAutoData]
+        [Theory(Skip = SkipReason), AzureVoteBackServiceRequestAutoData]
         public async Task SaveAsync_AzureVoteBackService_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
@@ -35,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
-        [Theory, RandomNamespaceRequestAutoData]
+        [Theory(Skip = SkipReason), RandomNamespaceRequestAutoData]
         public async Task GetAsync_SavedNamespace_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             await sut.SaveAsync(request, CancellationToken.None);
@@ -47,7 +49,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             successResponse.Resource.Properties.GetProperty("metadata").TryGetProperty("uid", out _).Should().BeTrue();
         }
 
-        [Theory, RandomNamespaceRequestAutoData]
+        [Theory(Skip = SkipReason), RandomNamespaceRequestAutoData]
         public async Task PreviewSaveAsync_WithExistingNamespace_PerformsServerSideDryRun(ExtensibilityOperationRequest namespaceRequest, KubernetesProvider sut)
         {
             await sut.SaveAsync(namespaceRequest, CancellationToken.None);
@@ -73,7 +75,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             labelTwo.GetString().Should().Be("valueTwo");
         }
 
-        [Theory, AutoData]
+        [Theory(Skip = SkipReason), AutoData]
         public async Task PreviewSaveAsync_WithoutExistingNamespace_PerformsClientSideDryRun(Fixture fixture, KubernetesProvider sut)
         {
             var nonexistentNamespace = fixture.Create<string>();

@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.17.0" />
+    <PackageReference Include="AutoFixture" Version="4.18.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj" />
     <ProjectReference Include="..\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.133" />
   </ItemGroup>
 
 </Project>

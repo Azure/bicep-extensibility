@@ -1,11 +1,11 @@
 name: Deploy dev host
 
 on:
-  push:
-    branches: 
-      - main
-    paths:
-      - 'src/Azure.Deployments.Extensibility.DevHost/**'
+  # push:
+    # branches: 
+    #   - main
+    # paths:
+    #   - 'src/Azure.Deployments.Extensibility.DevHost/**'
   workflow_dispatch:
 
 permissions:

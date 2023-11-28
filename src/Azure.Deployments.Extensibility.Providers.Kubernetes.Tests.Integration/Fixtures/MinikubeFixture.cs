@@ -66,13 +66,17 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             readStandardOutputThread.Join();
             readStandardErrorThread.Join();
 
-            if (!string.IsNullOrEmpty(standardError))
+            var errorMessage = new DiagnosticMessage(standardError);
+            this.diagnosticMessageSink.OnMessage(errorMessage);
+
+            var outputMessage = new DiagnosticMessage(standardOutput);
+            this.diagnosticMessageSink.OnMessage(errorMessage);
+
+            if (process.ExitCode != 0)
             {
-                throw new InvalidOperationException(standardError);
+                throw new InvalidOperationException("Cannot start minikube.");
             }
 
-            var diagnosticMessage = new DiagnosticMessage(standardOutput);
-            this.diagnosticMessageSink.OnMessage(diagnosticMessage);
         }
     }
 }

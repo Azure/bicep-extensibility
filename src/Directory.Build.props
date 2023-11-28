@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
     <Deterministic>true</Deterministic>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(MSBuildProjectExtension)' == '.csproj' ">
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
