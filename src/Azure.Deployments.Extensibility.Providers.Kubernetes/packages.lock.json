@@ -42,6 +42,11 @@
         "resolved": "7.2.1",
         "contentHash": "1gVCo18/02ZZOJ+dcpVNMsUHF6cLmltMMskUWl2G1l+0OmTTvcwJZq5/JXIVpvOzPM3gDLombsloGMlTQNcv9g=="
       },
+      "Humanizer.Core": {
+        "type": "Transitive",
+        "resolved": "2.11.10",
+        "contentHash": "4TBsHSXPocdsEB5dewIHeKykTzIz5Ui7ouXw4JsUGI+ax4jjviVJVD7+gsPCNyA+b3de2EjYI+jcEq8I/1ZFSQ=="
+      },
       "IdentityModel": {
         "type": "Transitive",
         "resolved": "5.2.0",
@@ -63,8 +68,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "1.9.0",
-        "contentHash": "MMjd2dOh32hLbcZg9YyA+7aEH9gu2cMTEAWrQY17in4+aEsPg2NtYTcwgWHJS9Tt2WUx+4iN1mNegR2uiEwsVQ==",
+        "resolved": "1.9.2",
+        "contentHash": "JZhi2ZJhoIqTtr9hSlMgmaj0PLq8lLvh9TiO1wOBgEYuGpvV/JUt5t0SD/VookahzptaBkApERpgBZUHMTP+aA==",
         "dependencies": {
           "System.Text.Json": "6.0.2"
         }
@@ -79,16 +84,17 @@
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "3.0.3",
-        "contentHash": "mCGQc15lHLp1R2CVhWiipnZurHXm93+LbPPAT/vXQm5PdHt6WQuYLhaEF8VZ+aXL9P2I6bGND6pDTEfqFs6gig==",
+        "resolved": "3.2.0",
+        "contentHash": "5mIWjhHbWRuVFQkw5CARF+e8aEXn746rgeY+gK+iHGt9us6JOM4HE3QNCVkPVW309Oau7Z93JYZVTupIr6vlwA==",
         "dependencies": {
-          "Json.More.Net": "1.8.0"
+          "Humanizer.Core": "2.11.10",
+          "Json.More.Net": "1.9.2"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "5.3.1",
-        "contentHash": "1Ox9kMtire1U1O+obAKGbO8i8MAWbRTKDBda1GpNaEN6sxQUFD7h9laBZ1WmXFVbsv9grTBFfYJi/I/5zoPvsQ==",
+        "resolved": "5.4.0",
+        "contentHash": "lHyhlaxkh0BiMak1YLyK1kG0gfnp3Dmfin+zBRWjShIGBigUQo+54ACFjeFodW0s+JqH5ZMqnF5h2HWx1cvxYg==",
         "dependencies": {
           "JetBrains.Annotations": "2021.2.0",
           "Json.More.Net": "1.9.0",
@@ -254,7 +260,8 @@
         "type": "Project",
         "dependencies": {
           "JsonPath.Net": "[0.6.7, )",
-          "JsonSchema.Net": "[5.3.1, )"
+          "JsonPointer.Net": "[3.2.0, )",
+          "JsonSchema.Net": "[5.4.0, )"
         }
       }
     },
@@ -299,6 +306,11 @@
         "resolved": "7.2.1",
         "contentHash": "1gVCo18/02ZZOJ+dcpVNMsUHF6cLmltMMskUWl2G1l+0OmTTvcwJZq5/JXIVpvOzPM3gDLombsloGMlTQNcv9g=="
       },
+      "Humanizer.Core": {
+        "type": "Transitive",
+        "resolved": "2.11.10",
+        "contentHash": "4TBsHSXPocdsEB5dewIHeKykTzIz5Ui7ouXw4JsUGI+ax4jjviVJVD7+gsPCNyA+b3de2EjYI+jcEq8I/1ZFSQ=="
+      },
       "IdentityModel": {
         "type": "Transitive",
         "resolved": "5.2.0",
@@ -320,8 +332,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "1.9.0",
-        "contentHash": "MMjd2dOh32hLbcZg9YyA+7aEH9gu2cMTEAWrQY17in4+aEsPg2NtYTcwgWHJS9Tt2WUx+4iN1mNegR2uiEwsVQ==",
+        "resolved": "1.9.2",
+        "contentHash": "JZhi2ZJhoIqTtr9hSlMgmaj0PLq8lLvh9TiO1wOBgEYuGpvV/JUt5t0SD/VookahzptaBkApERpgBZUHMTP+aA==",
         "dependencies": {
           "System.Text.Json": "6.0.2"
         }
@@ -336,16 +348,17 @@
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "3.0.3",
-        "contentHash": "mCGQc15lHLp1R2CVhWiipnZurHXm93+LbPPAT/vXQm5PdHt6WQuYLhaEF8VZ+aXL9P2I6bGND6pDTEfqFs6gig==",
+        "resolved": "3.2.0",
+        "contentHash": "5mIWjhHbWRuVFQkw5CARF+e8aEXn746rgeY+gK+iHGt9us6JOM4HE3QNCVkPVW309Oau7Z93JYZVTupIr6vlwA==",
         "dependencies": {
-          "Json.More.Net": "1.8.0"
+          "Humanizer.Core": "2.11.10",
+          "Json.More.Net": "1.9.2"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "5.3.1",
-        "contentHash": "1Ox9kMtire1U1O+obAKGbO8i8MAWbRTKDBda1GpNaEN6sxQUFD7h9laBZ1WmXFVbsv9grTBFfYJi/I/5zoPvsQ==",
+        "resolved": "5.4.0",
+        "contentHash": "lHyhlaxkh0BiMak1YLyK1kG0gfnp3Dmfin+zBRWjShIGBigUQo+54ACFjeFodW0s+JqH5ZMqnF5h2HWx1cvxYg==",
         "dependencies": {
           "JetBrains.Annotations": "2021.2.0",
           "Json.More.Net": "1.9.0",
@@ -511,7 +524,8 @@
         "type": "Project",
         "dependencies": {
           "JsonPath.Net": "[0.6.7, )",
-          "JsonSchema.Net": "[5.3.1, )"
+          "JsonPointer.Net": "[3.2.0, )",
+          "JsonSchema.Net": "[5.4.0, )"
         }
       }
     }

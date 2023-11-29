@@ -1,21 +1,19 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Json.Pointer;
 using System.Linq.Expressions;
-using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Utils
 {
     public static class JsonPointerBuilder
     {
-        public static JsonPointer Build<T>(Expression<Func<T, object>> expression)
+        private static readonly PointerCreationOptions DefaultOptions = new()
         {
-            var segmentsInCamelCase = JsonPointer.Create(expression).Segments
-                .Select(x => JsonNamingPolicy.CamelCase.ConvertName(x.Value))
-                .Select(PointerSegment.Create);
+            PropertyNameResolver = PropertyNameResolvers.CamelCase,
+        };
 
-            return JsonPointer.Create(segmentsInCamelCase);
-        }
+        public static JsonPointer Build<T>(Expression<Func<T, object>> expression, PointerCreationOptions? options = null) =>
+            JsonPointer.Create(expression, options ?? DefaultOptions);
     }
 }
