@@ -86,6 +86,11 @@
         "resolved": "2.5.4",
         "contentHash": "YUtEOBdArAISyb1cTWcHc6/bilSDB9q5lc8ughPQP1MqlAKSkxKMBqLQ+tiWMFRBd2o22E59nLD/4V5R3jfZxQ=="
       },
+      "CsvHelper": {
+        "type": "Transitive",
+        "resolved": "30.0.1",
+        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+      },
       "Fare": {
         "type": "Transitive",
         "resolved": "2.1.1",
@@ -1342,6 +1347,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "CsvHelper": "[30.0.1, )",
           "KubernetesClient": "[12.1.1, )"
         }
       },
@@ -1439,6 +1445,11 @@
         "resolved": "2.5.4",
         "contentHash": "YUtEOBdArAISyb1cTWcHc6/bilSDB9q5lc8ughPQP1MqlAKSkxKMBqLQ+tiWMFRBd2o22E59nLD/4V5R3jfZxQ=="
       },
+      "CsvHelper": {
+        "type": "Transitive",
+        "resolved": "30.0.1",
+        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+      },
       "Fare": {
         "type": "Transitive",
         "resolved": "2.1.1",
@@ -2695,6 +2706,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "CsvHelper": "[30.0.1, )",
           "KubernetesClient": "[12.1.1, )"
         }
       },

@@ -120,6 +120,11 @@
           "System.Text.Json": "4.7.2"
         }
       },
+      "CsvHelper": {
+        "type": "Transitive",
+        "resolved": "30.0.1",
+        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+      },
       "Fractions": {
         "type": "Transitive",
         "resolved": "7.2.1",
@@ -517,6 +522,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "CsvHelper": "[30.0.1, )",
           "KubernetesClient": "[12.1.1, )"
         }
       },
@@ -652,6 +658,11 @@
           "System.Text.Json": "4.7.2"
         }
       },
+      "CsvHelper": {
+        "type": "Transitive",
+        "resolved": "30.0.1",
+        "contentHash": "rcZtgbWR+As4G3Vpgx0AMNmShGuQLFjkHAPIIflzrfkJCx8/AOd4m96ZRmiU1Wi39qS5UVjV0P8qdgqOo5Cwyg=="
+      },
       "Fractions": {
         "type": "Transitive",
         "resolved": "7.2.1",
@@ -1049,6 +1060,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "CsvHelper": "[30.0.1, )",
           "KubernetesClient": "[12.1.1, )"
         }
       },

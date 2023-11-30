@@ -27,9 +27,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 
         private static readonly HttpContext DummyHttpContext = new DefaultHttpContext();
 
-        private static readonly V2KubernetesProvider Sut = new(
-            new V1APIResourceCatalogServiceFactory(),
-            new K8sResourceRepositoryFactory());
+        private static readonly V2KubernetesProvider Sut = new(new K8sApiDiscoveryServiceFactory(), new K8sResourceRepositoryFactory());
 
         [Theory, SampleNamespacedResourceRequestBodyAutoData]
         public async Task CreateResourceReferenceAsync_NamespacedResource_Ok(ResourceRequestBody request)
