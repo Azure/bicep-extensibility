@@ -12,8 +12,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Extensions
         public static IServiceCollection AddKubernetesV2Provider(this IServiceCollection services)
         {
             services
+                .AddSingleton<IK8sApiDiscoveryServiceFactory, K8sApiDiscoveryServiceFactory>()
                 .AddSingleton<IK8sResourceRepositoryFactory, K8sResourceRepositoryFactory>()
-                .AddSingleton<IV1APIResourceCatalogServiceFactory, V1APIResourceCatalogServiceFactory>()
                 .AddSingleton<KubernetesProvider>();
 
             return services;

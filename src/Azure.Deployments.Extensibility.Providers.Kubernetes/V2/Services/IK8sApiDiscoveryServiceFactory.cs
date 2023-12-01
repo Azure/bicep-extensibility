@@ -5,8 +5,8 @@ using k8s;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Services
 {
-    public interface IV1APIResourceCatalogServiceFactory
+    public interface IK8sApiDiscoveryServiceFactory
     {
-        IV1APIResourceCatalogService CreateV1APIResourceCatalogService(IKubernetes kubernetes);
+        IK8sApiDiscoveryService CreateK8sApiDiscoveryService(IKubernetes kubernetes);
     }
 }

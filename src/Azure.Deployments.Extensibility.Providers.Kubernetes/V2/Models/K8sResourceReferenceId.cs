@@ -6,8 +6,6 @@ using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Extensions;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Utils;
 using Json.Pointer;
-using k8s.Models;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -22,25 +20,25 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Models
 
         public static implicit operator K8sResourceReferenceId(string value) => Parse(value);
 
-        public static K8sResourceReferenceId Create(V1APIResource apiResource, K8sClusterAccessConfig config, ResourceRequestBody requestBody)
+        public static K8sResourceReferenceId Create(K8sApiMetadata apiMetadata, K8sClusterAccessConfig config, ResourceRequestBody requestBody)
         {
             var @namespace = requestBody.TryGetNamespace();
 
-            if (!apiResource.Namespaced && @namespace is not null)
+            if (!apiMetadata.Namespaced && @namespace is not null)
             {
                 throw new ErrorResponseException(
                     "NamespaceNotAllowed",
-                    $"Namespace should be specified for a cluster-scoped resource kind '{apiResource.Kind}'.",
+                    $"Namespace should be specified for a cluster-scoped resource kind '{apiMetadata.Kind}'.",
                     JsonPointer.Create("properties", "metadata", "namespace"));
             }
 
             @namespace ??= config.Namespace;
 
-            if (apiResource.Namespaced && @namespace is null)
+            if (apiMetadata.Namespaced && @namespace is null)
             {
                 throw new ErrorResponseException(
                     "NamespaceNotSpecified",
-                    $"Namespace is not specified for a namespaced resource kind '{apiResource.Kind}'.",
+                    $"Namespace is not specified for a namespaced resource kind '{apiMetadata.Kind}'.",
                     JsonPointer.Create("properties", "metadata", "namespace"));
             }
 
@@ -49,11 +47,11 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Models
 
             return new K8sResourceReferenceId
             {
-                Group = apiResource.Group,
-                Version = apiResource.Version,
-                Plural = apiResource.Name,
-                Kind = apiResource.Kind,
-                Namespace = apiResource.Namespaced ? @namespace : null,
+                Group = apiMetadata.Group ?? "",
+                Version = apiMetadata.Version,
+                Plural = apiMetadata.Plural,
+                Kind = apiMetadata.Kind,
+                Namespace = apiMetadata.Namespaced ? @namespace : null,
                 Name = requestBody.GetName(),
                 ClusterHostHash = clusterHostHash,
             };

@@ -16,9 +16,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2
 {
     public class KubernetesProviderTests
     {
-        private static readonly V2KubernetesProvider Sut = new(
-            new V1APIResourceCatalogServiceFactory(),
-            new K8sResourceRepositoryFactory());
+        private static readonly V2KubernetesProvider Sut = new(new K8sApiDiscoveryServiceFactory(), new K8sResourceRepositoryFactory());
 
         [Theory, AutoData]
         public async Task CreateResourceReferenceAsync_InvalidRequestBody_Throws(string providerVersion, string resourceType)

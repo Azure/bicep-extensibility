@@ -7,14 +7,17 @@
   <ItemGroup>
     <None Remove="V2\Schemas\K8sClusterAccessConfig.schema.json" />
     <None Remove="V2\Schemas\K8sResourceProperties.schema.json" />
+    <None Remove="V2\Services\K8sApiCatalog.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="V2\Schemas\K8sClusterAccessConfig.schema.json" />
     <EmbeddedResource Include="V2\Schemas\K8sResourceProperties.schema.json" />
+    <EmbeddedResource Include="V2\Data\K8sApiCatalog.csv" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="KubernetesClient" Version="12.1.1" />
   </ItemGroup>
 

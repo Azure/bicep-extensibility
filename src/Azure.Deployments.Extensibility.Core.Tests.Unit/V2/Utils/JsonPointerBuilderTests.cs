@@ -3,7 +3,6 @@
 
 using Azure.Deployments.Extensibility.Core.V2.Utils;
 using FluentAssertions;
-using Json.Pointer;
 using Xunit;
 
 namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Utils
@@ -17,7 +16,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Utils
         private record Bar(string Value);
 
         [Fact]
-        public void Build_PropertyExpression_ReturnsJsonPointerInCamelCase()
+        public void Build_DefaultOption_ReturnsJsonPointerInCamelCase()
         {
             var jsonPointer = JsonPointerBuilder.Build<Foobar>(x => x.Foo.Bar.Value);
 

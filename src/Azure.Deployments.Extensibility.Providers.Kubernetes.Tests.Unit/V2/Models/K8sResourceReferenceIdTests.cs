@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using AutoFixture;
 using AutoFixture.Xunit2;
 using Azure.Deployments.Extensibility.Core.V2.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Models;
 using FluentAssertions;
 using k8s.Models;
+using System.Collections.Immutable;
 using System.Text;
 using System.Text.Json.Nodes;
 using Xunit;
@@ -42,7 +44,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2.Mod
         [Theory, AutoData]
         public async Task Create_NamespaceSpecifiedForClusterScopedResource_Throws(string kind, string type)
         {
-            var apiResource = new V1APIResource { Namespaced = false, Kind = kind };
+            var apiMetadata = new K8sApiMetadata(null, "", kind, "", false, default);
             var config = await K8sClusterAccessConfig.FromAsync(DummyConfigObject);
             var requestBody = new ResourceRequestBody(type, new()
             {
@@ -52,7 +54,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2.Mod
                 }
             });
 
-            var exception = Invoking(() => K8sResourceReferenceId.Create(apiResource, config, requestBody))
+            var exception = Invoking(() => K8sResourceReferenceId.Create(apiMetadata, config, requestBody))
                 .Should()
                 .Throw<ErrorResponseException>()
                 .Which;
@@ -63,19 +65,20 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.V2.Mod
         }
 
         [Theory, AutoData]
-        public async Task Create_NamespaceNotSpecifiedForNamespacedResource_Throws(string kind, string type)
+        public async Task Create_NamespaceNotSpecifiedForNamespacedResource_Throws(string type, IFixture fixture)
         {
-            var apiResource = new V1APIResource { Namespaced = true, Kind = kind };
+            fixture.Inject(ImmutableArray<string>.Empty);
+            var apiMetadata = fixture.Build<K8sApiMetadata>().With(x => x.Namespaced, true).Create();
             var config = await K8sClusterAccessConfig.FromAsync(DummyConfigObject);
             var requestBody = new ResourceRequestBody(type, []);
 
-            var exception = Invoking(() => K8sResourceReferenceId.Create(apiResource, config, requestBody))
+            var exception = Invoking(() => K8sResourceReferenceId.Create(apiMetadata, config, requestBody))
                 .Should()
                 .Throw<ErrorResponseException>()
                 .Which;
 
             exception.Error.Code.Should().Be("NamespaceNotSpecified");
-            exception.Error.Message.Should().Be($"Namespace is not specified for a namespaced resource kind '{kind}'.");
+            exception.Error.Message.Should().Be($"Namespace is not specified for a namespaced resource kind '{apiMetadata.Kind}'.");
             exception.Error.Target?.ToString().Should().Be("/properties/metadata/namespace");
         }
 

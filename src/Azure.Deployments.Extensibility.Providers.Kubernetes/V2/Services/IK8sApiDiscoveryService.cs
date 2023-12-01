@@ -2,12 +2,11 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Models;
-using k8s.Models;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2.Services
 {
-    public interface IV1APIResourceCatalogService
+    public interface IK8sApiDiscoveryService
     {
-        Task<V1APIResource> FindV1APIResourceAsync(string providerVersion, K8sResourceType resourceType, CancellationToken cancellationToken);
+        Task<K8sApiMetadata> FindK8sApiMetadataAsync(string providerVersion, K8sResourceType resourceType, CancellationToken cancellationToken);
     }
 }

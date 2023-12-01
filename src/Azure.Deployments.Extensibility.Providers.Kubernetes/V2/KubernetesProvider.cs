@@ -21,7 +21,7 @@ using System.Text.Json.Nodes;
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2
 {
     public class KubernetesProvider(
-        IV1APIResourceCatalogServiceFactory v1APIResourceCatalogServiceFactory,
+        IK8sApiDiscoveryServiceFactory k8sApiDiscoveryServiceFactory,
         IK8sResourceRepositoryFactory k8sResourceRepositoryFactory) : IExtensibilityProvider
     {
         public const string ProviderName = "Kubernetes";
@@ -183,10 +183,10 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.V2
 
         private async Task<K8sResourceReferenceId> CreateResourceReferenceIdAsync(IKubernetes kubernetes, string providerVersion, K8sResourceType resourceType, K8sClusterAccessConfig config, ResourceRequestBody requestBody, CancellationToken cancellationToken)
         {
-            var apiResourceCatalogService = v1APIResourceCatalogServiceFactory.CreateV1APIResourceCatalogService(kubernetes);
-            var apiResource = await apiResourceCatalogService.FindV1APIResourceAsync(providerVersion, resourceType, cancellationToken);
+            var apiDiscoveryService = k8sApiDiscoveryServiceFactory.CreateK8sApiDiscoveryService(kubernetes);
+            var apiMetadata = await apiDiscoveryService.FindK8sApiMetadataAsync(providerVersion, resourceType, cancellationToken);
 
-            return K8sResourceReferenceId.Create(apiResource, config, requestBody);
+            return K8sResourceReferenceId.Create(apiMetadata, config, requestBody);
         }
     }
 }
