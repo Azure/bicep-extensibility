@@ -21,10 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core.csproj", "{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevHost", "DevHost", "{D067770F-49EE-4374-B878-C624450A7329}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.DevHost", "src\Azure.Deployments.Extensibility.DevHost\Azure.Deployments.Extensibility.DevHost.csproj", "{33BEB45A-04F9-4824-AFE1-2B20B439EA67}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{A5D0B27B-E278-4619-863C-16EE38693FE2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.ThirdParty", "src\Azure.Deployments.Extensibility.Providers.ThirdParty\Azure.Deployments.Extensibility.Providers.ThirdParty.csproj", "{C9AA69F5-2811-4F73-A559-1560150623B8}"
@@ -46,7 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{68DB78AC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8sApiCatalogGenerator", "K8sApiCatalogGenerator", "{B5233916-39C6-43F2-B0D4-D8AB2DCF0639}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator", "src\Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator\Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator.csproj", "{C02CEE52-920F-43FD-B1EA-0D2593E66EC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator", "src\Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator\Azure.Deployments.Extensibility.Tools.K8sApiCatalogGenerator.csproj", "{C02CEE52-920F-43FD-B1EA-0D2593E66EC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,10 +74,6 @@ Global
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33BEB45A-04F9-4824-AFE1-2B20B439EA67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33BEB45A-04F9-4824-AFE1-2B20B439EA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33BEB45A-04F9-4824-AFE1-2B20B439EA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33BEB45A-04F9-4824-AFE1-2B20B439EA67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9AA69F5-2811-4F73-A559-1560150623B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9AA69F5-2811-4F73-A559-1560150623B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9AA69F5-2811-4F73-A559-1560150623B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -102,7 +94,6 @@ Global
 		{551B9302-B7A3-47C5-8892-6B1598C70690} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{CEA4E336-491B-4D1A-A578-776E380EF463} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
-		{33BEB45A-04F9-4824-AFE1-2B20B439EA67} = {D067770F-49EE-4374-B878-C624450A7329}
 		{A5D0B27B-E278-4619-863C-16EE38693FE2} = {71A5B95E-429D-4E5A-BCDD-69E963D79962}
 		{C9AA69F5-2811-4F73-A559-1560150623B8} = {A5D0B27B-E278-4619-863C-16EE38693FE2}
 		{B5233916-39C6-43F2-B0D4-D8AB2DCF0639} = {68DB78AC-277C-437B-A0FB-6C1949DEE06C}
