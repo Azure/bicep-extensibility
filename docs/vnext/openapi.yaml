@@ -26,6 +26,17 @@ paths:
       summary: Create a resource reference
       description: |
         Generate a reference to a resource comprising a reference ID, regardless the existence of the resource.
+        
+        The reference ID MUST adhere to the format {flags}-{uniqueId}.
+        
+        ## {flags}
+        This section consists of two binary digits indicating the type of reference ID. The currently accepted values are `00` and `01`:
+        
+        - `00`: The reference ID is self-contained and requires no additional information for GET and DELETE operations.
+        - `01`: To perform GET and DELETE operations, the reference ID, along with the user-provided provider configuration, is necessary (e.g., the configuration includes a connection string).
+        
+        ## {uniqueId}
+        This is a URL-encoded free-form string that serves to uniquely identify a resource. The format of `uniqueId` is defined by the providers and is opaque to the Azure Deployments engine.
       operationId: createResourceReference
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -168,6 +179,70 @@ paths:
         - $ref: '#/components/parameters/HeaderTraceState'
         - $ref: '#/components/parameters/ProviderVersion'
         - $ref: '#/components/parameters/ReferenceId'
+      responses:
+        '204':
+          description: Successful operation
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '4XX':
+          description: Client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+  /{providerVersion}/resources/{referenceId}/getWithConfig:
+    post:
+      tags:
+       - Resource
+      summary: Get a resource
+      description: |
+        A supplementary RPC-style API to get a resource based on its reference ID and user-specified provider configuration through the POST method.
+        
+        This API is should only be implemented when the user-specified provider configuration is essential for the GET operation. For instance, if the configuration includes information like a connection string. However, if such configuration is not mandatory, the RESTful GET API MUST be implemented instead.
+      operationId: getResourceWithConfig
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ReferenceId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Config'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceResponse'
+        '404':
+          description: Resource not found.
+        '4XX':
+          description: Other client errors, such as 401 Unauthorized.
+        '5XX':
+          description: Server errors.
+  /{providerVersion}/resources/{referenceId}/deleteWithConfig:
+    post:
+      tags:
+       - Resource
+      summary: Delete a resource with config
+      description: |
+        A supplementary RPC-style API to remove a resource based on its reference ID and user-specified provider configuration through the POST method.
+        
+        This API should only be implemented when the user-specified provider configuration is essential for the delete operation. For instance, if the configuration includes information like a connection string. However, if such configuration is not mandatory, the RESTful DELETE API MUST be implemented instead.
+      operationId: deleteResourceWithConfig
+      parameters:
+        - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderRequestId'
+        - $ref: '#/components/parameters/HeaderCorrelationId'
+        - $ref: '#/components/parameters/HeaderTraceParent'
+        - $ref: '#/components/parameters/HeaderTraceState'
+        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ReferenceId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Config'
       responses:
         '204':
           description: Successful operation
@@ -401,6 +476,10 @@ components:
       minLength: 1
       maxLength: 2000
       description: A free-form string which is derived through computation utilizing the supplied resource configuration, resource type, and resource properties. **A reference ID should never be based on properties containing confidential data, such as a password or connection string**.
+    Config:
+      type: object
+      writeOnly: true
+      description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied provider configuration in the Bicep or ARM template file.
     Resource:
       type: object
       required:
@@ -408,9 +487,7 @@ components:
         - properties
       properties:
         config:
-          type: object
-          writeOnly: true
-          description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied provider configuration in the Bicep or ARM template file.
+          $ref: '#/components/schemas/Config'
         referenceId:
           $ref: '#/components/schemas/ResourceReferenceId'
         status:
