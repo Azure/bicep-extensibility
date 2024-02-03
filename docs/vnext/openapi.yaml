@@ -1,85 +1,35 @@
 openapi: 3.0.3
 info:
-  title: Azure Deployments Extensibility Provider API
+  title: Bicep Extension API
   description: |-
-    This is the OpenAPI 3.0 based specification for Azure Deployments Extensibility Provider API.
+    This is the OpenAPI 3.0 based specification for Bicep Extension API.
   version: 2.0.0
 externalDocs:
   description: Find out more about OpenAPI.
   url: https://www.openapis.org/
 servers:
-  - url: https://{providerApiEndpoint}
+  - url: https://{extensionApiEndpoint}
     variables:
-      providerApiEndpoint:
-        default: 'api.example-provider.com'
-        description: Extensibility provider API endpoint.
+      extensionApiEndpoint:
+        default: 'api.example-extension.com'
+        description: The extension API endpoint.
 tags:
   - name: Resource
     description: Resource API
   - name: ResourceOperation
     description: Resource Operation API
 paths:
-  /{providerVersion}/resources/reference:
-    post:
-      tags:
-        - Resource
-      summary: Create a resource reference
-      description: |
-        Generate a reference to a resource comprising a reference ID, regardless the existence of the resource.
-        
-        The reference ID MUST adhere to the format {flags}-{uniqueId}.
-        
-        ## {flags}
-        This section consists of two binary digits indicating the type of reference ID. The currently accepted values are `00` and `01`:
-        
-        - `00`: The reference ID is self-contained and requires no additional information for GET and DELETE operations.
-        - `01`: To perform GET and DELETE operations, the reference ID, along with the user-provided provider configuration, is necessary (e.g., the configuration includes a connection string).
-        
-        ## {uniqueId}
-        This is a URL-encoded free-form string that serves to uniquely identify a resource. The format of `uniqueId` is defined by the providers and is opaque to the Azure Deployments engine.
-      operationId: createResourceReference
-      parameters:
-        - $ref: '#/components/parameters/HeaderAcceptLanguage'
-        - $ref: '#/components/parameters/HeaderRequestId'
-        - $ref: '#/components/parameters/HeaderCorrelationId'
-        - $ref: '#/components/parameters/HeaderTraceParent'
-        - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Resource'
-        required: true
-      responses:
-        '200':
-          description: Successful operation.
-          headers: 
-            Date:
-              $ref: '#/components/headers/Date'
-            x-ms-request-id:
-              $ref: '#/components/headers/RequestId'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ResourceReference'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '4XX':
-          description: Other client errors, such as 401 Unauthorized.
-        '5XX':
-          description: Server errors.
-  /{providerVersion}/resources/preview:
+  /{extensionVersion}/resource/preview:
     post:
       tags:
        - Resource
-      summary: Create a preview of a resource create or update operation
+      summary: Preview a resource create or update operation
       description: |
         Preview a resource creation or update operation by simulating the process.
 
         Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
 
-        Should the simulation encounter failure due to inadequate provider or resource properties, the response must detail the errors encountered.
+        Should the simulation encounter failure due to inadequate information, the response must detail the errors encountered.
       operationId: previewResourceCreateOrUpdate
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -87,7 +37,7 @@ paths:
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
         - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
+        - $ref: '#/components/parameters/ExtensionVersion'
       requestBody:
         content:
           application/json:
@@ -103,13 +53,15 @@ paths:
           description: Other client errors, such as 401 Unauthorized.
         '5XX':
           description: Server errors.
-  /{providerVersion}/resources/{referenceId}:
-    put:
+  /{extensionVersion}/resource/createOrUpdate:
+    post:
       tags:
        - Resource
       summary: Create or update a resource
       description: |
-        Create or update a resource with a reference ID.
+        Create or update a resource.
+        
+        Upon successful operation, the service must add an identifiers property to its response. This property is an object consisting of several sub-properties that, when combined with the resource's type and configuration, create a *globally unique* key for identifying the resource. The structure of the identifiers property is determined by the extension service and is opaque to the template deployment engine.
 
         If the operation is synchronus or a resource based long-running operation (RELO), the response status code must be 201 Created for nonexistent resource or 200 OK for existing resource.
 
@@ -121,8 +73,7 @@ paths:
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
         - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
+        - $ref: '#/components/parameters/ExtensionVersion'
       requestBody:
         content:
           application/json:
@@ -142,11 +93,13 @@ paths:
           description: Other client errors, such as 401 Unauthorized.
         '5XX':
           description: Server errors.
-    get:
+  /{extensionVersion}/resource/get:
+    post:
       tags:
        - Resource
       summary: Get a resource
-      description: Get a resource by reference ID.
+      description: |
+        Get a resource given its type, identifiers, and configuration.
       operationId: getResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -154,8 +107,12 @@ paths:
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
         - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
+        - $ref: '#/components/parameters/ExtensionVersion'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceReference'
       responses:
         '200':
           $ref: '#/components/responses/ResourceResponse'
@@ -165,11 +122,13 @@ paths:
           description: Other client errors, such as 401 Unauthorized.
         '5XX':
           description: Server errors.
-    delete:
+  /{extensionVersion}/resource/delete:
+    post:
       tags:
        - Resource
       summary: Delete a resource
-      description: Delete a resource by reference ID.
+      description: |
+        Delete a resource given its type, identifiers, and configuration.
       operationId: deleteResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -177,72 +136,12 @@ paths:
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
         - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
-      responses:
-        '204':
-          description: Successful operation
-        '202':
-          $ref: '#/components/responses/Accepted'
-        '4XX':
-          description: Client errors, such as 401 Unauthorized.
-        '5XX':
-          description: Server errors.
-  /{providerVersion}/resources/{referenceId}/getWithConfig:
-    post:
-      tags:
-       - Resource
-      summary: Get a resource
-      description: |
-        A supplementary RPC-style API to get a resource based on its reference ID and user-specified provider configuration through the POST method.
-        
-        This API is should only be implemented when the user-specified provider configuration is essential for the GET operation. For instance, if the configuration includes information like a connection string. However, if such configuration is not mandatory, the RESTful GET API MUST be implemented instead.
-      operationId: getResourceWithConfig
-      parameters:
-        - $ref: '#/components/parameters/HeaderAcceptLanguage'
-        - $ref: '#/components/parameters/HeaderRequestId'
-        - $ref: '#/components/parameters/HeaderCorrelationId'
-        - $ref: '#/components/parameters/HeaderTraceParent'
-        - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
+        - $ref: '#/components/parameters/ExtensionVersion'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Config'
-      responses:
-        '200':
-          $ref: '#/components/responses/ResourceResponse'
-        '404':
-          description: Resource not found.
-        '4XX':
-          description: Other client errors, such as 401 Unauthorized.
-        '5XX':
-          description: Server errors.
-  /{providerVersion}/resources/{referenceId}/deleteWithConfig:
-    post:
-      tags:
-       - Resource
-      summary: Delete a resource with config
-      description: |
-        A supplementary RPC-style API to remove a resource based on its reference ID and user-specified provider configuration through the POST method.
-        
-        This API should only be implemented when the user-specified provider configuration is essential for the delete operation. For instance, if the configuration includes information like a connection string. However, if such configuration is not mandatory, the RESTful DELETE API MUST be implemented instead.
-      operationId: deleteResourceWithConfig
-      parameters:
-        - $ref: '#/components/parameters/HeaderAcceptLanguage'
-        - $ref: '#/components/parameters/HeaderRequestId'
-        - $ref: '#/components/parameters/HeaderCorrelationId'
-        - $ref: '#/components/parameters/HeaderTraceParent'
-        - $ref: '#/components/parameters/HeaderTraceState'
-        - $ref: '#/components/parameters/ProviderVersion'
-        - $ref: '#/components/parameters/ReferenceId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Config'
+              $ref: '#/components/schemas/ResourceReference'
       responses:
         '204':
           description: Successful operation
@@ -283,7 +182,7 @@ components:
       name: Accept-Language
       in: header
       required: false
-      description: Specifies the preferred language for the response Providers should use this header when generating client facing text, such as error messages.
+      description: Specifies the preferred language for the response Extensions should use this header when generating client facing text, such as error messages.
       schema:
         type: string
         example: en-US
@@ -308,22 +207,22 @@ components:
     HeaderTraceParent:
       name: traceparent
       required: true
-      description: Standard W3C trace context header generated by OpenTelemetry. Providers should use the header if they support OpenTelemetry.
+      description: Standard W3C trace context header generated by OpenTelemetry. Extensions should use the header if they support OpenTelemetry.
       in: header
       schema:
         type: string
     HeaderTraceState:
       name: tracestate
       required: true
-      description: Standard W3C trace context header generated by OpenTelemetry. Providers should use the header if they support OpenTelemetry.
+      description: Standard W3C trace context header generated by OpenTelemetry. Extensions should use the header if they support OpenTelemetry.
       in: header
       schema:
         type: string
-    ProviderVersion:
-      name: providerVersion
+    ExtensionVersion:
+      name: extensionVersion
       in: path
       required: true
-      description: Version of the provider. This is specified by the user with the provider import syntax in the Bicep or ARM template file. It is recommended for the extensibility provider to validate the request payload against the provider version, but it's not mandatory.
+      description: Version of the extension. This is specified by the user with the extension import syntax in the Bicep or ARM template file. It is recommended for the extension service to validate the request payload against the extension version, but it's not mandatory.
       schema:
         type: string
     ReferenceId:
@@ -347,7 +246,7 @@ components:
         type: string
         format: date
     RequestId:
-      description: A unique identifier for the current operation, service generated. Extensibility providers *must* return this value in the response headers to facilitate debugging.
+      description: A unique identifier for the current operation, service generated. Extensions *must* return this value in the response headers to facilitate debugging.
       schema:
         type: string
         format: uuid
@@ -390,7 +289,8 @@ components:
           schema:
             $ref: '#/components/schemas/Resource'
           example:
-            referenceId: 'application-v1-myApp'
+            identifiers:
+              name: 'myApp'
             status: Succeeded
             type: application@v1
             properties:
@@ -466,19 +366,21 @@ components:
       required:
         - referenceId
       properties:
-        referenceId:
-          $ref: '#/components/schemas/ResourceReferenceId'
+        identifiers:
+          type: object
+        config:
+          $ref: '#/components/schemas/Config'
       example:
-        referenceId: application-v1-myApp
-    ResourceReferenceId:
-      type: string
-      readOnly: true
-      minLength: 1
-      maxLength: 2000
-      description: A free-form string which is derived through computation utilizing the supplied resource configuration, resource type, and resource properties. **A reference ID should never be based on properties containing confidential data, such as a password or connection string**.
+        type: application@v1
+        identifiers: {
+          name: myApp
+        }
+        config:
+          configItemOne: true
+          configItemTwo: 'value'
     Config:
       type: object
-      writeOnly: true
+      # writeOnly: true
       description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied provider configuration in the Bicep or ARM template file.
     Resource:
       type: object
@@ -488,8 +390,9 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/Config'
-        referenceId:
-          $ref: '#/components/schemas/ResourceReferenceId'
+        identifiers:
+          type: object
+          readOnly: true
         status:
           $ref: '#/components/schemas/Status'
         type:
