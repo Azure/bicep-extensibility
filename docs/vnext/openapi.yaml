@@ -381,7 +381,7 @@ components:
     Config:
       type: object
       # writeOnly: true
-      description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied provider configuration in the Bicep or ARM template file.
+      description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied extension configuration in the Bicep or ARM template file.
     Resource:
       type: object
       required:
@@ -410,7 +410,7 @@ components:
 
     Status:
       readOnly: true
-      description: 'Indicates the provisioning status of the resource or long-running operation. There are three terminal status: defined Succeeded, Failed, and Canceled. A null or undefined status property is treated as Succeeded. Any other status is a non-terminal state and is defined by each extensibility provider (e.g., Running).'
+      description: 'Indicates the provisioning status of the resource or long-running operation. There are three terminal status: defined Succeeded, Failed, and Canceled. A null or undefined status property is treated as Succeeded. Any other status is a non-terminal state and is defined by each extension (e.g., Running).'
       oneOf:
         - type: string
         - type: string
