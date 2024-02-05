@@ -3,6 +3,8 @@ info:
   title: Bicep Extension API
   description: |-
     This is the OpenAPI 3.0 based specification for Bicep Extension API.
+    
+    Note: Authentication and authorization are not covered in this specification, since extensions may use different authentication and authorization mechanisms.
   version: 2.0.0
 externalDocs:
   description: Find out more about OpenAPI.
@@ -19,7 +21,7 @@ tags:
   - name: ResourceOperation
     description: Resource Operation API
 paths:
-  /{extensionVersion}/resource/preview:
+  /{extensionVersion}/resource/whatIf:
     post:
       tags:
        - Resource
@@ -30,9 +32,12 @@ paths:
         Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
 
         Should the simulation encounter failure due to inadequate information, the response must detail the errors encountered.
+        
+        [TODO]: A mechanism is required for extensions to identify properties that cannot be determined during the preview phase, such as a timestamp. One idea is to utilize a placeholder ARM template expression, like `[unknown()]`, for these property values. This should be brought up with Jorge and Jonny, who are currently tackling the related What-If issue #157 by introducing a placeholder ARM template expression.
       operationId: previewResourceCreateOrUpdate
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderReferer'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -69,6 +74,7 @@ paths:
       operationId: createOrUpdateResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderReferer'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -103,6 +109,7 @@ paths:
       operationId: getResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderReferer'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -132,6 +139,7 @@ paths:
       operationId: deleteResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderReferer'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -160,6 +168,7 @@ paths:
       operationId: getResourceOperation
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
+        - $ref: '#/components/parameters/HeaderReferer'
         - $ref: '#/components/parameters/HeaderRequestId'
         - $ref: '#/components/parameters/HeaderCorrelationId'
         - $ref: '#/components/parameters/HeaderTraceParent'
@@ -186,6 +195,15 @@ components:
       schema:
         type: string
         example: en-US
+    HeaderReferer:
+      name: Referer
+      in: header
+      required: true
+      description: The full URL of the extensibility host service instance from which the request is sent. Extensions should use this header to track the source of the request.
+      schema:
+        type: string
+        format: uri
+        example: https://www.example.com
     HeaderRequestId:
       name: x-ms-client-request-id
       in: header
@@ -259,7 +277,7 @@ components:
         x-ms-request-id:
           $ref: '#/components/headers/RequestId'
         Location:
-          description: An absolute and public facing URI pointing to an operation resource which can be used to monitor the status of the delete operation.
+          description: An absolute URL pointing to an operation resource which can be used to monitor the status of the delete operation.
           schema:
             type: string
         Retry-After:
@@ -380,7 +398,7 @@ components:
           configItemTwo: 'value'
     Config:
       type: object
-      # writeOnly: true
+      writeOnly: true
       description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied extension configuration in the Bicep or ARM template file.
     Resource:
       type: object
