@@ -62,9 +62,14 @@ The LRO pattern serves as an alternative for executing asynchronous resource cre
 
 #### API Flow
 
-1. The Extensibility Host initiates a DELETE request to the extension, signaling the intention to delete a resource.
-2. In response, the extension issues a 202 Accepted status along with a `Location` header, and optionally a `Retry-After` header. The Location header encompasses an absolute URL pointing to an operation resource that the Extensibility Host will poll.
-3. The Extensibility Host employs a GET request on the URL specified within the `Location` header.
-4. Subsequent polling by the Extensibility Host should respect the `Retry-After` interval if it was provided, or adhere to the default interval of 60 seconds if not.
-5. While the delete operation remains incomplete, the extension returns a 200 OK response containing a non-terminal `status` property in the response body.
-6. Upon the operation's completion, the extension issues a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`). If the status is `Failed` or `Canceled`, an `error` property must be included in the response.
+1. The Deployments RP initiates a DELETE request to the Extensibility Host, signaling the intention to delete a resource.
+2. The Extensibility Host, upon receiving the DELETE request, determines the corresponding extension to call and forwards the DELETE request to the identified extension.
+3. In response, the extension issues a 202 Accepted status along with a `Location` header, and optionally a `Retry-After` header. The Location header encompasses an absolute URL pointing to an operation resource.
+4. The Extensibility Host then modifies the `Location` URL provided by the extension, replacing the extension's endpoint (including the FQDN and port) with its own, and adds the extension's name and version at the beginning of the URL path. For instance, a `Location` URL like `https://{extensionApiEndpoint}/resourceOperations/123` is transformed to `https://{extensibilityHostEndpoint}/{extensionName}/{extensionVersion}/resourceOperations/123`.
+5. The Extensibility Host sends back the DELETE response to the Deployments RP.
+6. The Deployments RP employs a GET request on the `Location` URL to track the operation's progress.
+7. When this GET request is received, the Extensibility Host reverts the `Location` URL to its original format by substituting back the extension's endpoint for its own and removing the extension's name and version from the path.
+9. The Extensibility Host makes a GET request to the original `Location` URL and relays the response received from the extension back to the Deployments Resource Provider.
+10. The Deployments RP then periodically polls for the operation's status, adhering to the `Retry-After` header if specified, or defaulting to a 60-second interval otherwise.
+11. While the delete operation remains incomplete, the extension will return a 200 OK response containing a non-terminal `status` property in the response body.
+12. Upon the operation's completion, the extension will issue a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`). If the status is `Failed` or `Canceled`, an `error` property must be included in the response.
