@@ -27,7 +27,7 @@ paths:
        - Resource
       summary: Preview a resource create or update operation
       description: |
-        Preview a resource creation or update operation by simulating the process.
+        Preview a resource creation or update operation by simulating the process (i.e. What-If).
 
         Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
 
