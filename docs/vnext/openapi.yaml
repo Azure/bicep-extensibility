@@ -68,7 +68,7 @@ paths:
         
         Upon successful operation, the service must add an identifiers property to its response. This property is an object consisting of several sub-properties that, when combined with the resource's type and configuration, create a *globally unique* key for identifying the resource. The structure of the identifiers property is determined by the extension service and is opaque to the template deployment engine.
 
-        If the operation is synchronus or a resource based long-running operation (RELO), the response status code must be 201 Created for nonexistent resource or 200 OK for existing resource.
+        If the operation is synchronous or a resource based long-running operation (RELO), the response status code must be 201 Created for nonexistent resource or 200 OK for existing resource.
 
         If the opeartion is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
       operationId: createOrUpdateResource
@@ -268,12 +268,19 @@ components:
       schema:
         type: string
         format: uuid
+    Version:
+      description: Version of the extension. The value should be the same as the extensionVersion parameter in the request URL.
+      schema:
+        type: string
+        format: string
   responses:
     Accepted:
       description: Accepted
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        Version:
+          $ref: '#/components/headers/Version'
         x-ms-request-id:
           $ref: '#/components/headers/RequestId'
         Location:
@@ -289,6 +296,8 @@ components:
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        Version:
+          $ref: '#/components/headers/Version'
         x-ms-request-id:
           $ref: '#/components/headers/RequestId'
       content: 
@@ -300,6 +309,8 @@ components:
       headers:
         Date:
           $ref: '#/components/headers/Date'
+        Version:
+          $ref: '#/components/headers/Version'
         x-ms-request-id:
           $ref: '#/components/headers/RequestId'
       content: 
@@ -385,6 +396,7 @@ components:
         - referenceId
       properties:
         identifiers:
+          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.
           type: object
         config:
           $ref: '#/components/schemas/Config'
