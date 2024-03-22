@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 {
-    public readonly record struct KubernetesResourceType(string Group, string Version, string Kind)
+    public readonly partial record struct KubernetesResourceType(string Group, string Version, string Kind)
     {
-        public readonly static Regex Regex = new(@"^((?<group>[\w.]+)/)?(?<kind>[\w]+)@(?<version>[\w\d]+)$", RegexOptions.Compiled);
+        public readonly static Regex Regex = TypePattern();
 
         public string ApiVersion => this.Group == "" ? this.Version : $"{this.Group}/{this.Version}";
 
@@ -32,5 +32,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 
             return parsedType;
         }
+
+        [GeneratedRegex(@"^((?<group>[\w-.]+)/)?(?<kind>[\w-.]+)@(?<version>[\w\d]+)$", RegexOptions.Compiled)]
+        private static partial Regex TypePattern();
     }
 }
