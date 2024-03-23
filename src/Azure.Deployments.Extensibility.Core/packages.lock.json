@@ -4,32 +4,31 @@
     "net7.0": {
       "JsonPath.Net": {
         "type": "Direct",
-        "requested": "[0.6.7, )",
-        "resolved": "0.6.7",
-        "contentHash": "/3E+Ujg55DTSpGoy9DIcA7SqF1m6pLnsCgfgK4v3/E6FT/qabV6k/rLth/l40eg2yjakOnUa95/JY+hXubfZFA==",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
         "dependencies": {
-          "Json.More.Net": "1.9.0"
+          "Json.More.Net": "2.0.0"
         }
       },
       "JsonPointer.Net": {
         "type": "Direct",
-        "requested": "[3.2.0, )",
-        "resolved": "3.2.0",
-        "contentHash": "5mIWjhHbWRuVFQkw5CARF+e8aEXn746rgeY+gK+iHGt9us6JOM4HE3QNCVkPVW309Oau7Z93JYZVTupIr6vlwA==",
+        "requested": "[4.0.1, )",
+        "resolved": "4.0.1",
+        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
         "dependencies": {
-          "Humanizer.Core": "2.11.10",
-          "Json.More.Net": "1.9.2"
+          "Humanizer.Core": "2.14.1",
+          "Json.More.Net": "2.0.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Direct",
-        "requested": "[5.4.0, )",
-        "resolved": "5.4.0",
-        "contentHash": "lHyhlaxkh0BiMak1YLyK1kG0gfnp3Dmfin+zBRWjShIGBigUQo+54ACFjeFodW0s+JqH5ZMqnF5h2HWx1cvxYg==",
+        "requested": "[6.0.5, )",
+        "resolved": "6.0.5",
+        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
         "dependencies": {
-          "JetBrains.Annotations": "2021.2.0",
-          "Json.More.Net": "1.9.0",
-          "JsonPointer.Net": "3.0.3"
+          "Json.More.Net": "2.0.0",
+          "JsonPointer.Net": "4.0.0"
         }
       },
       "Microsoft.CodeAnalysis.BannedApiAnalyzers": {
@@ -56,20 +55,15 @@
       },
       "Humanizer.Core": {
         "type": "Transitive",
-        "resolved": "2.11.10",
-        "contentHash": "4TBsHSXPocdsEB5dewIHeKykTzIz5Ui7ouXw4JsUGI+ax4jjviVJVD7+gsPCNyA+b3de2EjYI+jcEq8I/1ZFSQ=="
-      },
-      "JetBrains.Annotations": {
-        "type": "Transitive",
-        "resolved": "2021.2.0",
-        "contentHash": "kKSyoVfndMriKHLfYGmr0uzQuI4jcc3TKGyww7buJFCYeHb/X0kodYBPL7n9454q7v6ASiRmDgpPGaDGerg/Hg=="
+        "resolved": "2.14.1",
+        "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "1.9.2",
-        "contentHash": "JZhi2ZJhoIqTtr9hSlMgmaj0PLq8lLvh9TiO1wOBgEYuGpvV/JUt5t0SD/VookahzptaBkApERpgBZUHMTP+aA==",
+        "resolved": "2.0.1",
+        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw==",
         "dependencies": {
-          "System.Text.Json": "6.0.2"
+          "System.Text.Json": "8.0.0"
         }
       },
       "Microsoft.Build.Tasks.Git": {
@@ -82,58 +76,48 @@
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
       },
-      "System.Runtime.CompilerServices.Unsafe": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg=="
-      },
       "System.Text.Encodings.Web": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "Vg8eB5Tawm1IFqj4TVK1czJX89rhFxJo9ELqc/Eiq0eXy13RK00eubyU6TJE6y+GQXjyV5gSfiewDUZjQgSE0w==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
+        "resolved": "8.0.0",
+        "contentHash": "yev/k9GHAEGx2Rg3/tU6MQh4HGBXJs70y7j1LaM1i/ER9po+6nnQ6RRqTJn1E7Xu0fbIFK80Nh5EoODxrbxwBQ=="
       },
       "System.Text.Json": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "0nE2gwXLn3PTBOPwORLqwuYvWB+Beomt9ZBX+6LmogMNKUvfD1SoDb/ycB1vBntT94rGaB/SvxEyeLu14H6aEg==",
+        "resolved": "8.0.0",
+        "contentHash": "OdrZO2WjkiEG6ajEFRABTRCi/wuXQPxeV6g8xvUJqdxMvvuCCEk86zPla8UiIQJz3durtUEbNyY/3lIhS0yZvQ==",
         "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0",
-          "System.Text.Encodings.Web": "6.0.0"
+          "System.Text.Encodings.Web": "8.0.0"
         }
       }
     },
     "net8.0": {
       "JsonPath.Net": {
         "type": "Direct",
-        "requested": "[0.6.7, )",
-        "resolved": "0.6.7",
-        "contentHash": "/3E+Ujg55DTSpGoy9DIcA7SqF1m6pLnsCgfgK4v3/E6FT/qabV6k/rLth/l40eg2yjakOnUa95/JY+hXubfZFA==",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
         "dependencies": {
-          "Json.More.Net": "1.9.0"
+          "Json.More.Net": "2.0.0"
         }
       },
       "JsonPointer.Net": {
         "type": "Direct",
-        "requested": "[3.2.0, )",
-        "resolved": "3.2.0",
-        "contentHash": "5mIWjhHbWRuVFQkw5CARF+e8aEXn746rgeY+gK+iHGt9us6JOM4HE3QNCVkPVW309Oau7Z93JYZVTupIr6vlwA==",
+        "requested": "[4.0.1, )",
+        "resolved": "4.0.1",
+        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
         "dependencies": {
-          "Humanizer.Core": "2.11.10",
-          "Json.More.Net": "1.9.2"
+          "Humanizer.Core": "2.14.1",
+          "Json.More.Net": "2.0.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Direct",
-        "requested": "[5.4.0, )",
-        "resolved": "5.4.0",
-        "contentHash": "lHyhlaxkh0BiMak1YLyK1kG0gfnp3Dmfin+zBRWjShIGBigUQo+54ACFjeFodW0s+JqH5ZMqnF5h2HWx1cvxYg==",
+        "requested": "[6.0.5, )",
+        "resolved": "6.0.5",
+        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
         "dependencies": {
-          "JetBrains.Annotations": "2021.2.0",
-          "Json.More.Net": "1.9.0",
-          "JsonPointer.Net": "3.0.3"
+          "Json.More.Net": "2.0.0",
+          "JsonPointer.Net": "4.0.0"
         }
       },
       "Microsoft.CodeAnalysis.BannedApiAnalyzers": {
@@ -160,21 +144,13 @@
       },
       "Humanizer.Core": {
         "type": "Transitive",
-        "resolved": "2.11.10",
-        "contentHash": "4TBsHSXPocdsEB5dewIHeKykTzIz5Ui7ouXw4JsUGI+ax4jjviVJVD7+gsPCNyA+b3de2EjYI+jcEq8I/1ZFSQ=="
-      },
-      "JetBrains.Annotations": {
-        "type": "Transitive",
-        "resolved": "2021.2.0",
-        "contentHash": "kKSyoVfndMriKHLfYGmr0uzQuI4jcc3TKGyww7buJFCYeHb/X0kodYBPL7n9454q7v6ASiRmDgpPGaDGerg/Hg=="
+        "resolved": "2.14.1",
+        "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "1.9.2",
-        "contentHash": "JZhi2ZJhoIqTtr9hSlMgmaj0PLq8lLvh9TiO1wOBgEYuGpvV/JUt5t0SD/VookahzptaBkApERpgBZUHMTP+aA==",
-        "dependencies": {
-          "System.Text.Json": "6.0.2"
-        }
+        "resolved": "2.0.1",
+        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -185,28 +161,6 @@
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "dk9JPxTCIevS75HyEQ0E4OVAFhB2N+V9ShCXf8Q6FkUQZDkgLI12y679Nym1YqsiSysuQskT7Z+6nUf3yab6Vw=="
-      },
-      "System.Runtime.CompilerServices.Unsafe": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg=="
-      },
-      "System.Text.Encodings.Web": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "Vg8eB5Tawm1IFqj4TVK1czJX89rhFxJo9ELqc/Eiq0eXy13RK00eubyU6TJE6y+GQXjyV5gSfiewDUZjQgSE0w==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
-        }
-      },
-      "System.Text.Json": {
-        "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "0nE2gwXLn3PTBOPwORLqwuYvWB+Beomt9ZBX+6LmogMNKUvfD1SoDb/ycB1vBntT94rGaB/SvxEyeLu14H6aEg==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "6.0.0",
-          "System.Text.Encodings.Web": "6.0.0"
-        }
       }
     }
   }

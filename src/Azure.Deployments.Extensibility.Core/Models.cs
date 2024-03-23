@@ -48,7 +48,8 @@ namespace Azure.Deployments.Extensibility.Core
     /// "/resource/properties/foo" will be converted to "resources/myResource/properties/foo".
     /// </param>
     /// <param name="Message">The error message.</param>
-    public record ExtensibilityError(string Code, JsonPointer Target,  string Message);
+    /// <param name="SanitizedMessage">Optional. The sanitized error message for logging.</param>
+    public record ExtensibilityError(string Code, JsonPointer Target, string Message, string? SanitizedMessage = null);
 
     /// <summary>
     /// Provides information about an extensibility operation.
