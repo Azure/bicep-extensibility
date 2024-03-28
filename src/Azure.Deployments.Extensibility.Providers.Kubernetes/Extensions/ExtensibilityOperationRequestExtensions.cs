@@ -77,7 +77,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
             // Run JSON schema validation.
             return request.Validate<KubernetesConfig, KubernetesResourceProperties>(
                 KubernetesConfig.Schema,
-                KubernetesResourceType.Regex,
+                KubernetesResourceType.TypePattern,
                 KubernetesResourceProperties.Schema);
         }
 
