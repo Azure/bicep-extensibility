@@ -7,13 +7,13 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 {
     public readonly partial record struct KubernetesResourceType(string Group, string Version, string Kind)
     {
-        public readonly static Regex Regex = TypePattern();
+        public readonly static Regex TypePattern = new(@"^((?<group>[\w-.]+)/)?(?<kind>[\w-.]+)@(?<version>[\w\d]+)$", RegexOptions.Compiled);
 
         public string ApiVersion => this.Group == "" ? this.Version : $"{this.Group}/{this.Version}";
 
         public static KubernetesResourceType Parse(string rawType)
         {
-            if (Regex.Match(rawType) is not { } match)
+            if (TypePattern.Match(rawType) is not { } match)
             {
                 throw new ArgumentException($"Expected {nameof(rawType)} to be valid.");
             }
@@ -32,8 +32,5 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Models
 
             return parsedType;
         }
-
-        [GeneratedRegex(@"^((?<group>[\w-.]+)/)?(?<kind>[\w-.]+)@(?<version>[\w\d]+)$", RegexOptions.Compiled)]
-        private static partial Regex TypePattern();
     }
 }
