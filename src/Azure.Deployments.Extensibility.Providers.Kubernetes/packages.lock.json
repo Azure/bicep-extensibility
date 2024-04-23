@@ -4,9 +4,9 @@
     "net6.0": {
       "CsvHelper": {
         "type": "Direct",
-        "requested": "[31.0.2, )",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "requested": "[31.0.4, )",
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "KubernetesClient": {
         "type": "Direct",
@@ -68,33 +68,33 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw==",
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w==",
         "dependencies": {
           "System.Text.Json": "8.0.0"
         }
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -234,18 +234,18 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       }
     },
     "net7.0": {
       "CsvHelper": {
         "type": "Direct",
-        "requested": "[31.0.2, )",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "requested": "[31.0.4, )",
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "KubernetesClient": {
         "type": "Direct",
@@ -307,33 +307,33 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw==",
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w==",
         "dependencies": {
           "System.Text.Json": "8.0.0"
         }
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -469,18 +469,18 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       }
     },
     "net8.0": {
       "CsvHelper": {
         "type": "Direct",
-        "requested": "[31.0.2, )",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "requested": "[31.0.4, )",
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "KubernetesClient": {
         "type": "Direct",
@@ -542,30 +542,30 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw=="
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w=="
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -688,9 +688,9 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       }
     }
