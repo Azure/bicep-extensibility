@@ -21,19 +21,21 @@ tags:
   - name: ResourceOperation
     description: Resource Operation API
 paths:
-  /{extensionVersion}/resource/whatIf:
+  /{extensionVersion}/resource/preview:
     post:
       tags:
        - Resource
       summary: Preview a resource create or update operation
       description: |
-        Preview a resource creation or update operation by simulating the process (i.e. What-If).
+        Preview a resource creation or update operation by simulating the process.
 
         Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
 
-        Should the simulation encounter failure due to inadequate information, the response must detail the errors encountered.
+        Should the simulation encounter failure due to invalid properties, the response must detail the errors encountered.
         
-        [TODO]: A mechanism is required for extensions to identify properties that cannot be determined during the preview phase, such as a timestamp. One idea is to utilize a placeholder ARM template expression, like `[unknown()]`, for these property values. This should be brought up with Jorge and Jonny, who are currently tackling the related What-If issue #157 by introducing a placeholder ARM template expression.
+        [TODO 1]: We need to explore strategies for handling ARM template expressions.
+          
+        [TODO 2]: A mechanism is required for extensions to report properties that cannot be determined during the preview phase, such as a timestamp. One idea is to utilize a placeholder ARM template expression, like `[unknown()]`, for these property values.
       operationId: previewResourceCreateOrUpdate
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -321,7 +323,8 @@ components:
             identifiers:
               name: 'myApp'
             status: Succeeded
-            type: application@v1
+            type: application
+            apiVersion: v1
             properties:
               name: 'myApp'
               propOne: true
@@ -389,7 +392,7 @@ components:
         target:
           type: string
           description: An absolute JSON Pointer (see [RFC 6901](https://datatracker.ietf.org/doc/html/rfc6901)) to the property causing the error.
-          example: /properties/foo
+          example: /type
     ResourceReference:
       type: object
       required:
@@ -428,7 +431,11 @@ components:
         type:
           type: string
           description: The type of the resource.
-          example: application@v1
+          example: application
+        apiVersion:
+          type: string
+          description: The API version of the resource.
+          example: v1
         properties:
           description: The properties of the resource.
           type: object
