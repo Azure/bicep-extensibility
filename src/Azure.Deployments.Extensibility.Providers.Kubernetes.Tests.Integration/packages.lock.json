@@ -71,25 +71,25 @@
       },
       "xunit": {
         "type": "Direct",
-        "requested": "[2.7.0, )",
-        "resolved": "2.7.0",
-        "contentHash": "KcCI5zxh8zbUfQTeErc4oT7YokViVND2V0p4vDJ2VD4lhF9V5qCYMMDNixme7FdwYy3SwPHF+2xC2Dq4Z9GSlA==",
+        "requested": "[2.7.1, )",
+        "resolved": "2.7.1",
+        "contentHash": "9o050yCLzPvHxbrAkaHnI1j+YfPvRw+/ncvKbTfzIhO4JvQA0rPgoICJxXHMkscfgXmLFwZ8107ehnMUVzE23A==",
         "dependencies": {
-          "xunit.analyzers": "1.11.0",
-          "xunit.assert": "2.7.0",
-          "xunit.core": "[2.7.0]"
+          "xunit.analyzers": "1.12.0",
+          "xunit.assert": "2.7.1",
+          "xunit.core": "[2.7.1]"
         }
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[2.5.7, )",
-        "resolved": "2.5.7",
-        "contentHash": "31Rl7dBJriX0DNwZfDp8gqFOPsiM0c9kqpcH/HvNi9vDp+K7Ydf42H7mVIvYT918Ywzn1ymLg1c4DDC6iU754w=="
+        "requested": "[2.5.8, )",
+        "resolved": "2.5.8",
+        "contentHash": "ZJTm71neOfZcUnqdyY0A0Qgcg1162DoOq6+VpCCsOaD9rwCK5alcjOEHeu17sEekzq4qNv3kyelx6lUMsAt/eA=="
       },
       "CsvHelper": {
         "type": "Transitive",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "Fare": {
         "type": "Transitive",
@@ -125,33 +125,33 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw==",
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w==",
         "dependencies": {
           "System.Text.Json": "8.0.0"
         }
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -1258,37 +1258,37 @@
       },
       "xunit.analyzers": {
         "type": "Transitive",
-        "resolved": "1.11.0",
-        "contentHash": "SCv+Ihxv+fCqotGeM8sVwLhw8nzAJ2aFRN5lcoKn9QtGdbVJ79JqDc+4u8/Ddnp2udxtmv+xYFWkHNlb/sk01w=="
+        "resolved": "1.12.0",
+        "contentHash": "w23LH3aXade2WXKvXi0oA/uV15fpgUMjsPq1x91iQckzgWApgAiijNHmfFQtqNPm41wfrdbRl7nSJRd0yux/dw=="
       },
       "xunit.assert": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "CCTs3bUhmIS4tDwK6Cn/IiabG3RhYzdf65eIkO7u9/grKoN9MrN780LzVED3E8v+vwmmj7b5TW3/GFuZHPAzWA=="
+        "resolved": "2.7.1",
+        "contentHash": "JqvXS4yX+PtJn5BuqoKkYav7I0g4nXcxRbGTomDwVQjFccOdyfYKpuPOHX/DqrPCcL+MIHrGVdP3bveUXlvdnA=="
       },
       "xunit.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "98tzqYAbtc/p/2Ba455XTNbD12Qoo8kPehjC4oDT46CAsLli5JOCU9hFF2MV3HHWMw/Y3yFUV2Vcukplbs6kuA==",
+        "resolved": "2.7.1",
+        "contentHash": "hcODgS+RXdjmXq0zQzmRbERQgY+bAGGx1bdH3370t/8CTGmIEU2qAc1dQAjIRpARsacR0cj6LLJDUF5BNQNKTQ==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]",
-          "xunit.extensibility.execution": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]",
+          "xunit.extensibility.execution": "[2.7.1]"
         }
       },
       "xunit.extensibility.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "JLnx4PI0vn1Xr1Ust6ydrp2t/ktm2dyGPAVoDJV5gQuvBMSbd2K7WGzODa2ttiz030CeQ8nbsXl05+cvf7QNyA==",
+        "resolved": "2.7.1",
+        "contentHash": "yLX4XlBFkvNYCzf+DEzlNk45KsSlu9W93IJHBmtUP96qZ9XyRYDFlwMj6BCcOhDKVNrZxSM8bqu4F/Qud4ehxA==",
         "dependencies": {
           "xunit.abstractions": "2.0.3"
         }
       },
       "xunit.extensibility.execution": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "bjY+crT1jOyxKagFjCMdEVzoenO2v66ru8+CK/0UaXvyG4U9Q3UTieJkbQXbi7/1yZIK1sGh01l5/jh2CwLJtQ==",
+        "resolved": "2.7.1",
+        "contentHash": "ei3dKF8agj4UKkJ6KkaZ5/Gcif3if6hBsyzegIQJonZDSKZFvb0AyKtyOhDfggBaXVL5iXZExITdRkfjC95yhw==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]"
         }
       },
       "YamlDotNet": {
@@ -1299,16 +1299,16 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
-          "CsvHelper": "[31.0.2, )",
+          "CsvHelper": "[31.0.4, )",
           "KubernetesClient": "[13.0.26, )"
         }
       },
@@ -1391,25 +1391,25 @@
       },
       "xunit": {
         "type": "Direct",
-        "requested": "[2.7.0, )",
-        "resolved": "2.7.0",
-        "contentHash": "KcCI5zxh8zbUfQTeErc4oT7YokViVND2V0p4vDJ2VD4lhF9V5qCYMMDNixme7FdwYy3SwPHF+2xC2Dq4Z9GSlA==",
+        "requested": "[2.7.1, )",
+        "resolved": "2.7.1",
+        "contentHash": "9o050yCLzPvHxbrAkaHnI1j+YfPvRw+/ncvKbTfzIhO4JvQA0rPgoICJxXHMkscfgXmLFwZ8107ehnMUVzE23A==",
         "dependencies": {
-          "xunit.analyzers": "1.11.0",
-          "xunit.assert": "2.7.0",
-          "xunit.core": "[2.7.0]"
+          "xunit.analyzers": "1.12.0",
+          "xunit.assert": "2.7.1",
+          "xunit.core": "[2.7.1]"
         }
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[2.5.7, )",
-        "resolved": "2.5.7",
-        "contentHash": "31Rl7dBJriX0DNwZfDp8gqFOPsiM0c9kqpcH/HvNi9vDp+K7Ydf42H7mVIvYT918Ywzn1ymLg1c4DDC6iU754w=="
+        "requested": "[2.5.8, )",
+        "resolved": "2.5.8",
+        "contentHash": "ZJTm71neOfZcUnqdyY0A0Qgcg1162DoOq6+VpCCsOaD9rwCK5alcjOEHeu17sEekzq4qNv3kyelx6lUMsAt/eA=="
       },
       "CsvHelper": {
         "type": "Transitive",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "Fare": {
         "type": "Transitive",
@@ -1445,33 +1445,33 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw==",
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w==",
         "dependencies": {
           "System.Text.Json": "8.0.0"
         }
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -2574,37 +2574,37 @@
       },
       "xunit.analyzers": {
         "type": "Transitive",
-        "resolved": "1.11.0",
-        "contentHash": "SCv+Ihxv+fCqotGeM8sVwLhw8nzAJ2aFRN5lcoKn9QtGdbVJ79JqDc+4u8/Ddnp2udxtmv+xYFWkHNlb/sk01w=="
+        "resolved": "1.12.0",
+        "contentHash": "w23LH3aXade2WXKvXi0oA/uV15fpgUMjsPq1x91iQckzgWApgAiijNHmfFQtqNPm41wfrdbRl7nSJRd0yux/dw=="
       },
       "xunit.assert": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "CCTs3bUhmIS4tDwK6Cn/IiabG3RhYzdf65eIkO7u9/grKoN9MrN780LzVED3E8v+vwmmj7b5TW3/GFuZHPAzWA=="
+        "resolved": "2.7.1",
+        "contentHash": "JqvXS4yX+PtJn5BuqoKkYav7I0g4nXcxRbGTomDwVQjFccOdyfYKpuPOHX/DqrPCcL+MIHrGVdP3bveUXlvdnA=="
       },
       "xunit.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "98tzqYAbtc/p/2Ba455XTNbD12Qoo8kPehjC4oDT46CAsLli5JOCU9hFF2MV3HHWMw/Y3yFUV2Vcukplbs6kuA==",
+        "resolved": "2.7.1",
+        "contentHash": "hcODgS+RXdjmXq0zQzmRbERQgY+bAGGx1bdH3370t/8CTGmIEU2qAc1dQAjIRpARsacR0cj6LLJDUF5BNQNKTQ==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]",
-          "xunit.extensibility.execution": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]",
+          "xunit.extensibility.execution": "[2.7.1]"
         }
       },
       "xunit.extensibility.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "JLnx4PI0vn1Xr1Ust6ydrp2t/ktm2dyGPAVoDJV5gQuvBMSbd2K7WGzODa2ttiz030CeQ8nbsXl05+cvf7QNyA==",
+        "resolved": "2.7.1",
+        "contentHash": "yLX4XlBFkvNYCzf+DEzlNk45KsSlu9W93IJHBmtUP96qZ9XyRYDFlwMj6BCcOhDKVNrZxSM8bqu4F/Qud4ehxA==",
         "dependencies": {
           "xunit.abstractions": "2.0.3"
         }
       },
       "xunit.extensibility.execution": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "bjY+crT1jOyxKagFjCMdEVzoenO2v66ru8+CK/0UaXvyG4U9Q3UTieJkbQXbi7/1yZIK1sGh01l5/jh2CwLJtQ==",
+        "resolved": "2.7.1",
+        "contentHash": "ei3dKF8agj4UKkJ6KkaZ5/Gcif3if6hBsyzegIQJonZDSKZFvb0AyKtyOhDfggBaXVL5iXZExITdRkfjC95yhw==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]"
         }
       },
       "YamlDotNet": {
@@ -2615,16 +2615,16 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
-          "CsvHelper": "[31.0.2, )",
+          "CsvHelper": "[31.0.4, )",
           "KubernetesClient": "[13.0.26, )"
         }
       },
@@ -2707,25 +2707,25 @@
       },
       "xunit": {
         "type": "Direct",
-        "requested": "[2.7.0, )",
-        "resolved": "2.7.0",
-        "contentHash": "KcCI5zxh8zbUfQTeErc4oT7YokViVND2V0p4vDJ2VD4lhF9V5qCYMMDNixme7FdwYy3SwPHF+2xC2Dq4Z9GSlA==",
+        "requested": "[2.7.1, )",
+        "resolved": "2.7.1",
+        "contentHash": "9o050yCLzPvHxbrAkaHnI1j+YfPvRw+/ncvKbTfzIhO4JvQA0rPgoICJxXHMkscfgXmLFwZ8107ehnMUVzE23A==",
         "dependencies": {
-          "xunit.analyzers": "1.11.0",
-          "xunit.assert": "2.7.0",
-          "xunit.core": "[2.7.0]"
+          "xunit.analyzers": "1.12.0",
+          "xunit.assert": "2.7.1",
+          "xunit.core": "[2.7.1]"
         }
       },
       "xunit.runner.visualstudio": {
         "type": "Direct",
-        "requested": "[2.5.7, )",
-        "resolved": "2.5.7",
-        "contentHash": "31Rl7dBJriX0DNwZfDp8gqFOPsiM0c9kqpcH/HvNi9vDp+K7Ydf42H7mVIvYT918Ywzn1ymLg1c4DDC6iU754w=="
+        "requested": "[2.5.8, )",
+        "resolved": "2.5.8",
+        "contentHash": "ZJTm71neOfZcUnqdyY0A0Qgcg1162DoOq6+VpCCsOaD9rwCK5alcjOEHeu17sEekzq4qNv3kyelx6lUMsAt/eA=="
       },
       "CsvHelper": {
         "type": "Transitive",
-        "resolved": "31.0.2",
-        "contentHash": "ndlIN77XcFm6qqGlNPzl0XjVupMCBVhVSiO+1+X2UhJtnnvkx9f//7FOvlkLuEQ76NC3Y7owa8IOhgtKVa4H7Q=="
+        "resolved": "31.0.4",
+        "contentHash": "m4ikjUAn4XOD1tShxxk4ui42sHxjHdX52P7fPQ9K7tzJkPTEwiCbvEz3k73mTGSSaPTUCOp9VziQC757IqKLew=="
       },
       "Fare": {
         "type": "Transitive",
@@ -2761,30 +2761,30 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "k4yLP8ZgEeiFKodcOdqt4qscXZU69F/My5pRNNBox97mBHQwdfUdJDG8jmsLM99GDhPgE25iSxj2/NvMnstUOw=="
+        "resolved": "2.0.1.2",
+        "contentHash": "uF3QeiaXEfH92emz0/BWUiNtMSfxIIvgynuB0Bf1vF4s8eWTcZitBx9l+g/FDaJk5XxqBv9buQXizXKQcXFG1w=="
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "Y2ur7pm9mHn2CzdhL3jg9UJHLnYWFmOy5RRwhwXZUcBwGrMBoi8YqoZCaBgFL2sQ90CUlYWV9o5/uJ4Ye26lnQ==",
+        "resolved": "1.0.1.2",
+        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
         "dependencies": {
-          "Json.More.Net": "2.0.0"
+          "Json.More.Net": "2.0.1.2"
         }
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "4.0.1",
-        "contentHash": "+5GU2QEn79BRCanWG+dJ22HQTD3FvKGc+PX2aKMrbsvdC8VXAwj3cKD6YZksRqoqPm6SfLzvkUm/4Km9dzl+eA==",
+        "resolved": "4.0.1.3",
+        "contentHash": "HgeRspKZH9B0FNEVAmIW6yVUIVAhptGEt4qAmyQKh9x8QzWMhWtgDzBBG7JQUkdW4I9N2PyVO1a1sqqHLcwg0Q==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1"
+          "Json.More.Net": "2.0.1.1"
         }
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "6.0.5",
-        "contentHash": "fwPIR6DX3fgwmAbr8kmqh9YbxrqfzcGPuSA3h7QrqzDvOdL0gcf2i14lSxw1ML5v4QcBNPYnivvBhlITgif7hA==",
+        "resolved": "6.1.2",
+        "contentHash": "UQ2QfZpjSy7YbqaAF0ROJ0agUpdyWLqnhoBwlzoE9AVwssRcel7z0wNKi7BPXx/TlgmUIpdWgBxAuWaD3pdOlQ==",
         "dependencies": {
           "Json.More.Net": "2.0.0",
           "JsonPointer.Net": "4.0.0"
@@ -3874,37 +3874,37 @@
       },
       "xunit.analyzers": {
         "type": "Transitive",
-        "resolved": "1.11.0",
-        "contentHash": "SCv+Ihxv+fCqotGeM8sVwLhw8nzAJ2aFRN5lcoKn9QtGdbVJ79JqDc+4u8/Ddnp2udxtmv+xYFWkHNlb/sk01w=="
+        "resolved": "1.12.0",
+        "contentHash": "w23LH3aXade2WXKvXi0oA/uV15fpgUMjsPq1x91iQckzgWApgAiijNHmfFQtqNPm41wfrdbRl7nSJRd0yux/dw=="
       },
       "xunit.assert": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "CCTs3bUhmIS4tDwK6Cn/IiabG3RhYzdf65eIkO7u9/grKoN9MrN780LzVED3E8v+vwmmj7b5TW3/GFuZHPAzWA=="
+        "resolved": "2.7.1",
+        "contentHash": "JqvXS4yX+PtJn5BuqoKkYav7I0g4nXcxRbGTomDwVQjFccOdyfYKpuPOHX/DqrPCcL+MIHrGVdP3bveUXlvdnA=="
       },
       "xunit.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "98tzqYAbtc/p/2Ba455XTNbD12Qoo8kPehjC4oDT46CAsLli5JOCU9hFF2MV3HHWMw/Y3yFUV2Vcukplbs6kuA==",
+        "resolved": "2.7.1",
+        "contentHash": "hcODgS+RXdjmXq0zQzmRbERQgY+bAGGx1bdH3370t/8CTGmIEU2qAc1dQAjIRpARsacR0cj6LLJDUF5BNQNKTQ==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]",
-          "xunit.extensibility.execution": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]",
+          "xunit.extensibility.execution": "[2.7.1]"
         }
       },
       "xunit.extensibility.core": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "JLnx4PI0vn1Xr1Ust6ydrp2t/ktm2dyGPAVoDJV5gQuvBMSbd2K7WGzODa2ttiz030CeQ8nbsXl05+cvf7QNyA==",
+        "resolved": "2.7.1",
+        "contentHash": "yLX4XlBFkvNYCzf+DEzlNk45KsSlu9W93IJHBmtUP96qZ9XyRYDFlwMj6BCcOhDKVNrZxSM8bqu4F/Qud4ehxA==",
         "dependencies": {
           "xunit.abstractions": "2.0.3"
         }
       },
       "xunit.extensibility.execution": {
         "type": "Transitive",
-        "resolved": "2.7.0",
-        "contentHash": "bjY+crT1jOyxKagFjCMdEVzoenO2v66ru8+CK/0UaXvyG4U9Q3UTieJkbQXbi7/1yZIK1sGh01l5/jh2CwLJtQ==",
+        "resolved": "2.7.1",
+        "contentHash": "ei3dKF8agj4UKkJ6KkaZ5/Gcif3if6hBsyzegIQJonZDSKZFvb0AyKtyOhDfggBaXVL5iXZExITdRkfjC95yhw==",
         "dependencies": {
-          "xunit.extensibility.core": "[2.7.0]"
+          "xunit.extensibility.core": "[2.7.1]"
         }
       },
       "YamlDotNet": {
@@ -3915,16 +3915,16 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.0, )",
-          "JsonPointer.Net": "[4.0.1, )",
-          "JsonSchema.Net": "[6.0.5, )"
+          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPointer.Net": "[4.0.1.3, )",
+          "JsonSchema.Net": "[6.1.2, )"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
-          "CsvHelper": "[31.0.2, )",
+          "CsvHelper": "[31.0.4, )",
           "KubernetesClient": "[13.0.26, )"
         }
       },
