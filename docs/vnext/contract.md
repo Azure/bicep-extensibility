@@ -1,8 +1,8 @@
-# Azure Deployments Extensibility Provider API Contract
+# Bicep Extension API Contract
 
-This document defines the contract of the API that every team who wants to onboard Azure Deployments extensibility provider must adhere to. An Azure Deployments extensibility provider is an API abstraction, allowing users to do the following operations:
-1. Deploy Azure data-plane or non-Azure resources (a.k.a, Azure Deployments extensible resources) via Bicep files or ARM templates;
-2. [Future Plan] Perform resource-level or provider-level queries that have no side effects through provider functions in Bicep files or ARM templates, e.g., list secrets of a resource.
+This document defines the contract of the API that every team who wants to onboard to Bicep exension must adhere to. An Bicep extension is an API abstraction, allowing users to do the following operations:
+1. Deploy Azure data-plane or non-Azure resources (a.k.a, extensible resources) via Bicep files or ARM templates;
+2. [Future Plan] Perform resource-level or extension-level queries that have no side effects through functions in Bicep files or ARM templates, e.g., list secrets of a resource.
 
 ## Table of Contents
 - [Api Limits and Constraints](#api-limits-and-constraints)
@@ -13,17 +13,17 @@ This document defines the contract of the API that every team who wants to onboa
 
 ### Request Timeout
 
-The timeout value for each request is 60 seconds. If the provider failed to respond within 60 seconds, the Extensibility Host will return a 504 Gateway Timeout to the deployments RP and ignore the response from the provider.
+The timeout value for each request is 60 seconds. If the extension failed to respond within 60 seconds, the Extensibility Host will return a 504 Gateway Timeout to the deployments RP and ignore the response from the extension.
 
 ### Request Throttling
 
-The Extensibility Host does not implement throttling for incoming request from the deployments RP, and it's up to extensibility providers to apply their own throttling limits. However, since the extensible resources are deployed through ARM, the [general ARM request throttling limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) still apply to deployments that contain extensible resources.
+The Extensibility Host does not implement throttling for incoming request from the deployments RP, and it's up to extensions to apply their own throttling limits. However, since the extensible resources are deployed through ARM, the [general ARM request throttling limits](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling) still apply to deployments that contain extensible resources.
 
 ### Maximum Request Body Size
 
 > This is something that the deployments team has been trying to improve. The limit may change in the future.
 
-The maximum size of a request body that ARM will accept is 4 MB. Any request with a body larger than 4 MB will not be sent to the extensibility host and providers, and a 413 Payload Too Large will be returned to the client.
+The maximum size of a request body that ARM will accept is 4 MB. Any request with a body larger than 4 MB will not be sent to the extensibility host and extensions, and a 413 Payload Too Large will be returned to the client.
 
 ### Maximum Response Size
 
@@ -35,9 +35,7 @@ For details about resource APIs, Refer to the OpenAPI 3.0 based resource API [sp
 
 ## Long-running Operation Reference
 
-The Extensibility Host supports two types of long-running operations: resource based long-running operations (RELO) and stepwise long-running operations (LRO). Comprehensive details regarding each of these operation types can be found in the [Microsoft REST API Guideline](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#13-long-running-operations). Extensibility providers should align any other long-running operation patterns implemented by the underlying API with these two classifications.
-
-> As highlighted in [Microsoft REST API Guideline](https://github.com/microsoft/api-guidelines/blob/vNext/Guidelines.md#1441-responsiveness), it is recommended that invocations taking longer than 1 second to respond in the 99th percentile SHOULD employ the long-running operation pattern. However, this guideline is not mandatory for extensibility providers, as it might not perfectly align with the nuances of the underlying API implementation. Nonetheless, extensibility providers are strongly encouraged to enhance their overall system responsiveness. For instance, a slow synchronous API can be converted into an asynchronous LRO counterpart. This can be achieved by exposing an operation resource dedicated to the Extensibility Host, facilitating real-time tracking of operation status and progress. In this case, the operation resource is managed by the extensibility provider, leaving the underlying API unchanged.
+The Extensibility Host supports two types of long-running operations: resource based long-running operations (RELO) and stepwise long-running operations (LRO). Comprehensive details regarding each of these operation types can be found in the [Azure REST API Guideline](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#long-running-operations--jobs) and [Microsoft Graph REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/patterns/long-running-operations.md). Extensions should align any other long-running operation patterns implemented by the underlying API with these two classifications.
 
 ### Resource based long-running operations (RELO)
 
@@ -47,8 +45,8 @@ The RELO pattern is the preferred pattern for long-running resource create or up
 
 #### API Flow
 
-1. The Extensibility Host initiates a PUT request to the extensibility provider, triggering the creation or update of a resource.
-2. In response to the PUT request, the extensibility provider issues a 201 Created response if the resource is being created or 200 OK if the resource is being updated.
+1. The Extensibility Host initiates a PUT request to the extension, triggering the creation or update of a resource.
+2. In response to the PUT request, the extension issues a 201 Created response if the resource is being created or 200 OK if the resource is being updated.
 3. As the operation remains ongoing, the PUT response payload should include a status property set to a non-terminal value (e.g., "Running"), adhering to the guidelines specified in the resource API [specification](openapi.yaml).
 4. Subsequent GET requests targeting the same resource, which underwent creation or update, should consistently yield a 200 OK response accompanied by a non-terminal status property. This pattern continues as long as the provisioning process remains in progress.
 5. Upon the completion of provisioning, the status property is expected to transition to one of the terminal states. If an update to existing resource properties encounters failure, it's advisable to revert those properties to their previous state if such a restoration best reflects the final state of the resource post the unsuccessful operation.
@@ -62,9 +60,14 @@ The LRO pattern serves as an alternative for executing asynchronous resource cre
 
 #### API Flow
 
-1. The Extensibility Host initiates a DELETE request to the extensibility provider, signaling the intention to delete a resource.
-2. In response, the extensibility provider issues a 202 Accepted status along with a `Location` header, and optionally a `Retry-After` header. The Location header encompasses an absolute URL pointing to an operation resource that the Extensibility Host will poll.
-3. The Extensibility Host employs a GET request on the URL specified within the `Location` header.
-4. Subsequent polling by the Extensibility Host should respect the `Retry-After` interval if it was provided, or adhere to the default interval of 60 seconds if not.
-5. While the delete operation remains incomplete, the extensibility provider returns a 200 OK response containing a non-terminal `status` property in the response body.
-6. Upon the operation's completion, the extensibility provider issues a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`). If the status is `Failed` or `Canceled`, an `error` property must be included in the response.
+1. The Deployments RP initiates a DELETE request to the Extensibility Host, signaling the intention to delete a resource.
+2. The Extensibility Host, upon receiving the DELETE request, determines the corresponding extension to call and forwards the DELETE request to the identified extension.
+3. In response, the extension issues a 202 Accepted status along with a `Location` header, and optionally a `Retry-After` header. The Location header encompasses an absolute URL pointing to an operation resource.
+4. The Extensibility Host then modifies the `Location` URL provided by the extension, replacing the extension's endpoint (including the FQDN and port) with its own, and adds the extension's name and version at the beginning of the URL path. For instance, a `Location` URL like `https://{extensionApiEndpoint}/resourceOperations/123` is transformed to `https://{extensibilityHostEndpoint}/{extensionName}/{extensionVersion}/resourceOperations/123`.
+5. The Extensibility Host sends back the DELETE response to the Deployments RP.
+6. The Deployments RP employs a GET request on the `Location` URL to track the operation's progress.
+7. When this GET request is received, the Extensibility Host reverts the `Location` URL to its original format by substituting back the extension's endpoint for its own and removing the extension's name and version from the path.
+9. The Extensibility Host makes a GET request to the original `Location` URL and relays the response received from the extension back to the Deployments Resource Provider.
+10. The Deployments RP then periodically polls for the operation's status, adhering to the `Retry-After` header if specified, or defaulting to a 60-second interval otherwise.
+11. While the delete operation remains incomplete, the extension will return a 200 OK response containing a non-terminal `status` property in the response body.
+12. Upon the operation's completion, the extension will issue a 200 OK response with a terminal `status` property (`Succeeded`, `Failed`, or `Canceled`). If the status is `Failed` or `Canceled`, an `error` property must be included in the response.
