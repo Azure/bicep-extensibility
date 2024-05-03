@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="31.0.4" />
-    <PackageReference Include="KubernetesClient" Version="13.0.26" />
+    <PackageReference Include="CsvHelper" Version="32.0.1" />
+    <PackageReference Include="KubernetesClient" Version="13.0.37" />
   </ItemGroup>
 
   <ItemGroup>

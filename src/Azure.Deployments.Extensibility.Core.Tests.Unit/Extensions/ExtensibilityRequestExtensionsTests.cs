@@ -64,13 +64,13 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.Extensions
 
             errors.Should().HaveCount(3);
 
-            errors[0].Target.Should().Be(import.GetJsonPointer(x => x.Config.Height));
+            errors[0].Target.Should().BeEquivalentTo(import.GetJsonPointer(x => x.Config.Height));
             errors[0].Message.Should().Be(@"Value is ""boolean"" but should be ""integer"".");
 
-            errors[1].Target.Should().Be(import.GetJsonPointer(x => x.Config.Length));
+            errors[1].Target.Should().BeEquivalentTo(import.GetJsonPointer(x => x.Config.Length));
             errors[1].Message.Should().Be(@"Value fails against the ""#/additionalProperties"": false schema.");
 
-            errors[2].Target.Should().Be(resource.GetJsonPointer(x => x.Properties).Combine("foo"));
+            errors[2].Target.Should().BeEquivalentTo(resource.GetJsonPointer(x => x.Properties).Combine("foo"));
             errors[2].Message.Should().Be(@"Value does not match the regular expression ""FOO"".");
         }
 
@@ -86,7 +86,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.Extensions
 
             errors.Should().HaveCount(1);
 
-            errors[0].Target.Should().Be(resource.GetJsonPointer(x => x.Type));
+            errors[0].Target.Should().BeEquivalentTo(resource.GetJsonPointer(x => x.Type));
             errors[0].Message.Should().Be(@"Value does not match the regular expression ""TYPE"".");
         }
     }
