@@ -133,8 +133,8 @@
       },
       "CsvHelper": {
         "type": "Transitive",
-        "resolved": "32.0.1",
-        "contentHash": "1sPpPUlSGCU2BRZmU+NZ2Le/AO2BBQTRZPZvNmfIgrDiVgLC6oD6b9QDFFf5AHhNsU+cAAbGoAcnnWq5a7VPlw=="
+        "resolved": "32.0.3",
+        "contentHash": "JNDkd4Wc2Tim5IuyL8Ai13RhzRvaHItseEvlJ2YRkx2SMBFrIsW8a5+/o4/O1jsb6mlviihR6Hfyn+nqY6CurA=="
       },
       "Fare": {
         "type": "Transitive",
@@ -175,8 +175,8 @@
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.0.1.2",
-        "contentHash": "C/+1yqdTwTjfvnIhZg7ap/lYfqy8kK1FpKs4hCfnEQru4+W9KHg5x7fpDiKlcWhpMdyd4GEnUtkhwgHcrOfQZg==",
+        "resolved": "1.0.4",
+        "contentHash": "G7RBYVMh4MMQfdAfo3TkZDdduX2GCBWHiDRzK3elyUxk0Pi3bohEqDvkUnC/3/yU8Pc8arSN0CEbAy8bTCbYqw==",
         "dependencies": {
           "Json.More.Net": "2.0.1.2"
         }
@@ -192,16 +192,16 @@
       },
       "JsonSchema.Net": {
         "type": "Transitive",
-        "resolved": "7.0.0.3",
-        "contentHash": "GPx6fLqMUHLocrrM33GfAd3eE1sPqZcnAhr2aJ1zvJ73QUg4ECclCRCg6fAEe88emIBe6aoM6Ng740esx96zrQ==",
+        "resolved": "7.0.2",
+        "contentHash": "UAt+IVSRcq/CkvnkEfacETPOMZdUVq4aZ9uyRSB+vZe+0Sev6ZyWbb+cidkVykCwraFOkCnPyxZYjEu+aMCorQ==",
         "dependencies": {
           "JsonPointer.Net": "5.0.0"
         }
       },
       "KubernetesClient": {
         "type": "Transitive",
-        "resolved": "13.0.37",
-        "contentHash": "AR1s4bfBJCsk4d4JXpZ/HnC9vdtILyohnrltzglkaIzNUl10o3Vh4EvmIK1mmjn/7CWEd9F9e5IqKpIRVUNttg==",
+        "resolved": "14.0.2",
+        "contentHash": "Ul7SLe34fLwOahsJKFf2InqcuRTCIBr3mW1PtabXlYeCJeP7yPiYyrGxilLn2+HIq1C5AoMTydhGcdNLbc/f9w==",
         "dependencies": {
           "Fractions": "7.3.0",
           "IdentityModel.OidcClient": "5.2.1",
@@ -1502,17 +1502,17 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPath.Net": "[1.0.1.2, )",
+          "JsonPath.Net": "[1.0.4, )",
           "JsonPointer.Net": "[5.0.0, )",
-          "JsonSchema.Net": "[7.0.0.3, )"
+          "JsonSchema.Net": "[7.0.2, )"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes": {
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
-          "CsvHelper": "[32.0.1, )",
-          "KubernetesClient": "[13.0.37, )"
+          "CsvHelper": "[32.0.3, )",
+          "KubernetesClient": "[14.0.2, )"
         }
       },
       "azure.deployments.extensibility.providers.kubernetes.tests.core": {
