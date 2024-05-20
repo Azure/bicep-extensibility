@@ -5,14 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
-    public class ErrorPayload
+    public class ErrorData
     {
-        public ErrorPayload()
+        public ErrorData()
         {
         }
 
         [SetsRequiredMembers]
-        public ErrorPayload(Error error)
+        public ErrorData(Error error)
         {
             this.Error = error;
         }

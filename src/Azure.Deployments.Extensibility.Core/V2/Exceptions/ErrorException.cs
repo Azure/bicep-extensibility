@@ -22,6 +22,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Exceptions
 
         public Error Error { get; }
 
-        public ErrorPayload ToErrorPayload() => new(this.Error);
+        public ErrorData ToErrorData() => new(this.Error);
     }
 }
