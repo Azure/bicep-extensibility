@@ -5,16 +5,16 @@ using Azure.Deployments.Extensibility.Core.V2.Models;
 using Json.Pointer;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Exceptions
+namespace Azure.Deployments.Extensibility.AspNetCore.Exceptions
 {
-    public class ErrorException
+    public class ErrorResponseException : Exception
     {
-        public ErrorException(Error error)
+        public ErrorResponseException(Error error)
         {
             this.Error = error;
         }
 
-        public ErrorException(string code, string message, JsonPointer? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
+        public ErrorResponseException(string code, string message, JsonPointer? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
             : this(new(code, message, target, details, innerError))
         {
 
