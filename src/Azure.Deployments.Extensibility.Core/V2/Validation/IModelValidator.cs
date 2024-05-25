@@ -5,8 +5,9 @@ using Azure.Deployments.Extensibility.Core.V2.Models;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
-    public interface IModelValidationRule<TModel>
+    public interface IModelValidator<TModel>
+        where TModel : class
     {
-        public IEnumerable<ErrorDetail> Validate(TModel model);
+        Error? Validate(TModel model);
     }
 }
