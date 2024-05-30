@@ -6,14 +6,18 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
-    public class ResourceSpecification
+    public record ResourceSpecification : ResourceSpecification<JsonObject, JsonObject>
+    {
+    }
+
+    public record ResourceSpecification<TProperties, TConfig>
     {
         public ResourceSpecification()
         {
         }
 
         [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config)
+        public ResourceSpecification(string type, string? apiVersion, TProperties properties, TConfig? config)
         {
             this.Type = type;
             this.ApiVersion = apiVersion;
@@ -25,8 +29,8 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
 
         public string? ApiVersion { get; init; }
 
-        public required JsonObject Properties { get; init; }
+        public required TProperties Properties { get; init; }
 
-        public JsonObject? Config { get; init; }
+        public TConfig? Config { get; init; }
     }
 }

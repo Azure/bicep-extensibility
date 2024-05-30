@@ -6,14 +6,18 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
-    public class ResourceReference
+    public record ResourceReference : ResourceReference<JsonObject, JsonObject>
+    {
+    }
+
+    public record ResourceReference<TIdentifiers, TConfig>
     {
         public ResourceReference()
         {
         }
 
         [SetsRequiredMembers]
-        public ResourceReference(string type, string? apiVersion, JsonObject identifiers, JsonObject? config)
+        public ResourceReference(string type, string? apiVersion, TIdentifiers identifiers, TConfig? config)
         {
             this.Type = type;
             this.ApiVersion = apiVersion;
@@ -25,8 +29,8 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
 
         public string? ApiVersion { get; init; }
 
-        public required JsonObject Identifiers { get; init; }
+        public required TIdentifiers Identifiers { get; init; }
 
-        public JsonObject? Config { get; init; }
+        public TConfig? Config { get; init; }
     }
 }

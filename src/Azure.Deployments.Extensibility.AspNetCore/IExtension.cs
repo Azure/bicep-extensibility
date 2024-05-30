@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Azure.Deployments.Extensibility.AspNetCore
 {
-    public interface IDeploymentExtension
+    public interface IExtension
     {
         Task<IResult> PreviewResourceCreateOrUpdateAsync(HttpContext httpContext, ResourceSpecification resourceSpecification, CancellationToken cancellationToken);
 
