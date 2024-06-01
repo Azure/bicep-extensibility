@@ -27,18 +27,38 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             return new(group, version, kind);
         }
 
-        public static Resource<K8sObjectIdentifiers, JsonObject> MapToResource(K8sObjectIdentifiers identifiers, K8sObject k8sObject)
+        public static Resource MapToResource(K8sObjectIdentifiers identifiers, K8sObject k8sObject)
         {
             var (group, version, kind) = k8sObject.GroupVersionKind;
             var resourceType = string.IsNullOrEmpty(group) ? $"core/{kind}" : $"{group}/{kind}";
 
-            return new Resource<K8sObjectIdentifiers, JsonObject>
+            return new Resource
             {
                 Type = resourceType,
                 ApiVersion = version,
-                Identifiers = identifiers,
+                Identifiers = MapToResourceIdentifiers(identifiers),
                 Properties = k8sObject.Body,
             };
         }
+
+        public static K8sObjectIdentifiers MapToK8sObjectIdentifiers(JsonObject identifiers)
+        {
+            var metadataObject = identifiers["metadata"]?.AsObject() ?? throw new InvalidOperationException("Metadata must be non-null.");
+            var name = metadataObject["name"]?.GetValue<string>() ?? throw new InvalidOperationException("Name must be non-null.");
+            var @namespace = metadataObject["namespace"]?.GetValue<string>();
+            var serverHostHash = identifiers["serverHostHash"]?.GetValue<string>();
+
+            return new(name, @namespace, serverHostHash);
+        }
+
+        public static JsonObject MapToResourceIdentifiers(K8sObjectIdentifiers identifiers) => new()
+        {
+            ["metadata"] = new JsonObject()
+            {
+                ["name"] = identifiers.Name,
+                ["namespace"] = identifiers.Namespace,
+            },
+            ["serverHostHash"] = identifiers.ServerHostHash,
+        };
     }
 }

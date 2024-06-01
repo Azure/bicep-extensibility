@@ -19,7 +19,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation
                 .MustNotBeNull()
                     .WithErrorCode("NullApiVersion")
                     .WithErrorMessage("The Kubernetes resource API version must be provided and cannot be null.").AndThen
-                .MustMatchRegex(RegexPatterns.ApiVersion());
+                .MustMatchRegex(RegexPatterns.ApiVersion())
+                    .WithErrorCode("InvalidApiVersion");
 
             this.WhenPrecedingRulesSatisfied(x => x.Properties)
                 .MustMatchJsonSchema(JsonSchemas.K8sResourceProperties)

@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Validation\Schemas\K8sResourceConfig.schema.json" />
     <None Remove="Validation\Schemas\K8sResourceIdentifiers.schema.json" />
     <None Remove="Validation\Schemas\K8sResourceProperties.schema.json" />

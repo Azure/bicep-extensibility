@@ -18,10 +18,6 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             return new(k8sObject.Name, k8sObject.Namespace, serverHostHash);
         }
 
-        public static K8sObjectIdentifiers From(JsonObject identifiersObject) =>
-            JsonSerializer.Deserialize(identifiersObject, K8sModelSerializerContext.WithDefaultOptions.K8sObjectIdentifiers) ??
-            throw new InvalidOperationException("Could not deserialize the identifiers object.");
-
         public bool MatchesServerHost(string serverHost)
         {
             var serverHostHash = CalculateServerHostHash(serverHost, this.Name);

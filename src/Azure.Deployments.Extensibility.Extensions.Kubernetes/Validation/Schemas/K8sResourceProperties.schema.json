@@ -14,11 +14,8 @@
       },
       "required": [ "name" ],
       "additionalProperties": false
-    },
-    "clusterHostHash": {
-      "type": "string"
     }
   },
-  "required": ["metadata", "clusterHostHash"],
+  "required": ["metadata"],
   "additionalProperties": true
 }

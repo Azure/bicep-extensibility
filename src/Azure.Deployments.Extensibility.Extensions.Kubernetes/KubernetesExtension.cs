@@ -34,9 +34,10 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             this.resourceSpecificationValidator.ValidateAndThrow(resourceSpecification);
 
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceSpecification.Type, resourceSpecification.ApiVersion);
+            var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
+
             var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
-            var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
 
             if (api.Namespaced && (k8sObject.Namespace ?? client.DefaultNamespace) is { } @namespace)
             {
@@ -59,9 +60,10 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             this.resourceSpecificationValidator.ValidateAndThrow(resourceSpecification);
 
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceSpecification.Type, resourceSpecification.ApiVersion);
+            var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
+
             var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
-            var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
 
             k8sObject = await api.PatchObjectAsync(k8sObject, dryRun: false, cancellationToken);
 
@@ -73,9 +75,10 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             this.resourceReferenceValidator.ValidateAndThrow(resourceReference);
 
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
+            var identifiers = ModelMapper.MapToK8sObjectIdentifiers(resourceReference.Identifiers);
+
             var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
-            var identifiers = K8sObjectIdentifiers.From(resourceReference.Identifiers);
 
             if (await api.GetObjectAsync(identifiers, cancellationToken) is { } k8sObject)
             {
@@ -96,7 +99,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
         {
             this.resourceReferenceValidator.ValidateAndThrow(resourceReference);
 
-            var identifiers = K8sObjectIdentifiers.From(resourceReference.Identifiers);
+            var identifiers = ModelMapper.MapToK8sObjectIdentifiers(resourceReference.Identifiers);
 
             // This can only be invoked by Deployment Stacks. ServerHostHash must be preserved
             // to ensure that the operation is performed on the correct cluster.
@@ -106,7 +109,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                 {
                     Error = new()
                     {
-                        Code = "InvalidResourceIdentifiers",
+                        Code = "InvalidIdentifiers",
                         Message = "The resource identifiers is missing the server host hash.",
                     },
                 });
@@ -122,7 +125,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                     Error = new()
                     {
                         Code = "ClusterMismatch",
-                        Message = "The referenced Kubernetes object cannot be deleted because it is deployed to a different cluster. Please verify that you are using the correct kubeConfig file and context.",
+                        Message = "The referenced Kubernetes object cannot be deleted because it may be deployed to a different cluster. Please verify that you are using the correct kubeConfig file and context.",
                     },
                 });
             }

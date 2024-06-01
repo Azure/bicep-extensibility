@@ -9,10 +9,13 @@
           "type": "string"
         },
         "namespace": {
+          "type": [ "string", "null" ]
+        },
+        "serverHostHash": {
           "type": ["string", "null"]
         }
       },
-      "required": ["name"],
+      "required": [ "name" ],
       "additionalProperties": false
     }
   },
