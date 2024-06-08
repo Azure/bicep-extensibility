@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Validation\Schemas\K8sResourceConfig.schema.json" />
+    <None Remove="Validation\Schemas\K8sResourceIdentifiers.schema.json" />
+    <None Remove="Validation\Schemas\K8sResourceProperties.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Api\ApiCatalog\K8sApiCatalog.csv" />
+    <EmbeddedResource Include="Validation\Schemas\K8sResourceConfig.schema.json" />
+    <EmbeddedResource Include="Validation\Schemas\K8sResourceIdentifiers.schema.json" />
+    <EmbeddedResource Include="Validation\Schemas\K8sResourceProperties.schema.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="32.0.3" />
+    <PackageReference Include="KubernetesClient" Version="14.0.2" />
+    <PackageReference Include="Semver" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure.Deployments.Extensibility.AspNetCore\Azure.Deployments.Extensibility.AspNetCore.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -5,21 +5,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
-    public record ResourceOperation
+    public class ErrorData
     {
-        public ResourceOperation()
+        public ErrorData()
         {
         }
 
         [SetsRequiredMembers]
-        public ResourceOperation(string status, Error? error)
+        public ErrorData(Error error)
         {
-            this.Status = status;
             this.Error = error;
         }
 
-        public required string Status { get; init; }
-
-        public Error? Error { get; init; }
+        public required Error Error { get; init; }
     }
 }

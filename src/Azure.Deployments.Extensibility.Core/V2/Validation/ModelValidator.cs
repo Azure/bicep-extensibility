@@ -2,45 +2,58 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.Core.V2.Models;
+using System.Linq.Expressions;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
-    public class ModelValidator<TModel>
+    public abstract class ModelValidator<TModel> : IModelValidator<TModel>
         where TModel : class
     {
         private readonly List<IModelValidationRule<TModel>> rules = [];
 
-        public ModelValidator<TModel> AddRule<TRule>(Action<TRule>? configureRule = null)
-             where TRule : IModelValidationRule<TModel>, new()
-        {
-            var rule = new TRule();
+        private readonly HashSet<IModelValidationRule<TModel>> dependentRules = [];
 
-            configureRule?.Invoke(rule);
+        public IPropertyRuleBuilder<TModel, TProperty> AnyValid<TProperty>(Expression<Func<TModel,  TProperty>> propertyExpression)
+        {
+            var rule = new PropertyRule<TModel, TProperty>(propertyExpression);
+
             this.rules.Add(rule);
 
-            return this;
+            return new PropertyRuleBuilder<TModel, TProperty>(rule);
         }
 
-        public Error? Validate(TModel model)
+        public IPropertyRuleBuilder<TModel, TProperty> WhenPrecedingRulesSatisfied<TProperty>(Expression<Func<TModel,  TProperty>> propertyExpression)
         {
-            var errorDetails = new List<ErrorDetail>();
+            var rule = new PropertyRule<TModel, TProperty>(propertyExpression);
+
+            this.rules.Add(rule);
+            this.dependentRules.Add(rule);
+
+            return new PropertyRuleBuilder<TModel, TProperty>(rule);
+        }
+
+        public Error? Validate(TModel model) => AggregateErrorDetails(this.ValidateRules(model).ToArray());
+
+        private IEnumerable<ErrorDetail> ValidateRules(TModel model)
+        {
+            var dependencyRulesSatisfied = true;
 
             foreach (var rule in this.rules)
             {
-                var errorDetailCount = errorDetails.Count;
-
-                errorDetails.AddRange(rule.Validate(model));
-
-                if (errorDetails.Count > errorDetailCount && rule.BailOnError)
+                if (this.dependentRules.Contains(rule) && !dependencyRulesSatisfied)
                 {
-                    return AggregateErrorDetails(errorDetails);
+                    continue;
+                }
+
+                foreach (var errorDetail in rule.Validate(model))
+                {
+                    dependencyRulesSatisfied = false;
+                    yield return errorDetail;
                 }
             }
-
-            return AggregateErrorDetails(errorDetails);
         }
 
-        private static Error? AggregateErrorDetails(List<ErrorDetail> errorDetails) => errorDetails.Count switch
+        private static Error? AggregateErrorDetails(ErrorDetail[] errorDetails) => errorDetails.Length switch
         {
             0 => null,
             1 => errorDetails[0].ToError(),

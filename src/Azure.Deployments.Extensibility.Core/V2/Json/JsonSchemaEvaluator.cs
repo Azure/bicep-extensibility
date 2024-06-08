@@ -33,14 +33,14 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
 
         public IEnumerable<JsonSchemaViolation> Evaluate(JsonElement value)
         {
-            var result = schema.Evaluate(value, this.evaluationOptions);
+            var result = this.schema.Evaluate(value, this.evaluationOptions);
 
             return CheckResult(result);
         }
 
         public IEnumerable<JsonSchemaViolation> Evaluate(JsonNode? value)
         {
-            var result = schema.Evaluate(value, this.evaluationOptions);
+            var result = this.schema.Evaluate(value, this.evaluationOptions);
 
             return CheckResult(result);
         }
