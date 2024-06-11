@@ -9,7 +9,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
 {
-    public record K8sObjectIdentifiers(string Name, string? Namespace, string? ServerHostHash)
+    internal record K8sObjectIdentifiers(string Name, string? Namespace, string? ServerHostHash)
     {
         public static K8sObjectIdentifiers Create(K8sObject k8sObject, string serverHost)
         {

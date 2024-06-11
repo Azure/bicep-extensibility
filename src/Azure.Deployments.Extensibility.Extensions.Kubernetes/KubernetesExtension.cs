@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Core.V2.Validation;

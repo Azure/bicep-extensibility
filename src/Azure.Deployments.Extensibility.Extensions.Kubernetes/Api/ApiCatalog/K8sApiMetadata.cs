@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 {
-    public record K8sApiMetadata(
+    internal record K8sApiMetadata(
         string? Group,
         string Version,
         string Kind,

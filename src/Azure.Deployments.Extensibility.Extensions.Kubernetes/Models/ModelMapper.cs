@@ -7,7 +7,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
 {
-    public static class ModelMapper
+    internal static class ModelMapper
     {
         public static GroupVersionKind MapToGroupVersionKind(string resourceType, string? resourceApiVersion)
         {

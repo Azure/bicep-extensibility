@@ -10,7 +10,7 @@ using Semver;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 {
-    internal class KubernetesExtensionDispatcher : IExtensionDispatcher
+    public class KubernetesExtensionDispatcher : IExtensionDispatcher
     {
         private readonly IModelValidator<ResourceSpecification> resourceSpecificationValidator;
         private readonly IModelValidator<ResourceReference> resourceReferenceValidator;

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 {
-    public class K8sApiCatalog
+    internal class K8sApiCatalog
     {
         private const string FileName = $"{nameof(K8sApiCatalog)}.csv";
 
