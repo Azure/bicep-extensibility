@@ -1,10 +1,10 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using AutoFixture;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
-using Azure.Deployments.Extensibility.TestFixtures.Attributes;
+using Azure.Deployments.Extensibility.TestFixtures;
 using FluentAssertions;
 using Json.Pointer;
 using System.Text.Json.Nodes;
