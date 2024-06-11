@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 using AutoFixture;
+using AutoFixture.Xunit2;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
-using Azure.Deployments.Extensibility.TestFixtures;
 using FluentAssertions;
 using Json.Pointer;
 using System.Text.Json.Nodes;
@@ -13,7 +13,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
 {
     public class ResourceSpecificationValidatorTests
     {
-        [Theory, AutoMoqData]
+        [Theory, AutoData]
         internal void Validate_InvalidTypeNullApiVersionNullConfig_ReturnsError(Fixture fixture, ResourceSpecificationValidator sut)
         {
             var invalidResourceSpecification = fixture.Build<ResourceSpecification>()
@@ -36,7 +36,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
             errorDetails[2].Code.Should().Be("NullConfig");
         }
 
-        [Theory, AutoMoqData]
+        [Theory, AutoData]
         internal void Validate_InvalidApiVersionInvalidConfig_ReturnsError(Fixture fixture, ResourceSpecificationValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceSpecification>()
@@ -60,7 +60,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
             errorDetails[1].Message.Should().Be(@"Required properties [""kubeConfig""] are not present.");
         }
 
-        [Theory, AutoMoqData]
+        [Theory, AutoData]
         internal void Validate_InvalidPropertiesNullConfig_ReturnsError(Fixture fixture, ResourceSpecificationValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceSpecification>()
@@ -91,7 +91,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
             errorDetails[1].Code.Should().Be("NullConfig");
         }
 
-        [Theory, AutoMoqData]
+        [Theory, AutoData]
         internal void Validate_ValidReference_ReturnsNull(Fixture fixture, ResourceSpecificationValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceSpecification>()

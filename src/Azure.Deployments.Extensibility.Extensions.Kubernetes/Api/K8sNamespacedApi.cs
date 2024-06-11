@@ -58,14 +58,16 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api
 
         public override Task DeleteObjectAsync(K8sObjectIdentifiers identifiers, CancellationToken cancellationToken)
         {
-            var @namespace = identifiers.Namespace ?? this.Client.DefaultNamespace;
-
-            this.EnsureNamespaceSpecified(@namespace);
+            // The identifiers must include the namespace of object to delete.
+            // The namespace was set by the CreateOrUpdateResource API.
+            // Client.DefaultNamespace cannot be used because it might be different than
+            // the namespace used when creating the object.
+            this.EnsureNamespaceSpecified(identifiers.Namespace);
 
             return this.Client.DeleteNamespacedObjectAsync(
                 this.Group,
                 this.Version,
-                @namespace,
+                identifiers.Namespace,
                 this.Plural,
                 identifiers.Name,
                 cancellationToken: cancellationToken);
