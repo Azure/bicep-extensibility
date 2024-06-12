@@ -26,7 +26,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
         private static ImmutableArray<K8sApiMetadata> ReadRecordsFromEmbeddedResource()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var csvResourceName = $"{assembly.GetName().Name}.Data.{FileName}";
+            var csvResourceName = $"{assembly.GetName().Name}.Api.ApiCatalog.{FileName}";
             var csvStream = assembly.GetManifestResourceStream(csvResourceName) ?? throw new InvalidOperationException($"Unable to load {csvResourceName} from assembly.");
 
             using var csvStreamReader = new StreamReader(csvStream);

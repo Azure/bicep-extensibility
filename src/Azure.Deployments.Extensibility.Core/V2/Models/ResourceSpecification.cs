@@ -8,6 +8,16 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
     public record ResourceSpecification : ResourceSpecification<JsonObject, JsonObject>
     {
+        public ResourceSpecification()
+            : base()
+        {
+        }
+
+        [SetsRequiredMembers]
+        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config)
+            : base(type, apiVersion, properties, config)
+        {
+        }
     }
 
     public record ResourceSpecification<TProperties, TConfig>

@@ -24,6 +24,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             var kind = typeMatch.Groups["kind"].Value;
             var version = resourceApiVersion;
 
+            group = group.Equals("core", StringComparison.OrdinalIgnoreCase) ? "" : group;
+
             return new(group, version, kind);
         }
 

@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
 {
-    public interface IK8sClient
+    public interface IK8sClient : IDisposable
     {
         string ServerHost { get; }
 

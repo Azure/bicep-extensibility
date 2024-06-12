@@ -27,6 +27,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
 
         public string? DefaultNamespace { get; }
 
+        public void Dispose() => this.kubernetes.Dispose();
+
         public async Task<VersionInfo> GetServerVersionInfoAsync(CancellationToken cancellationToken)
         {
             try
