@@ -21,8 +21,6 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
         {
         }
 
-        public string ApiVersion => !string.IsNullOrEmpty(this.Group) ? $"{this.Group}/{this.Version}" : this.Version;
-
         public static K8sApiMetadata From(ResourceSpecification resourceSpecification)
         {
             ArgumentException.ThrowIfNullOrEmpty(resourceSpecification.ApiVersion);

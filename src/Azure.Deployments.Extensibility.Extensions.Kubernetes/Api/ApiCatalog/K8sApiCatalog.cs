@@ -79,7 +79,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
                 // search upwards for the .git directory. This should only exist at the repository root.
                 if (Directory.Exists(Path.Join(repoRootDirectory.FullName, ".git")))
                 {
-                    return Path.Combine(repoRootDirectory.FullName, "src", $"{Assembly.GetExecutingAssembly().GetName().Name}", "Data", FileName);
+                    return Path.Combine(repoRootDirectory.FullName, "src", $"{Assembly.GetExecutingAssembly().GetName().Name}", "Api", "ApiCatalog", FileName);
                 }
 
                 repoRootDirectory = parentDirectory;

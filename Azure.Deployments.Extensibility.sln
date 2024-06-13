@@ -54,7 +54,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit", "src\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.csproj", "{8ECF4A85-3A2F-4ED5-A5E5-24854EA2331B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration", "src\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.csproj", "{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration", "src\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration\Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.csproj", "{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator", "src\Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator\Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator.csproj", "{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +112,10 @@ Global
 		{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,6 +136,7 @@ Global
 		{DF5B4359-72FB-46E4-90B6-D22A69881565} = {64F4C241-955C-4B96-AF80-257FC0CEE4B6}
 		{8ECF4A85-3A2F-4ED5-A5E5-24854EA2331B} = {0AFEE13C-D656-43BF-98F1-263D71E5C04A}
 		{C0D5356F-C39C-4A4B-8573-40A5CD43E9EA} = {0AFEE13C-D656-43BF-98F1-263D71E5C04A}
+		{C4D9552F-D20A-4ED2-8E1F-5D55728ABC42} = {0AFEE13C-D656-43BF-98F1-263D71E5C04A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3073660-079C-482C-ABB4-E970087314E7}
