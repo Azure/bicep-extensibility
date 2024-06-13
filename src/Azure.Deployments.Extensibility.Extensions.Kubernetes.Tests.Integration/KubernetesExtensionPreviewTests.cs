@@ -9,14 +9,6 @@ using Azure.Deployments.Extensibility.Core.V2.Json;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration
 {
-    /*
-     * To run the tests locally:
-     *   - Install Docker and minikube (https://minikube.sigs.k8s.io/docs/start/)
-     *   - Run "minikube start"
-     *
-     * To clean up resources created by the tests:
-     *   - Run "minikube delete"
-     */
     public class KubernetesExtensionPreviewTests : KubernetesExtensionTestBase
     {
         [Theory, K8sDeploymentSpecificationAutoData]
