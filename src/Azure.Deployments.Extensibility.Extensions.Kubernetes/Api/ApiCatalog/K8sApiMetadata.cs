@@ -61,7 +61,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 
         public bool Matches(SemVersion serverVersion)
         {
-            var majorMinorServerVersion = $"{serverVersion.Major}.{serverVersion.Major}";
+            var majorMinorServerVersion = $"{serverVersion.Major}.{serverVersion.Minor}";
 
             return this.MajorMinorServerVersions.BinarySearch(majorMinorServerVersion) >= 0;
         }

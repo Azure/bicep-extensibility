@@ -84,12 +84,16 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                 return Results.Ok(ModelMapper.MapToResource(identifiers, k8sObject));
             }
 
+            var @namespace = api.Namespaced ? identifiers.Namespace ?? client.DefaultNamespace : null;
+
             return Results.NotFound(new ErrorData
             {
                 Error = new()
                 {
                     Code = "ObjectNotFound",
-                    Message = "The referenced Kubernetes object was not found.",
+                    Message = @namespace is null
+                        ? $"The referenced Kubernetes object (GroupVersionKind={groupVersionKind}, Name={identifiers.Name}) was not found."
+                        : $"The referenced Kubernetes object (GroupVersionKind={groupVersionKind}, Name={identifiers.Name}, Namespace={@namespace}) was not found.",
                 },
             });
         }
