@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.11.3" />
+    <PackageReference Include="Azure.Identity" Version="1.11.4" />
     <PackageReference Include="Azure.Containers.ContainerRegistry" Version="1.1.1" />
     <PackageReference Include="Azure.ResourceManager.Applications.Containers" Version="1.0.0-beta.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-    <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.133" />
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.6.139" />
   </ItemGroup>
 
 </Project>
