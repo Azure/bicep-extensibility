@@ -7,7 +7,7 @@ using k8s.Models;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api
 {
-    public abstract class K8sApi
+    internal abstract class K8sApi
     {
         private readonly V1APIResource apiResource;
 

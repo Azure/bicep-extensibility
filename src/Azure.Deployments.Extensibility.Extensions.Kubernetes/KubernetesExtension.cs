@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Core.V2.Validation;
@@ -36,7 +35,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceSpecification.Type, resourceSpecification.ApiVersion);
             var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
 
-            var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
+            using var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
             if (api.Namespaced && (k8sObject.Namespace ?? client.DefaultNamespace) is { } @namespace)
@@ -62,7 +61,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceSpecification.Type, resourceSpecification.ApiVersion);
             var k8sObject = new K8sObject(groupVersionKind, resourceSpecification.Properties);
 
-            var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
+            using var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
             k8sObject = await api.PatchObjectAsync(k8sObject, dryRun: false, cancellationToken);
@@ -77,7 +76,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
             var identifiers = ModelMapper.MapToK8sObjectIdentifiers(resourceReference.Identifiers);
 
-            var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
+            using var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
             if (await api.GetObjectAsync(identifiers, cancellationToken) is { } k8sObject)
@@ -85,12 +84,16 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                 return Results.Ok(ModelMapper.MapToResource(identifiers, k8sObject));
             }
 
+            var @namespace = api.Namespaced ? identifiers.Namespace ?? client.DefaultNamespace : null;
+
             return Results.NotFound(new ErrorData
             {
                 Error = new()
                 {
                     Code = "ObjectNotFound",
-                    Message = "The referenced Kubernetes object was not found.",
+                    Message = @namespace is null
+                        ? $"The referenced Kubernetes object (GroupVersionKind={groupVersionKind}, Name={identifiers.Name}) was not found."
+                        : $"The referenced Kubernetes object (GroupVersionKind={groupVersionKind}, Name={identifiers.Name}, Namespace={@namespace}) was not found.",
                 },
             });
         }
@@ -116,7 +119,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             }
 
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
-            var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
+            using var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
 
             if (!identifiers.MatchesServerHost(client.ServerHost))
             {

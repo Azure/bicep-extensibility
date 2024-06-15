@@ -1,4 +1,4 @@
-﻿Group,Version,Kind,Plural,Namespaced,MajorMinorServerVersions
+Group,Version,Kind,Plural,Namespaced,MajorMinorServerVersions
 ,v1,Binding,bindings,True,1.16|1.17|1.18|1.19|1.21|1.22|1.23|1.24|1.25|1.26|1.27|1.28
 ,v1,ComponentStatus,componentstatuses,False,1.16|1.17|1.18|1.19|1.21|1.22|1.23|1.24|1.25|1.26|1.27|1.28
 ,v1,ConfigMap,configmaps,True,1.16|1.17|1.18|1.19|1.21|1.22|1.23|1.24|1.25|1.26|1.27|1.28

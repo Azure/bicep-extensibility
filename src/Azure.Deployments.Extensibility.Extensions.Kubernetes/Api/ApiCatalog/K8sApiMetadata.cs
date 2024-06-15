@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 {
-    public record K8sApiMetadata(
+    internal record K8sApiMetadata(
         string? Group,
         string Version,
         string Kind,
@@ -20,8 +20,6 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
             : this(group, version, kind, "", default, default)
         {
         }
-
-        public string ApiVersion => !string.IsNullOrEmpty(this.Group) ? $"{this.Group}/{this.Version}" : this.Version;
 
         public static K8sApiMetadata From(ResourceSpecification resourceSpecification)
         {
@@ -61,7 +59,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 
         public bool Matches(SemVersion serverVersion)
         {
-            var majorMinorServerVersion = $"{serverVersion.Major}.{serverVersion.Major}";
+            var majorMinorServerVersion = $"{serverVersion.Major}.{serverVersion.Minor}";
 
             return this.MajorMinorServerVersions.BinarySearch(majorMinorServerVersion) >= 0;
         }

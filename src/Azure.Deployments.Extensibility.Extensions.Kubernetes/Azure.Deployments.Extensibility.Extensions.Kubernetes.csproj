@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator" />
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit" />
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration" />
   </ItemGroup>

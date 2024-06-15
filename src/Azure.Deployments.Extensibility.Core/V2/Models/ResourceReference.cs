@@ -8,6 +8,16 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
     public record ResourceReference : ResourceReference<JsonObject, JsonObject>
     {
+        public ResourceReference()
+            : base()
+        {
+        }
+
+        [SetsRequiredMembers]
+        public ResourceReference(string type, string? apiVersion, JsonObject identifiers, JsonObject? config)
+            : base(type, apiVersion, identifiers, config)
+        {
+        }
     }
 
     public record ResourceReference<TIdentifiers, TConfig>

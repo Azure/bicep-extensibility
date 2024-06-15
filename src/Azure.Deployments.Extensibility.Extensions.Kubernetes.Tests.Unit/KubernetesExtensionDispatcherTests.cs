@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
-using Azure.Deployments.Extensibility.TestFixtures.Attributes;
+using Azure.Deployments.Extensibility.TestFixtures;
 using FluentAssertions;
 using static FluentAssertions.FluentActions;
 

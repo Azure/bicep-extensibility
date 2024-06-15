@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation
 {
-    public partial class RegexPatterns
+    internal partial class RegexPatterns
     {
         [GeneratedRegex(@"^((?<group>[a-zA-Z0-9.]+)\/)?(?<kind>[a-zA-Z]+)$")]
         public static partial Regex ResourceType();

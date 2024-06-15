@@ -10,7 +10,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api
 {
-    public class K8sClusterScopedApi : K8sApi
+    internal class K8sClusterScopedApi : K8sApi
     {
         public K8sClusterScopedApi(IK8sClient client, V1APIResource apiResource)
             : base(client, apiResource)

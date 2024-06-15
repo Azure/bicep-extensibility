@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
 {
-    public class K8sObject
+    internal class K8sObject
     {
         public K8sObject(GroupVersionKind groupVersionKind, JsonObject body)
         {

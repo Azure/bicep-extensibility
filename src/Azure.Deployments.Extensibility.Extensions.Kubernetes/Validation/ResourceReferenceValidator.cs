@@ -7,7 +7,7 @@ using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation.Schemas;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation
 {
-    public sealed class ResourceReferenceValidator : ModelValidator<ResourceReference>
+    internal sealed class ResourceReferenceValidator : ModelValidator<ResourceReference>
     {
         public ResourceReferenceValidator()
         {

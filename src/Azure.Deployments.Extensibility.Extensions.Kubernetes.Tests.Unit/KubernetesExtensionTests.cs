@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using AutoFixture;
@@ -6,7 +6,7 @@ using AutoFixture.Xunit2;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Core.V2.Validation;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
-using Azure.Deployments.Extensibility.TestFixtures.Attributes;
+using Azure.Deployments.Extensibility.TestFixtures;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;

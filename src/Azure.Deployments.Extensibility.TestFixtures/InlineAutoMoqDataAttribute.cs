@@ -3,7 +3,7 @@
 
 using AutoFixture.Xunit2;
 
-namespace Azure.Deployments.Extensibility.TestFixtures.Attributes
+namespace Azure.Deployments.Extensibility.TestFixtures
 {
     public class InlineAutoMoqDataAttribute(params object[] objects)
         : InlineAutoDataAttribute(new AutoMoqDataAttribute(), objects)

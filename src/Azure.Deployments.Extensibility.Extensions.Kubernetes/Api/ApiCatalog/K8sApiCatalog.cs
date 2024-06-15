@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
 {
-    public class K8sApiCatalog
+    internal class K8sApiCatalog
     {
         private const string FileName = $"{nameof(K8sApiCatalog)}.csv";
 
@@ -26,7 +26,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
         private static ImmutableArray<K8sApiMetadata> ReadRecordsFromEmbeddedResource()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var csvResourceName = $"{assembly.GetName().Name}.Data.{FileName}";
+            var csvResourceName = $"{assembly.GetName().Name}.Api.ApiCatalog.{FileName}";
             var csvStream = assembly.GetManifestResourceStream(csvResourceName) ?? throw new InvalidOperationException($"Unable to load {csvResourceName} from assembly.");
 
             using var csvStreamReader = new StreamReader(csvStream);
@@ -79,7 +79,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api.ApiCatalog
                 // search upwards for the .git directory. This should only exist at the repository root.
                 if (Directory.Exists(Path.Join(repoRootDirectory.FullName, ".git")))
                 {
-                    return Path.Combine(repoRootDirectory.FullName, "src", $"{Assembly.GetExecutingAssembly().GetName().Name}", "Data", FileName);
+                    return Path.Combine(repoRootDirectory.FullName, "src", $"{Assembly.GetExecutingAssembly().GetName().Name}", "Api", "ApiCatalog", FileName);
                 }
 
                 repoRootDirectory = parentDirectory;

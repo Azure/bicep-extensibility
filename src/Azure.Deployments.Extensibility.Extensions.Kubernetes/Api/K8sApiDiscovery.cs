@@ -45,8 +45,14 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Api
                 throw new ErrorResponseException("UnknownResourceType", $"Unknown API group version '{group}/{version}'.");
             }
 
-            return apiResourceList.Resources.SingleOrDefault(x => x.Kind.Equals(kind, StringComparison.Ordinal)) ??
+            // Ensure not to include subresources (e.g. /status).
+            apiResource = apiResourceList.Resources.SingleOrDefault(x => x.Kind.Equals(kind, StringComparison.Ordinal) && !x.Name.Contains('/')) ??
                 throw new ErrorResponseException("UnknownResourceKind", $"Unknown resource kind '{kind}'.", JsonPointer.Create("type"));
+
+            apiResource.Group = group;
+            apiResource.Version = version;
+
+            return apiResource;
         }
 
         private async Task<V1APIResource?> TryFastFindApiResourceAsync(GroupVersionKind groupVersionKind, CancellationToken cancellationToken)
