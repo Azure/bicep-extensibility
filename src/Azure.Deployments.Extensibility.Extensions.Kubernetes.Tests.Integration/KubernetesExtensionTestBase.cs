@@ -1,17 +1,18 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.Core.V2.Models;
-using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
+using Azure.Deployments.Extensibility.Extensions.Kubernetes.DependencyInjection;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.TestFixtures;
-using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration
 {
     public abstract class KubernetesExtensionTestBase
     {
-        internal static KubernetesExtension Sut { get; } = new(new ResourceSpecificationValidator(), new ResourceReferenceValidator(), new K8sClientFactory());
+        internal static KubernetesExtension Sut { get; } = CreateSut();
 
         internal static HttpContext DefaultHttpContext { get; } = new DefaultHttpContext();
 
@@ -37,5 +38,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
         }
 
         protected static Task<IResult> CreateOrUpdateNamespaceAsync(K8sNamespaceSpecification specification) => CreateOrUpdateResourceAsync(specification);
+
+        private static KubernetesExtension CreateSut()
+        {
+            var serviceProvider = new ServiceCollection().AddKubernetesExtensionDispatcher().BuildServiceProvider();
+            var extensionDispatcher = serviceProvider.GetRequiredKeyedService<IExtensionDispatcher>(KubernetesExtension.ExtensionName);
+
+            return (KubernetesExtension)extensionDispatcher.DispatchExtension("1.0.0");
+        }
     }
 }

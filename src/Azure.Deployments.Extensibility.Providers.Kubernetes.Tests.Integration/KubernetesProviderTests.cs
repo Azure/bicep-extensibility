@@ -19,9 +19,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
     // and after running all test cases.
     public class KubernetesProviderTests
     {
-        private const string SkipReason = "V1 Implementation is being deprecated";
-
-        [Theory(Skip = SkipReason), AzureVoteBackDeploymentRequestAutoData]
+        [Theory, AzureVoteBackDeploymentRequestAutoData]
         public async Task SaveAsync_AzureVoteBackDeployment_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
@@ -29,7 +27,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
-        [Theory(Skip = SkipReason), AzureVoteBackServiceRequestAutoData]
+        [Theory, AzureVoteBackServiceRequestAutoData]
         public async Task SaveAsync_AzureVoteBackService_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             var response = await sut.SaveAsync(request, CancellationToken.None);
@@ -37,7 +35,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             response.Should().BeOfType<ExtensibilityOperationSuccessResponse>();
         }
 
-        [Theory(Skip = SkipReason), RandomNamespaceRequestAutoData]
+        [Theory, RandomNamespaceRequestAutoData]
         public async Task GetAsync_SavedNamespace_Succeeds(ExtensibilityOperationRequest request, KubernetesProvider sut)
         {
             await sut.SaveAsync(request, CancellationToken.None);
@@ -49,7 +47,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             successResponse.Resource.Properties.GetProperty("metadata").TryGetProperty("uid", out _).Should().BeTrue();
         }
 
-        [Theory(Skip = SkipReason), RandomNamespaceRequestAutoData]
+        [Theory, RandomNamespaceRequestAutoData]
         public async Task PreviewSaveAsync_WithExistingNamespace_PerformsServerSideDryRun(ExtensibilityOperationRequest namespaceRequest, KubernetesProvider sut)
         {
             await sut.SaveAsync(namespaceRequest, CancellationToken.None);
@@ -75,7 +73,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             labelTwo.GetString().Should().Be("valueTwo");
         }
 
-        [Theory(Skip = SkipReason), AutoData]
+        [Theory, AutoData]
         public async Task PreviewSaveAsync_WithoutExistingNamespace_PerformsClientSideDryRun(Fixture fixture, KubernetesProvider sut)
         {
             var nonexistentNamespace = fixture.Create<string>();
