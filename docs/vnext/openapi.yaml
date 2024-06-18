@@ -245,13 +245,6 @@ components:
       description: Version of the extension. This is specified by the user with the extension import syntax in the Bicep or ARM template file. It is recommended for the extension service to validate the request payload against the extension version, but it's not mandatory.
       schema:
         type: string
-    ReferenceId:
-      name: referenceId
-      in: path
-      required: true
-      description: Reference ID of the resource.
-      schema:
-        type: string
     ResourceOperationPath:
       name: resourceOperationPath
       in: path
@@ -396,15 +389,25 @@ components:
     ResourceReference:
       type: object
       required:
-        - referenceId
+        - identifiers
+        - type
       properties:
         identifiers:
           description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.
           type: object
         config:
           $ref: '#/components/schemas/Config'
+        type:
+          type: string
+          description: The type of the resource.
+          example: application
+        apiVersion:
+          type: string
+          description: The API version of the resource.
+          example: v1
       example:
-        type: application@v1
+        type: application
+        version: v1
         identifiers: {
           name: myApp
         }
@@ -425,6 +428,7 @@ components:
           $ref: '#/components/schemas/Config'
         identifiers:
           type: object
+          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.
           readOnly: true
         status:
           $ref: '#/components/schemas/Status'
