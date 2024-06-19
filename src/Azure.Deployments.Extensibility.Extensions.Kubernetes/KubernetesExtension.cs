@@ -14,6 +14,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 {
     internal class KubernetesExtension : IExtension
     {
+        public const string ExtensionName = "Kubernetes";
+
         private readonly IModelValidator<ResourceSpecification> resourceSpecificationValidator;
         private readonly IModelValidator<ResourceReference> resourceReferenceValidator;
         private readonly IK8sClientFactory k8sClientFactory;
