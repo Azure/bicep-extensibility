@@ -70,7 +70,7 @@ paths:
         
         Upon successful operation, the service must add an identifiers property to its response. This property is an object consisting of several sub-properties that, when combined with the resource's type and configuration, create a *globally unique* key for identifying the resource. The structure of the identifiers property is determined by the extension service and is opaque to the template deployment engine.
 
-        If the operation is synchronous or a resource based long-running operation (RELO), the response status code must be 201 Created for nonexistent resource or 200 OK for existing resource.
+        If the operation is synchronous or a resource based long-running operation (RELO), the response status code should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension service cannot determine whether the resource already exists, or if determining this is costly (e.g., requiring an additional query), it is acceptable to return a 200 OK status code.
 
         If the opeartion is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
       operationId: createOrUpdateResource
