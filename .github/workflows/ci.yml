@@ -48,7 +48,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Code Coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           # TODO: remove after the repo goes public
           token: ${{ secrets.CODECOV_TOKEN }}
