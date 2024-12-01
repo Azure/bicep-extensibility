@@ -22,12 +22,12 @@
       },
       "JsonPointer.Net": {
         "type": "Direct",
-        "requested": "[5.0.2, )",
-        "resolved": "5.0.2",
-        "contentHash": "H/OtixKadr+ja1j7Fru3WG56V9zP0AKT1Bd0O7RWN/zH1bl8ZIwW9aCa4+xvzuVvt4SPmrvBu3G6NpAkNOwNAA==",
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "pqVAJGpGBkEWQTMrmuiw54HT/ou0bLr+wOWlqQCqYfAG3mGOF/j4JC3UIw8mf0CTpT5TwLttF3kCRXk+hnAD9g==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1.2"
+          "Json.More.Net": "2.1.0"
         }
       },
       "JsonSchema.Net": {
@@ -68,8 +68,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.2",
-        "contentHash": "izscdjjk8EAHDBCjyz7V7n77SzkrSjh/hUGV6cyR6PlVdjYDh5ohc8yqvwSqJ9+6Uof8W6B24dIHlDKD+I1F8A=="
+        "resolved": "2.1.0",
+        "contentHash": "qtwsyAsL55y2vB2/sK4Pjg3ZyVzD5KKSpV3lOAMHlnjFfsjQ/86eHJfQT9aV1YysVXzF4+xyHOZbh7Iu3YQ7Lg=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
