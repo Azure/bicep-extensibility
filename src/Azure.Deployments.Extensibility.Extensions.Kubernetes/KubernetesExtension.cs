@@ -40,20 +40,22 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             using var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
+            var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+
             if (api.Namespaced && (k8sObject.Namespace ?? client.DefaultNamespace) is { } @namespace)
             {
                 if (await client.GetNamespaceAsync(@namespace, cancellationToken: cancellationToken) is null)
                 {
                     // Namespace does not exist. Perform client-side dry run.
                     k8sObject.Metadata["namespace"] = @namespace;
-
-                    return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject, client.ServerHost), k8sObject));
+                    
+                    return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject), k8sObject, configId));
                 }
             }
 
             k8sObject = await api.PatchObjectAsync(k8sObject, dryRun: true, cancellationToken);
 
-            return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject, client.ServerHost), k8sObject));
+            return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject), k8sObject, configId));
         }
 
         public async Task<IResult> CreateOrUpdateResourceAsync(HttpContext httpContext, ResourceSpecification resourceSpecification, CancellationToken cancellationToken)
@@ -68,7 +70,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             k8sObject = await api.PatchObjectAsync(k8sObject, dryRun: false, cancellationToken);
 
-            return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject, client.ServerHost), k8sObject));
+            var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+
+            return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject), k8sObject, configId));
         }
 
         public async Task<IResult> GetResourceAsync(HttpContext httpContext, ResourceReference resourceReference, CancellationToken cancellationToken)
@@ -83,7 +87,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             if (await api.GetObjectAsync(identifiers, cancellationToken) is { } k8sObject)
             {
-                return Results.Ok(ModelMapper.MapToResource(identifiers, k8sObject));
+                var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+                return Results.Ok(ModelMapper.MapToResource(identifiers, k8sObject, configId));
             }
 
             var @namespace = api.Namespaced ? identifiers.Namespace ?? client.DefaultNamespace : null;
@@ -108,14 +113,14 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             // This can only be invoked by Deployment Stacks. ServerHostHash must be preserved
             // to ensure that the operation is performed on the correct cluster.
-            if (identifiers.ServerHostHash is null)
+            if (resourceReference.ConfigId is null)
             {
                 return Results.BadRequest(new ErrorData
                 {
                     Error = new()
                     {
-                        Code = "InvalidIdentifiers",
-                        Message = "The resource identifiers is missing the server host hash.",
+                        Code = "InvalidConfigId",
+                        Message = "The resource reference is missing the config ID.",
                     },
                 });
             }
@@ -123,7 +128,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
             using var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
 
-            if (!identifiers.MatchesServerHost(client.ServerHost))
+            var expectedConfigId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+            if (!string.Equals(expectedConfigId, resourceReference.ConfigId, StringComparison.Ordinal))
             {
                 return Results.UnprocessableEntity(new ErrorData
                 {

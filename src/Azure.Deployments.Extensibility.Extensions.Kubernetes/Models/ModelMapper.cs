@@ -29,7 +29,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             return new(group, version, kind);
         }
 
-        public static Resource MapToResource(K8sObjectIdentifiers identifiers, K8sObject k8sObject)
+        public static Resource MapToResource(K8sObjectIdentifiers identifiers, K8sObject k8sObject, string configId)
         {
             var (group, version, kind) = k8sObject.GroupVersionKind;
             var resourceType = string.IsNullOrEmpty(group) ? $"core/{kind}" : $"{group}/{kind}";
@@ -40,6 +40,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
                 ApiVersion = version,
                 Identifiers = MapToResourceIdentifiers(identifiers),
                 Properties = k8sObject.Body,
+                ConfigId = configId
             };
         }
 
@@ -48,9 +49,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             var metadataObject = identifiers["metadata"]?.AsObject() ?? throw new InvalidOperationException("Metadata must be non-null.");
             var name = metadataObject["name"]?.GetValue<string>() ?? throw new InvalidOperationException("Name must be non-null.");
             var @namespace = metadataObject["namespace"]?.GetValue<string>();
-            var serverHostHash = identifiers["serverHostHash"]?.GetValue<string>();
 
-            return new(name, @namespace, serverHostHash);
+            return new(name, @namespace);
         }
 
         public static JsonObject MapToResourceIdentifiers(K8sObjectIdentifiers identifiers) => new()
@@ -59,8 +59,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Models
             {
                 ["name"] = identifiers.Name,
                 ["namespace"] = identifiers.Namespace,
-            },
-            ["serverHostHash"] = identifiers.ServerHostHash,
+            }
         };
     }
 }
