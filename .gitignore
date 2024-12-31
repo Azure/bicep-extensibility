@@ -357,3 +357,7 @@ deploy/package/
 deploy/package.zip
 deploy/dev-host
 deploy/dev-host.zip
+
+# JetBrains
+.idea/
+*.iml
