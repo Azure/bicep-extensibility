@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
@@ -8,7 +9,6 @@ using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
 using FluentAssertions;
-using System.Text.Json.Nodes;
 using static FluentAssertions.FluentActions;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
@@ -24,9 +24,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
         }
 
         [Theory, NamespacedK8sObjectAutoData]
-        internal async Task GetObjectAsync_NamespacedObject_Throws(K8sObject namespacedObject, string serverHost, K8sClusterScopedApi sut)
+        internal async Task GetObjectAsync_NamespacedObject_Throws(K8sObject namespacedObject, K8sClusterScopedApi sut)
         {
-            var namespacedIdentifiers = K8sObjectIdentifiers.Create(namespacedObject, serverHost);
+            var namespacedIdentifiers = K8sObjectIdentifiers.Create(namespacedObject);
 
             await Invoking(() => sut.GetObjectAsync(namespacedIdentifiers, default))
                 .Should()
@@ -34,9 +34,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
         }
 
         [Theory, NamespacedK8sObjectAutoData]
-        internal async Task DeleteObjectAsync_NamespacedObject_Throws(K8sObject namespacedObject, string serverHost, K8sClusterScopedApi sut)
+        internal async Task DeleteObjectAsync_NamespacedObject_Throws(K8sObject namespacedObject, K8sClusterScopedApi sut)
         {
-            var namespacedIdentifiers = K8sObjectIdentifiers.Create(namespacedObject, serverHost);
+            var namespacedIdentifiers = K8sObjectIdentifiers.Create(namespacedObject);
 
             await Invoking(() => sut.DeleteObjectAsync(namespacedIdentifiers, default))
                 .Should()

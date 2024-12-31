@@ -111,7 +111,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             var identifiers = ModelMapper.MapToK8sObjectIdentifiers(resourceReference.Identifiers);
 
-            // This can only be invoked by Deployment Stacks. ServerHostHash must be preserved
+            // This can only be invoked by Deployment Stacks. ConfigId must be preserved
             // to ensure that the operation is performed on the correct cluster.
             if (resourceReference.ConfigId is null)
             {
@@ -120,7 +120,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                     Error = new()
                     {
                         Code = "InvalidConfigId",
-                        Message = "The resource reference is missing the config ID.",
+                        Message = "The resource reference is missing a config ID.",
                     },
                 });
             }
