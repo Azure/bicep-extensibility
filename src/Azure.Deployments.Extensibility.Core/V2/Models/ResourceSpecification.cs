@@ -14,8 +14,8 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         }
 
         [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config)
-            : base(type, apiVersion, properties, config)
+        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config, string? configId = null)
+            : base(type, apiVersion, properties, config, configId)
         {
         }
     }
@@ -27,12 +27,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         }
 
         [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, TProperties properties, TConfig? config)
+        public ResourceSpecification(string type, string? apiVersion, TProperties properties, TConfig? config, string? configId = null)
         {
             this.Type = type;
             this.ApiVersion = apiVersion;
             this.Properties = properties;
             this.Config = config;
+            this.ConfigId = configId;
         }
 
         public required string Type { get; init; }
@@ -42,5 +43,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public required TProperties Properties { get; init; }
 
         public TConfig? Config { get; init; }
+
+        public string? ConfigId { get; init; }
     }
 }

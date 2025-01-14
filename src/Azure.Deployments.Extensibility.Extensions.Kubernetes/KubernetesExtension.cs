@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
@@ -40,8 +41,14 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             using var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
-            var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+            var configId = CalculateConfigId(client);
 
+            // Do config ID checksum validation if one is supplied. 
+            if (resourceSpecification.ConfigId is not null && !TryMatchConfigurationId(resourceSpecification.ConfigId, configId, out var configIdErrorResult))
+            {
+                return configIdErrorResult;
+            }
+            
             if (api.Namespaced && (k8sObject.Namespace ?? client.DefaultNamespace) is { } @namespace)
             {
                 if (await client.GetNamespaceAsync(@namespace, cancellationToken: cancellationToken) is null)
@@ -68,9 +75,17 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             using var client = await this.k8sClientFactory.CreateAsync(resourceSpecification.Config);
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
+            // Do config ID checksum validation if one is supplied. 
+            if (resourceSpecification.ConfigId is not null
+                && (await api.GetObjectAsync(K8sObjectIdentifiers.Create(k8sObject), cancellationToken)) is not null
+                && !TryMatchConfigurationId(resourceSpecification.ConfigId, CalculateConfigId(client), out var configIdErrorResult))
+            {
+                return configIdErrorResult;
+            }
+
             k8sObject = await api.PatchObjectAsync(k8sObject, dryRun: false, cancellationToken);
 
-            var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+            var configId = CalculateConfigId(client);
 
             return Results.Ok(ModelMapper.MapToResource(K8sObjectIdentifiers.Create(k8sObject), k8sObject, configId));
         }
@@ -81,13 +96,20 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
             var identifiers = ModelMapper.MapToK8sObjectIdentifiers(resourceReference.Identifiers);
-
+            
             using var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
+
+            // Do config ID checksum validation if one is supplied. 
+            if (resourceReference.ConfigId is not null && !TryMatchConfigurationId(resourceReference.ConfigId, CalculateConfigId(client), out var configIdErrorResult))
+            {
+                return configIdErrorResult;
+            }
+            
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
 
             if (await api.GetObjectAsync(identifiers, cancellationToken) is { } k8sObject)
             {
-                var configId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
+                var configId = CalculateConfigId(client);
                 return Results.Ok(ModelMapper.MapToResource(identifiers, k8sObject, configId));
             }
 
@@ -128,17 +150,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             var groupVersionKind = ModelMapper.MapToGroupVersionKind(resourceReference.Type, resourceReference.ApiVersion);
             using var client = await this.k8sClientFactory.CreateAsync(resourceReference.Config);
 
-            var expectedConfigId = K8sObjectIdentifiers.CalculateServerHostHash(client.ServerHost);
-            if (!string.Equals(expectedConfigId, resourceReference.ConfigId, StringComparison.Ordinal))
+            if (!TryMatchConfigurationId(resourceReference.ConfigId, CalculateConfigId(client), out var configIdErrorResult))
             {
-                return Results.UnprocessableEntity(new ErrorData
-                {
-                    Error = new()
-                    {
-                        Code = "ClusterMismatch",
-                        Message = "The referenced Kubernetes object cannot be deleted because it may be deployed to a different cluster. Please verify that you are using the correct kubeConfig file and context.",
-                    },
-                });
+                return configIdErrorResult;
             }
 
             var api = await new K8sApiDiscovery(client).FindApiAsync(groupVersionKind, cancellationToken);
@@ -147,5 +161,29 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             return Results.NoContent();
         }
+
+        private static bool TryMatchConfigurationId(string userSentConfigId, string expectedConfigId, [NotNullWhen(false)] out IResult? errorResult)
+        {
+            errorResult = null;
+
+            if (string.Equals(expectedConfigId, userSentConfigId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+
+            errorResult = Results.UnprocessableEntity(
+                new ErrorData
+                {
+                    Error = new()
+                    {
+                        Code = "ClusterMismatch",
+                        Message = "The referenced Kubernetes object cannot be deleted because it may be deployed to a different cluster. Please verify that you are using the correct kubeConfig file and context.",
+                    },
+                });
+
+            return false;
+        }
+
+        private static string CalculateConfigId(IK8sClient k8sClient) => K8sObjectIdentifiers.CalculateServerHostHash(k8sClient.ServerHost);
     }
 }

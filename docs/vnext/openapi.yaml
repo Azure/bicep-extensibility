@@ -29,8 +29,10 @@ paths:
       description: |
         Preview a resource creation or update operation by simulating the process.
 
-        Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be ontained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
-
+        Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be obtained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
+        Additionally, the service must provide a configuration ID if a user configuration is received. This property should uniquely identify a deployment control plane and its format is decided by the extension. It is used as a checksum for some resource operations such as deletion.
+        A configuration ID is not required as input, however, if one is provided, it will be validated.
+        
         Should the simulation encounter failure due to invalid properties, the response must detail the errors encountered.
         
         [TODO 1]: We need to explore strategies for handling ARM template expressions.
@@ -69,10 +71,12 @@ paths:
         Create or update a resource.
         
         Upon successful operation, the service must add an identifiers property to its response. This property is an object consisting of several sub-properties that, when combined with the resource's type and configuration, create a *globally unique* key for identifying the resource. The structure of the identifiers property is determined by the extension service and is opaque to the template deployment engine.
-
+        Additionally, the service must provide a configuration ID if a user configuration is received. This property should uniquely identify a deployment control plane and its format is decided by the extension. It is used as a checksum for some resource operations such as deletion.
+        A configuration ID is not required as input, however, if one is provided, it will be validated.
+        
         If the operation is synchronous or a resource based long-running operation (RELO), the response status code should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension service cannot determine whether the resource already exists, or if determining this is costly (e.g., requiring an additional query), it is acceptable to return a 200 OK status code.
 
-        If the opeartion is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
+        If the operation is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
       operationId: createOrUpdateResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -108,6 +112,9 @@ paths:
       summary: Get a resource
       description: |
         Get a resource given its type, identifiers, and configuration.
+        
+        Additionally, the service must provide a configuration ID if a user configuration is received. This property should uniquely identify a deployment control plane and its format is decided by the extension. It is used as a checksum for some resource operations such as deletion.
+        A configuration ID is not required as input, however, if one is provided, it will be validated.
       operationId: getResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -137,7 +144,7 @@ paths:
        - Resource
       summary: Delete a resource
       description: |
-        Delete a resource given its type, identifiers, and configuration.
+        Delete a resource given its type, identifiers, configuration, and configuration ID. A configuration ID is required for checksum validation if a configuration is present.
       operationId: deleteResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -397,6 +404,8 @@ components:
           type: object
         config:
           $ref: '#/components/schemas/Config'
+        configId:
+          $ref: '#/components/schemas/ConfigId'
         type:
           type: string
           description: The type of the resource.
@@ -418,6 +427,9 @@ components:
       type: object
       writeOnly: true
       description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied extension configuration in the Bicep or ARM template file.
+    ConfigId:
+      type: string
+      description: An ID for the provided extension configuration that is calculated by the extension. This is used to uniquely identify a deployment control plane and is used as a checksum for some operations on a resource such as deletion. The extension decides the format of the ID. The extension is required to provide this if a configuration is supplied. The user must provide this configuration ID back to the extension for operations that require configuration checksum validation.
     Resource:
       type: object
       required:
@@ -426,6 +438,8 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/Config'
+        configId:
+          $ref: '#/components/schemas/ConfigId'
         identifiers:
           type: object
           description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.

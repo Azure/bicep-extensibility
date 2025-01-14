@@ -14,7 +14,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         }
 
         [SetsRequiredMembers]
-        public Resource(string type, string? apiVersion, JsonObject identifiers, JsonObject properties, string configId, string? status = null)
+        public Resource(string type, string? apiVersion, JsonObject identifiers, JsonObject properties, string? configId = null, string? status = null)
             : base(type, apiVersion, identifiers, properties, configId, status)
         {
         }
@@ -27,7 +27,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         }
 
         [SetsRequiredMembers]
-        public Resource(string type, string? apiVersion, TIdentifiers identifiers, TProperties properties, string configId, string? status = null)
+        public Resource(string type, string? apiVersion, TIdentifiers identifiers, TProperties properties, string? configId = null, string? status = null)
         {
             this.Type = type;
             this.ApiVersion = apiVersion;
@@ -46,7 +46,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public required TProperties Properties { get; init; }
 
         public string? Status { get; init; } = null;
-        
-        public required string ConfigId { get; init; }
+
+        public string? ConfigId { get; init; }
     }
 }
