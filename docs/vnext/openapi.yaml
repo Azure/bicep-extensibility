@@ -400,7 +400,7 @@ components:
         - type
       properties:
         identifiers:
-          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.
+          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload.
           type: object
         config:
           $ref: '#/components/schemas/Config'
@@ -429,7 +429,7 @@ components:
       description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied extension configuration in the Bicep or ARM template file.
     ConfigId:
       type: string
-      description: An ID for the provided extension configuration that is calculated by the extension. This is used to uniquely identify a deployment control plane and is used as a checksum for some operations on a resource such as deletion. The extension decides the format of the ID. The extension is required to provide this if a configuration is supplied. The user must provide this configuration ID back to the extension for operations that require configuration checksum validation.
+      description: An ID for the provided extension configuration that is calculated by the extension. This is used to uniquely identify a deployment control plane and is used as a checksum for some operations on a resource such as deletion. The extension decides the format of the ID. The ID is treated case-sensitively by the deployment engine so the extension should normalize casing. The extension is required to provide this if a configuration is supplied. The user must provide this configuration ID back to the extension for operations that require configuration checksum validation.
     Resource:
       type: object
       required:
@@ -442,7 +442,7 @@ components:
           $ref: '#/components/schemas/ConfigId'
         identifiers:
           type: object
-          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload. Occasionally, the extension might want incorporate extra properties to enhance validation. For instance, in the context of a Kubernetes extension, the inclusion of a clusterHostHash identifier might be imperative. This necessity arises in situations where the configuration of a Kubernetes resource gets changed subsequent to its initial creation.
+          description: An object comprising key properties that, when paired with the resource's type and configuration, uniquely identify a resource. These properties are generally a subset of the resource properties provided in the createOrUpdate request payload.
           readOnly: true
         status:
           $ref: '#/components/schemas/Status'
