@@ -1,17 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
-using System.Text.Json.Nodes;
-using FluentAssertions;
-using static FluentAssertions.FluentActions;
 using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
-using Moq;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
+using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
+using FluentAssertions;
+using Moq;
+using static FluentAssertions.FluentActions;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
 {
@@ -26,9 +26,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
         }
 
         [Theory, K8sObjectWithoutNamespaceAutoData]
-        internal async Task GetObjectAsync_NamespacedNotSpecified_Throws(K8sObject objectWithoutNamespace, string serverHost, K8sNamespacedApi sut)
+        internal async Task GetObjectAsync_NamespacedNotSpecified_Throws(K8sObject objectWithoutNamespace, K8sNamespacedApi sut)
         {
-            var identifiersWithoutNamespace = K8sObjectIdentifiers.Create(objectWithoutNamespace, serverHost);
+            var identifiersWithoutNamespace = K8sObjectIdentifiers.Create(objectWithoutNamespace);
 
             await Invoking(() => sut.GetObjectAsync(identifiersWithoutNamespace, default))
                 .Should()
@@ -36,9 +36,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Api
         }
 
         [Theory, K8sObjectWithoutNamespaceAutoData]
-        internal async Task DeleteObjectAsync_NamespacedNotSpecified_Throws(K8sObject objectWithoutNamespace, string serverHost, K8sNamespacedApi sut)
+        internal async Task DeleteObjectAsync_NamespacedNotSpecified_Throws(K8sObject objectWithoutNamespace, K8sNamespacedApi sut)
         {
-            var identifiersWithoutNamespace = K8sObjectIdentifiers.Create(objectWithoutNamespace, serverHost);
+            var identifiersWithoutNamespace = K8sObjectIdentifiers.Create(objectWithoutNamespace);
 
             await Invoking(() => sut.DeleteObjectAsync(identifiersWithoutNamespace, default))
                 .Should()

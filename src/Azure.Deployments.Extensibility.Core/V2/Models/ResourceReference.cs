@@ -42,5 +42,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public required TIdentifiers Identifiers { get; init; }
 
         public TConfig? Config { get; init; }
+        
+        public string? ConfigId { get; init; }
     }
 }
