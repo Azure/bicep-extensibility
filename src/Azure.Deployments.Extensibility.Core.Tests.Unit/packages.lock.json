@@ -141,8 +141,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.0.2",
-        "contentHash": "izscdjjk8EAHDBCjyz7V7n77SzkrSjh/hUGV6cyR6PlVdjYDh5ohc8yqvwSqJ9+6Uof8W6B24dIHlDKD+I1F8A=="
+        "resolved": "2.1.1",
+        "contentHash": "ZXAKl2VsdnIZeUo1PFII3Oi1m1L4YQjEyDjygHfHln5vgsjgIo749X6xWkv7qFYp8RROES+vOEfDcvvoVgs8kA=="
       },
       "JsonPatch.Net": {
         "type": "Transitive",
@@ -154,10 +154,10 @@
       },
       "JsonPath.Net": {
         "type": "Transitive",
-        "resolved": "1.1.6",
-        "contentHash": "FQLbFJdjIa70GdYGR3RpdGkLTMZwQCqcd8gC35yx6aGofVEP3QxMvSuXHn75N30jj9SS6yvsPPTDzJmPMt/Mdw==",
+        "resolved": "2.1.1",
+        "contentHash": "HYq/rUkfpChS2O1tnkR0ocBxHL60jZDORNXd6nO3D6I21MA1M7Idvd0m31X9yLkriNSatAih0Ho3QRDvU/G0cg==",
         "dependencies": {
-          "Json.More.Net": "2.0.2"
+          "Json.More.Net": "2.1.1"
         }
       },
       "JsonPointer.Net": {
@@ -1381,7 +1381,7 @@
         "type": "Project",
         "dependencies": {
           "JsonPatch.Net": "[3.1.1, )",
-          "JsonPath.Net": "[1.1.6, )",
+          "JsonPath.Net": "[2.1.1, )",
           "JsonPointer.Net": "[5.0.2, )",
           "JsonSchema.Net": "[7.2.3, )"
         }
