@@ -190,11 +190,11 @@
       },
       "JsonPointer.Net": {
         "type": "Transitive",
-        "resolved": "5.0.2",
-        "contentHash": "H/OtixKadr+ja1j7Fru3WG56V9zP0AKT1Bd0O7RWN/zH1bl8ZIwW9aCa4+xvzuVvt4SPmrvBu3G6NpAkNOwNAA==",
+        "resolved": "5.3.1",
+        "contentHash": "3e2OJjU0OaE26XC/klgxbJuXvteFWTDJIJv0ITYWcJEoskq7jzUwPSC1s0iz4wPPQnfN7vwwFmg2gJfwRAPwgw==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.0.1.2"
+          "Json.More.Net": "2.1.1"
         }
       },
       "JsonSchema.Net": {
@@ -1522,7 +1522,7 @@
         "dependencies": {
           "JsonPatch.Net": "[3.1.1, )",
           "JsonPath.Net": "[2.1.1, )",
-          "JsonPointer.Net": "[5.0.2, )",
+          "JsonPointer.Net": "[5.3.1, )",
           "JsonSchema.Net": "[7.2.3, )"
         }
       },
