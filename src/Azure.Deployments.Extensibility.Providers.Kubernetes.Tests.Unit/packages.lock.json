@@ -172,10 +172,10 @@
       },
       "JsonPatch.Net": {
         "type": "Transitive",
-        "resolved": "3.1.1",
-        "contentHash": "dLAUhmL7RgezL8lkBpzf+O4U4sEtbGE9DDF858MiQdNmGK8LYBfLqO73n5N288e5H8jVvwypQG/DUJunWvaJyQ==",
+        "resolved": "3.3.0",
+        "contentHash": "GIcMMDtzfzVfIpQgey8w7dhzcw6jG5nD4DDAdQCTmHfblkCvN7mI8K03to8YyUhKMl4PTR6D6nLSvWmyOGFNTg==",
         "dependencies": {
-          "JsonPointer.Net": "5.0.2"
+          "JsonPointer.Net": "5.2.0"
         }
       },
       "JsonPath.Net": {
@@ -1494,7 +1494,7 @@
       "azure.deployments.extensibility.core": {
         "type": "Project",
         "dependencies": {
-          "JsonPatch.Net": "[3.1.1, )",
+          "JsonPatch.Net": "[3.3.0, )",
           "JsonPath.Net": "[2.1.1, )",
           "JsonPointer.Net": "[5.3.1, )",
           "JsonSchema.Net": "[7.2.3, )"
