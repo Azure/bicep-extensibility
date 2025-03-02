@@ -32,11 +32,11 @@
       },
       "JsonSchema.Net": {
         "type": "Direct",
-        "requested": "[7.2.3, )",
-        "resolved": "7.2.3",
-        "contentHash": "O3KclMcPVFYTZsTeZBpwtKd/lYrNc3AFR+xi9j3Q4CfhDufOUx25TMMWJOcFRrqVklvKQ4Kl+0UhlNX1iDGoRw==",
+        "requested": "[7.3.3, )",
+        "resolved": "7.3.3",
+        "contentHash": "d1cSLfTHzv81aOqq5SqpJv6Uw78a45sovxr7EpEPHBG0Nrc8xSg1F5/jRdETeV5cbbytFGcTaVhVFaT7MCEdJg==",
         "dependencies": {
-          "JsonPointer.Net": "5.0.0"
+          "JsonPointer.Net": "5.3.1"
         }
       },
       "Microsoft.CodeAnalysis.BannedApiAnalyzers": {
