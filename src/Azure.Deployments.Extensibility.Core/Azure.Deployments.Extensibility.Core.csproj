@@ -12,7 +12,7 @@
     <PackageReference Include="JsonPatch.Net" Version="3.3.0" />
     <PackageReference Include="JsonPath.Net" Version="2.1.1" />
     <PackageReference Include="JsonPointer.Net" Version="5.3.1" />
-    <PackageReference Include="JsonSchema.Net" Version="7.3.3" />
+    <PackageReference Include="JsonSchema.Net" Version="7.3.4" />
   </ItemGroup>
 
   <!-- Need to sign the assembly with a strong name in Official Build. -->
