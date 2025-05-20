@@ -11,10 +11,10 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Validation
 {
-    public class ResourceReferenceValidatorTests
+    public class K8sResourceReferenceValidatorTests
     {
         [Theory, AutoData]
-        internal void Validate_InvalidTypeNullApiVersionNullConfig_ReturnsError(Fixture fixture, ResourceReferenceValidator sut)
+        internal void Validate_InvalidTypeNullApiVersionNullConfig_ReturnsError(Fixture fixture, K8sResourceReferenceValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceReference>()
                 .With(x => x.ApiVersion, (string?)null)
@@ -37,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
         }
 
         [Theory, AutoData]
-        internal void Validate_InvalidApiVersionInvalidConfig_ReturnsError(Fixture fixture, ResourceReferenceValidator sut)
+        internal void Validate_InvalidApiVersionInvalidConfig_ReturnsError(Fixture fixture, K8sResourceReferenceValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceReference>()
                 .With(x => x.Type, "apps/Deployment")
@@ -61,7 +61,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
         }
 
         [Theory, AutoData]
-        internal void Validate_InvalidIdentifiersNullConfig_ReturnsError(Fixture fixture, ResourceReferenceValidator sut)
+        internal void Validate_InvalidIdentifiersNullConfig_ReturnsError(Fixture fixture, K8sResourceReferenceValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceReference>()
                 .With(x => x.Type, "apps/Deployment")
@@ -92,7 +92,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
         }
 
         [Theory, AutoData]
-        internal void Validate_ValidReference_ReturnsNull(Fixture fixture, ResourceReferenceValidator sut)
+        internal void Validate_ValidReference_ReturnsNull(Fixture fixture, K8sResourceReferenceValidator sut)
         {
             var invalidResourceReference = fixture.Build<ResourceReference>()
                 .With(x => x.Type, "apps/Deployment")
