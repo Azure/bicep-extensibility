@@ -5,10 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 using Azure.Deployments.Extensibility.Core.V2.Models;
-using Azure.Deployments.Extensibility.Core.V2.Validation;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
+using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
 using Microsoft.AspNetCore.Http;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
@@ -17,13 +17,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
     {
         public const string ExtensionName = "Kubernetes";
 
-        private readonly IModelValidator<ResourceSpecification> resourceSpecificationValidator;
-        private readonly IModelValidator<ResourceReference> resourceReferenceValidator;
+        private readonly IK8sResourceSpecificationValidator resourceSpecificationValidator;
+        private readonly IK8sResourceReferenceValidator resourceReferenceValidator;
         private readonly IK8sClientFactory k8sClientFactory;
 
         public KubernetesExtension(
-            IModelValidator<ResourceSpecification> resourceSpecificationValidator,
-            IModelValidator<ResourceReference> resourceReferenceValidator,
+            IK8sResourceSpecificationValidator resourceSpecificationValidator,
+            IK8sResourceReferenceValidator resourceReferenceValidator,
             IK8sClientFactory k8sClientFactory)
         {
             this.resourceSpecificationValidator = resourceSpecificationValidator;

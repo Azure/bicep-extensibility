@@ -7,6 +7,7 @@ using AutoFixture.Xunit2;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Core.V2.Validation;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
+using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
 using Azure.Deployments.Extensibility.TestFixtures;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +21,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
         [Theory, AutoMoqData]
         internal async Task DeleteResourceAsync_ConfigIdMissing_ReturnsBadRequest(
             Fixture fixture,
-            [Frozen] Mock<IModelValidator<ResourceReference>> resourceReferenceValidatorMock,
+            [Frozen] Mock<IK8sResourceReferenceValidator> resourceReferenceValidatorMock,
             [Frozen] Mock<IK8sClient> k8sClientMock,
             [Frozen] Mock<IK8sClientFactory> k8sClientFactoryMock,
             KubernetesExtension sut)
@@ -60,7 +61,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
         internal async Task DeleteResourceAsync_ClusterMismatch_ReturnsUnprocessableEntity(
             Fixture fixture,
             DefaultHttpContext httpContext,
-            [Frozen] Mock<IModelValidator<ResourceReference>> resourceReferenceValidatorMock,
+            [Frozen] Mock<IK8sResourceReferenceValidator> resourceReferenceValidatorMock,
             [Frozen] Mock<IK8sClient> k8sClientMock,
             [Frozen] Mock<IK8sClientFactory> k8sClientFactoryMock,
             KubernetesExtension sut)

@@ -35,7 +35,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 return await this.kubernetes.Version.GetCodeAsync(cancellationToken);
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -49,11 +49,11 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
 
                 return await genericClient.ListAsync<V1APIResourceList>(cancellationToken);
             }
-            catch (HttpOperationException exception) when (exception.Response.StatusCode == HttpStatusCode.NotFound)
+            catch (HttpOperationException exception) when (IsNotFound(exception))
             {
                 return null;
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -66,11 +66,11 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 return await this.kubernetes.CoreV1.ReadNamespaceAsync(namespaceName, cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception) when (exception.Response.StatusCode == HttpStatusCode.NotFound)
+            catch (HttpOperationException exception) when (IsNotFound(exception))
             {
                 return null;
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -90,7 +90,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
                     fieldManager: "Bicep",
                     cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -111,7 +111,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
                     fieldManager: "Bicep",
                     cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -123,11 +123,11 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 return await this.kubernetes.CustomObjects.GetClusterCustomObjectAsync<T>(group, version, plural, objectName, cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception) when (exception.Response.StatusCode == HttpStatusCode.NotFound)
+            catch (HttpOperationException exception) when (IsNotFound(exception))
             {
                 return default;
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -139,11 +139,11 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 return await this.kubernetes.CustomObjects.GetNamespacedCustomObjectAsync<T>(group, version, @namespace, plural, objectName, cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception) when (exception.Response.StatusCode == HttpStatusCode.NotFound)
+            catch (HttpOperationException exception) when (IsNotFound(exception))
             {
                 return default;
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -155,7 +155,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 await this.kubernetes.CustomObjects.DeleteClusterCustomObjectAsync(group, version, plural, objectName, cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -167,7 +167,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             {
                 await this.kubernetes.CustomObjects.DeleteNamespacedCustomObjectAsync(group, version, @namespace, plural, objectName, cancellationToken: cancellationToken);
             }
-            catch (HttpOperationException exception)
+            catch (HttpOperationException exception) when (IsClientError(exception))
             {
                 throw ConvertToErrorResponseException(exception);
             }
@@ -181,5 +181,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
         }
 
         private static ErrorResponseException ConvertToErrorResponseException(HttpOperationException exception) => new("KubernetesOperationFailure", exception.Message);
+
+        private static bool IsNotFound(HttpOperationException exception) => exception.Response.StatusCode is HttpStatusCode.NotFound;
+
+        private static bool IsClientError(HttpOperationException exception) => exception.Response.StatusCode is >= HttpStatusCode.BadRequest and < HttpStatusCode.InternalServerError;
     }
 }
