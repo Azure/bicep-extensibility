@@ -177,7 +177,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
                     Error = new()
                     {
                         Code = "ClusterMismatch",
-                        Message = "The referenced Kubernetes object cannot be deleted because it may be deployed to a different cluster. Please verify that you are using the correct kubeConfig file and context.",
+                        Message = "The referenced Kubernetes object cannot be deleted because it may be deployed to a different cluster. Please verify that you are using the correct kubeconfig file and context.",
                     },
                 });
 

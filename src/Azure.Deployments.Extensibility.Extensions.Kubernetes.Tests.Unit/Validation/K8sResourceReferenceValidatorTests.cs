@@ -57,7 +57,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
 
             errorDetails[0].Code.Should().Be("InvalidApiVersion");
             errorDetails[1].Code.Should().Be("InvalidConfig");
-            errorDetails[1].Message.Should().Be(@"Required properties [""kubeConfig""] are not present.");
+            errorDetails[1].Message.Should().Be(@"Required properties [""kubeconfig""] are not present.");
         }
 
         [Theory, AutoData]
@@ -107,7 +107,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit.Valid
                 })
                 .With(x => x.Config, new JsonObject()
                 {
-                    ["kubeConfig"] = "kubeConfig",
+                    ["kubeconfig"] = "kubeconfig",
                 })
                 .Create();
 

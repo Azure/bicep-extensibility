@@ -17,11 +17,11 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
 
             try
             {
-                var kubeConfig = config["kubeConfig"]?.GetValue<string>() ?? throw new InvalidOperationException("Expected kubeConfig to be non-null.");
-                var kubeConfigBytes = Convert.FromBase64String(kubeConfig);
-                var kubeConfigStream = new MemoryStream(kubeConfigBytes);
+                var kubeconfig = (config["kubeconfig"] ?? config["kubeConfig"])?.GetValue<string>() ?? throw new InvalidOperationException("Expected kubeconfig to be non-null.");
+                var kubeconfigBytes = Convert.FromBase64String(kubeconfig);
+                var kubeconfigStream = new MemoryStream(kubeconfigBytes);
                 var currentContext = config["context"]?.GetValue<string>();
-                var clientConfiguration = await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(kubeConfigStream, currentContext: currentContext);
+                var clientConfiguration = await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(kubeconfigStream, currentContext: currentContext);
 
                 if (config["namespace"]?.GetValue<string>() is { } namespaceOverride)
                 {
@@ -34,7 +34,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (KubeConfigException exception)
             {
-                throw new ErrorResponseException("InvalidKubeConfig", exception.Message, JsonPointer.Create("config", "kubeConfig"));
+                throw new ErrorResponseException("InvalidKubeconfig", exception.Message, JsonPointer.Create("config", "kubeconfig"));
             }
         }
     }
