@@ -43,7 +43,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
                 .With(
                     x => x.Config, new JsonObject
                     {
-                        ["kubeConfig"] = fixture.Create<string>()
+                        ["kubeconfig"] = fixture.Create<string>()
                     })
                 .With(x => x.ConfigId, (string?)null)
                 .Create();
@@ -82,7 +82,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
                 })
                 .With(x => x.Config, new JsonObject
                 {
-                    ["kubeConfig"] = fixture.Create<string>()
+                    ["kubeconfig"] = fixture.Create<string>()
                 })
                 .With(x => x.ConfigId, fixture.Create<string>())
                 .Create();

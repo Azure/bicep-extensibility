@@ -37,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsJsonAsync(request.Resource.Properties));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.DeleteAsync(request, CancellationToken.None);
 
@@ -58,7 +58,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsJsonAsync(request.Resource.Properties));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.DeleteAsync(request, CancellationToken.None);
 
@@ -79,7 +79,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsync("{}"));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.GetAsync(request, CancellationToken.None);
 
@@ -100,7 +100,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsync("{}"));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.GetAsync(request, CancellationToken.None);
 
@@ -121,7 +121,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => Task.Run(() => { httpContext.Response.StatusCode = 404; }));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
@@ -147,7 +147,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsync("{}"),
                 HttpContext => HttpContext.Response.WriteAsJsonAsync(true));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
@@ -168,7 +168,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 HttpContext => HttpContext.Response.WriteAsJsonAsync(true));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.PreviewSaveAsync(request, CancellationToken.None);
 
@@ -190,7 +190,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsync("{}"));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.SaveAsync(request, CancellationToken.None);
 
@@ -211,7 +211,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit
                 httpContext => httpContext.Response.WriteAsJsonAsync(apiResourceList),
                 httpContext => httpContext.Response.WriteAsync("{}"));
 
-            request = server.InjectKubeConfig(request);
+            request = server.InjectKubeconfig(request);
 
             var response = await sut.SaveAsync(request, CancellationToken.None);
 

@@ -65,12 +65,12 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
 
         private static ExtensibilityOperationRequest<KubernetesConfig, KubernetesResourceProperties> Validate(ExtensibilityOperationRequest request)
         {
-            // Validate kubeConfig format.
-            if (request.Import.Config.TryGetProperty("kubeConfig", out var kubeConfig) && !kubeConfig.GetString().IsBase64Encoded())
+            // Validate kubeconfig format.
+            if (request.Import.Config.TryGetProperty("kubeconfig", out var kubeconfig) && !kubeconfig.GetString().IsBase64Encoded())
             {
                 throw new ExtensibilityException(
-                    "InvalidKubeConfig",
-                    request.Import.GetJsonPointer(x => x.Config).Combine("kubeConfig"),
+                    "InvalidKubeconfig",
+                    request.Import.GetJsonPointer(x => x.Config).Combine("kubeconfig"),
                     @$"Value must be a Base64-encoded string.");
             }
 
@@ -86,7 +86,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Extensions
             try
             {
                 return await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(
-                    new MemoryStream(import.Config.KubeConfig),
+                    new MemoryStream(import.Config.Kubeconfig),
                     currentContext: import.Config.Context);
             }
             catch (Exception exception)
