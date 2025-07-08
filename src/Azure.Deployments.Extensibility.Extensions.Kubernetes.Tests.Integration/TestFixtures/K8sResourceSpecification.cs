@@ -11,7 +11,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
 {
     public record K8sResourceSpecification : ResourceSpecification
     {
-        private readonly static string Base64EncodedKubeConfig = LoadContentAsBase64EncodedString();
+        private readonly static string Base64EncodedKubeconfig = LoadContentAsBase64EncodedString();
 
         [SetsRequiredMembers]
         public K8sResourceSpecification(string type, string apiVersion, string propertiesJson)
@@ -21,7 +21,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
                   JsonNode.Parse(propertiesJson)?.AsObject() ?? throw new ArgumentException("Argument is not a valid JSON object.", nameof(propertiesJson)),
                   new JsonObject
                   {
-                    ["kubeConfig"] = Base64EncodedKubeConfig,
+                    ["kubeconfig"] = Base64EncodedKubeconfig,
                   })
         {
         }
@@ -35,8 +35,8 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
         private static string LoadContentAsBase64EncodedString()
         {
             var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var kubeConfigPath = Path.Combine(homeDirectory, ".kube", "config");
-            var bytes = File.ReadAllBytes(kubeConfigPath);
+            var kubeconfigPath = Path.Combine(homeDirectory, ".kube", "config");
+            var bytes = File.ReadAllBytes(kubeconfigPath);
 
             return Convert.ToBase64String(bytes);
         }

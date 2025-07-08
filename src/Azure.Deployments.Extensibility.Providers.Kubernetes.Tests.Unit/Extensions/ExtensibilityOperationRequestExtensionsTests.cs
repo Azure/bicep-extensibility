@@ -30,7 +30,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
         }
 
         [Theory, ClusterRequestAutoData]
-        public async Task ProcessAsync_InvalidKubeConfig_ThrowsException(V1APIResourceList apiResourcesWithArbitraryKind, ExtensibilityOperationRequest request, Fixture fixture)
+        public async Task ProcessAsync_InvalidKubeconfig_ThrowsException(V1APIResourceList apiResourcesWithArbitraryKind, ExtensibilityOperationRequest request, Fixture fixture)
         {
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourcesWithArbitraryKind));
@@ -38,7 +38,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             var importConfig = new Dictionary<string, JsonElement>
             {
                 ["namespace"] = fixture.Create<string>().AsJsonElement(),
-                ["kubeConfig"] = fixture.Create<string>().AsJsonElement(),
+                ["kubeconfig"] = fixture.Create<string>().AsJsonElement(),
             };
 
             var sut = request with
@@ -56,8 +56,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             var errors = assertion.Which.Errors.ToArray();
 
             errors.Should().HaveCount(1);
-            errors[0].Code.Should().Be("InvalidKubeConfig");
-            errors[0].Target.ToString().Should().Be("/import/config/kubeConfig");
+            errors[0].Code.Should().Be("InvalidKubeconfig");
+            errors[0].Target.ToString().Should().Be("/import/config/kubeconfig");
             errors[0].Message.ToString().Should().Be("Value must be a Base64-encoded string.");
         }
 
@@ -67,8 +67,8 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourcesWithArbitraryKind));
 
-            var kubeConfig = fixture.Create<string>();
-            var sut = server.InjectKubeConfig(request, kubeConfig);
+            var kubeconfig = fixture.Create<string>();
+            var sut = server.InjectKubeconfig(request, kubeconfig);
 
             var assertion = await FluentActions.Invoking(async () => await sut.ProcessAsync(CancellationToken.None))
                 .Should()
@@ -87,7 +87,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourcesWithArbitraryKind));
 
-            var sut = server.InjectKubeConfig(request);
+            var sut = server.InjectKubeconfig(request);
 
             var assertion = await FluentActions.Invoking(async () => await sut.ProcessAsync(CancellationToken.None))
                 .Should()
@@ -111,7 +111,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourceList));
 
-            var sut = server.InjectKubeConfig(request);
+            var sut = server.InjectKubeconfig(request);
 
             var assertion = await FluentActions.Invoking(async () => await sut.ProcessAsync(CancellationToken.None))
                 .Should()
@@ -135,7 +135,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourceList));
 
-            var sut = server.InjectKubeConfig(request);
+            var sut = server.InjectKubeconfig(request);
 
             var resource = await sut.ProcessAsync(CancellationToken.None);
 
@@ -152,7 +152,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             await using var server = await MockKubernetesApiServer.StartAsync(this.testOutput, httpContext =>
                 httpContext.Response.WriteAsJsonAsync(apiResourceList));
 
-            var sut = server.InjectKubeConfig(request);
+            var sut = server.InjectKubeconfig(request);
 
             var resource = await sut.ProcessAsync(CancellationToken.None);
 

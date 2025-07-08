@@ -8,7 +8,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
 {
     public class FileSystemKubernetesConfigCustomization : ICustomization
     {
-        private static readonly byte[] KubeConfig = LoadKubeConfig();
+        private static readonly byte[] Kubeconfig = LoadKubeconfig();
 
         private readonly string @namespace;
 
@@ -21,16 +21,16 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         {
             fixture.Customize<KubernetesConfig>(composer => composer
                 .With(x => x.Namespace, this.@namespace)
-                .With(x => x.KubeConfig, KubeConfig)
+                .With(x => x.Kubeconfig, Kubeconfig)
                 .With(x => x.Context, value: null));
         }
 
-        private static byte[] LoadKubeConfig()
+        private static byte[] LoadKubeconfig()
         {
             var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var kubeConfigPath = Path.Combine(homeDirectory, ".kube", "config");
+            var kubeconfigPath = Path.Combine(homeDirectory, ".kube", "config");
 
-            return File.ReadAllBytes(kubeConfigPath);
+            return File.ReadAllBytes(kubeconfigPath);
         }
     }
 }

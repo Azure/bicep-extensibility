@@ -69,9 +69,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Mocks
             return new(app);
         }
 
-        public ExtensibilityOperationRequest InjectKubeConfig(ExtensibilityOperationRequest request, string? kubeConfig = null)
+        public ExtensibilityOperationRequest InjectKubeconfig(ExtensibilityOperationRequest request, string? kubeconfig = null)
         {
-            kubeConfig ??= $@"
+            kubeconfig ??= $@"
 apiVersion: v1
 clusters:
 - cluster:
@@ -91,7 +91,7 @@ kind: Config
             {
                 Config = import.Config with
                 {
-                    KubeConfig = Encoding.UTF8.GetBytes(kubeConfig),
+                    Kubeconfig = Encoding.UTF8.GetBytes(kubeconfig),
                 },
             };
 
