@@ -4,7 +4,7 @@
   </ItemGroup>
 
   <!-- Nuget Publishing related properties that are common to all packages -->
-  <PropertyGroup Condition="'$(EnableNuget)' == 'true'" >
+  <PropertyGroup Condition="'$(EnableNuget)' == 'true'">
     <!-- <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);</GenerateNuspecDependsOn> -->
     <PackageOutputPath>$(MSBuildThisFileDirectory)\..\out</PackageOutputPath>
     <Authors>Microsoft</Authors>
@@ -30,7 +30,7 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(EnableNuget)' == 'true'" >
+  <ItemGroup Condition="'$(EnableNuget)' == 'true'">
     <None Include="$(MSBuildThisFileDirectory)\assets\azure-resource-256.png" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
 </Project>
