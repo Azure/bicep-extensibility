@@ -96,5 +96,46 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             labels.TryGetProperty("labelTwo", out var labelTwo).Should().BeTrue();
             labelTwo.GetString().Should().Be("valueTwo");
         }
+
+        [Theory, AzureVoteBackDeploymentRequestAutoData]
+        public async Task DeleteAsync_DeletedCluster_ReturnsDeploymentTargetNotFoundError(ExtensibilityOperationRequest request, KubernetesProvider sut)
+        {
+            var resourceCreateResponse = await sut.SaveAsync(request, CancellationToken.None);
+            var successCreateResponse = resourceCreateResponse.Should().BeOfType<ExtensibilityOperationSuccessResponse>().Subject;
+
+            // Delete the cluster
+            try
+            {
+                // TODO(kylealbert): Before delete, need to backup the ~/.minikube/profiles folder
+
+                await MinikubeFixture.ExecuteMinikubeCommandAsync("delete");
+
+                // TODO(kylealbert): After delete, need to restore the ~/.minikube/profiles folder
+                // TODO(kylealbert): Perform a live test in canary once flags are flipped.
+
+                // Try to delete the resource.
+                var deleteRequest = new ExtensibilityOperationRequest(Import: request.Import, Resource: successCreateResponse.Resource);
+
+                try
+                {
+                    var response = await sut.DeleteAsync(deleteRequest, CancellationToken.None);
+                    Assert.Fail("An exception was expected.");
+                }
+#pragma warning disable CS0168 // Variable is declared but never used
+                catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
+                {
+                    // Minikube delete + restore profile so k8s config to client can be constructed:
+                    // System.Net.Http.HttpRequestException: No connection could be made because the target machine actively refused it. (127.0.0.1:61377) NULL status code.
+                    //  System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.
+                    //    ex.SockerErrorCode = ConnnectionRefused, ex.ErrorCode = 10061,
+                    throw;
+                }
+            }
+            finally
+            {
+                await MinikubeFixture.ExecuteMinikubeCommandAsync("start"); // restore
+            }
+        }
     }
 }
