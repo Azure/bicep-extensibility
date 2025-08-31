@@ -23,5 +23,15 @@ namespace Azure.Deployments.Extensibility.Core.Exceptions
         }
 
         public IEnumerable<ExtensibilityError> Errors { get; }
+
+        public override string Message
+        {
+            get
+            {
+                var firstError = this.Errors.FirstOrDefault();
+
+                return firstError is not null ? $"{firstError.Code}: {firstError.Message}" : string.Empty;
+            }
+        }
     }
 }
