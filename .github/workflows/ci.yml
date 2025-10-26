@@ -41,7 +41,7 @@ jobs:
         run: dotnet pack Azure.Deployments.Extensibility.sln --configuration release
 
       - name: Upload NuGet packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bicep-extensibility-packages
           path: ./out/*
