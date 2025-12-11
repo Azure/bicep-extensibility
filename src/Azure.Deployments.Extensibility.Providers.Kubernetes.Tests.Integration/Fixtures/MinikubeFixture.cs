@@ -27,7 +27,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
                 return;
             }
 
-            await this.ExecuteMinikubeCommandAsync("start");
+            await this.ExecuteMinikubeCommandAsyncInternal("start");
         }
 
         public async Task DisposeAsync()
@@ -37,10 +37,27 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
                 return;
             }
 
-            await this.ExecuteMinikubeCommandAsync("delete");
+            await this.ExecuteMinikubeCommandAsyncInternal("delete");
         }
 
-        private async Task ExecuteMinikubeCommandAsync(string arguments)
+        private async Task ExecuteMinikubeCommandAsyncInternal(string arguments) =>
+            this.ProcessMinikubeCommandResult(await ExecuteMinikubeCommandAsync(arguments));
+
+        private void ProcessMinikubeCommandResult(MinikubeCommandResult commandResult)
+        {
+            var errorMessage = new DiagnosticMessage(commandResult.StandardError);
+            this.diagnosticMessageSink.OnMessage(errorMessage);
+
+            var outputMessage = new DiagnosticMessage(commandResult.StandardOutput);
+            this.diagnosticMessageSink.OnMessage(outputMessage);
+
+            if (commandResult.ExitCode != 0)
+            {
+                throw new InvalidOperationException("Cannot start minikube.");
+            }
+        }
+
+        public static async Task<MinikubeCommandResult> ExecuteMinikubeCommandAsync(string arguments)
         {
             var process = new Process();
 
@@ -66,17 +83,9 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             readStandardOutputThread.Join();
             readStandardErrorThread.Join();
 
-            var errorMessage = new DiagnosticMessage(standardError);
-            this.diagnosticMessageSink.OnMessage(errorMessage);
-
-            var outputMessage = new DiagnosticMessage(standardOutput);
-            this.diagnosticMessageSink.OnMessage(errorMessage);
-
-            if (process.ExitCode != 0)
-            {
-                throw new InvalidOperationException("Cannot start minikube.");
-            }
-
+            return new MinikubeCommandResult(standardOutput, standardError, process.ExitCode);
         }
+
+        public record MinikubeCommandResult(string StandardOutput, string StandardError, int ExitCode);
     }
 }
