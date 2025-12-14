@@ -4,11 +4,11 @@
     "net8.0": {
       "JsonPatch.Net": {
         "type": "Direct",
-        "requested": "[3.3.0, )",
-        "resolved": "3.3.0",
-        "contentHash": "GIcMMDtzfzVfIpQgey8w7dhzcw6jG5nD4DDAdQCTmHfblkCvN7mI8K03to8YyUhKMl4PTR6D6nLSvWmyOGFNTg==",
+        "requested": "[4.0.0, )",
+        "resolved": "4.0.0",
+        "contentHash": "GWMbGrYRnZlTmKazpQiJa7+d2Neno55orn8bqbcktENrxhP/eprWAjfrvS9syYWpGwA0OjCd5ZyuQT8s7kK10g==",
         "dependencies": {
-          "JsonPointer.Net": "5.2.0"
+          "JsonPointer.Net": "6.0.0"
         }
       },
       "JsonPath.Net": {
@@ -22,12 +22,12 @@
       },
       "JsonPointer.Net": {
         "type": "Direct",
-        "requested": "[5.3.1, )",
-        "resolved": "5.3.1",
-        "contentHash": "3e2OJjU0OaE26XC/klgxbJuXvteFWTDJIJv0ITYWcJEoskq7jzUwPSC1s0iz4wPPQnfN7vwwFmg2gJfwRAPwgw==",
+        "requested": "[6.0.0, )",
+        "resolved": "6.0.0",
+        "contentHash": "OOObaRq33mNkoMFM1JfdW3nD6U6xF0MHHxPFAxSpKHNNTK6Zbt8U9grquJ+m2onZ1M7cruho0fWzHjhpjEXjog==",
         "dependencies": {
-          "Humanizer.Core": "2.14.1",
-          "Json.More.Net": "2.1.1"
+          "Humanizer.Core": "3.0.1",
+          "Json.More.Net": "2.2.0"
         }
       },
       "JsonSchema.Net": {
@@ -63,13 +63,13 @@
       },
       "Humanizer.Core": {
         "type": "Transitive",
-        "resolved": "2.14.1",
-        "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+        "resolved": "3.0.1",
+        "contentHash": "scB3+KcxNmEjZK5V8rKCW2gIiL8m8KH91w14FuuExyhi9xTyAJ+jr+DDxGdy12mHmioe2uvjxTfMgM7WmSUFlw=="
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "ZXAKl2VsdnIZeUo1PFII3Oi1m1L4YQjEyDjygHfHln5vgsjgIo749X6xWkv7qFYp8RROES+vOEfDcvvoVgs8kA=="
+        "resolved": "2.2.0",
+        "contentHash": "fiyEZJNgiCzDa7/N9bZ+CnM5qnawyJ54+CkHNZ2svwxWBWNNFzydJ7RlroqMdOjokGBiLcKIxdajNvOklzlYqQ=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
