@@ -10,9 +10,9 @@
       },
       "KubernetesClient": {
         "type": "Direct",
-        "requested": "[18.0.5, )",
-        "resolved": "18.0.5",
-        "contentHash": "xkttIbnGNibYwAyZ0sqeQle2w90bfaJrkF8BaURWHfSMKPbHwys9t/wq1XmT64eA4WRVXLENYlXtqmWlEstG6A==",
+        "requested": "[18.0.13, )",
+        "resolved": "18.0.13",
+        "contentHash": "X5IuxmydftB148XeULtc7rD5/RvqLuW5SzkIjFovPgJpvV4RAoRqNPruVB7GEFu1Xg+zHVIk88WqdV8JjbgHbA==",
         "dependencies": {
           "Fractions": "7.3.0",
           "YamlDotNet": "16.3.0"
