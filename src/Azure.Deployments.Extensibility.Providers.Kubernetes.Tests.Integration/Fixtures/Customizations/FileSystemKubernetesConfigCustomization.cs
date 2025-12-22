@@ -21,7 +21,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
         {
             fixture.Customize<KubernetesConfig>(composer => composer
                 .With(x => x.Namespace, this.@namespace)
-                .With(x => x.Kubeconfig, Kubeconfig)
+                .With(x => x.KubeConfig, Kubeconfig)
                 .With(x => x.Context, value: null));
         }
 
