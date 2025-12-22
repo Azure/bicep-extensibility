@@ -38,7 +38,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
             var importConfig = new Dictionary<string, JsonElement>
             {
                 ["namespace"] = fixture.Create<string>().AsJsonElement(),
-                ["kubeconfig"] = fixture.Create<string>().AsJsonElement(),
+                ["kubeConfig"] = fixture.Create<string>().AsJsonElement(),
             };
 
             var sut = request with
@@ -57,7 +57,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Extens
 
             errors.Should().HaveCount(1);
             errors[0].Code.Should().Be("InvalidKubeconfig");
-            errors[0].Target.ToString().Should().Be("/import/config/kubeconfig");
+            errors[0].Target.ToString().Should().Be("/import/config/kubeConfig");
             errors[0].Message.ToString().Should().Be("Value must be a Base64-encoded string.");
         }
 

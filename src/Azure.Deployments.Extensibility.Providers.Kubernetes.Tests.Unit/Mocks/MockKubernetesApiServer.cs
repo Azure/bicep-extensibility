@@ -91,7 +91,7 @@ kind: Config
             {
                 Config = import.Config with
                 {
-                    Kubeconfig = Encoding.UTF8.GetBytes(kubeconfig),
+                    KubeConfig = Encoding.UTF8.GetBytes(kubeconfig),
                 },
             };
 

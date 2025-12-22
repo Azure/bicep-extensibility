@@ -12,7 +12,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.Fixtur
         public void Customize(IFixture fixture)
         {
             fixture.Customize<KubernetesConfig>(composer => composer
-                .With(x => x.Kubeconfig, Array.Empty<byte>())
+                .With(x => x.KubeConfig, Array.Empty<byte>())
                 .With(x => x.Context, value: null));
         }
     }
