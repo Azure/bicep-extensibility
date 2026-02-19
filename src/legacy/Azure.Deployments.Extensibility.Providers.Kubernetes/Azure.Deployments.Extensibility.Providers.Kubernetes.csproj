@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <EnableNuget>true</EnableNuget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="KubernetesClient" Version="18.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj" />
+  </ItemGroup>
+
+</Project>

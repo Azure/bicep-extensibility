@@ -5,26 +5,23 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{B288A1A3-08D1-4D97-B9F8-32873EFEB4B0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{71A5B95E-429D-4E5A-BCDD-69E963D79962}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Legacy", "Legacy", "{71A5B95E-429D-4E5A-BCDD-69E963D79962}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{13E01E57-50E3-42B7-A0E2-5EA0709CB27B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes", "src\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj", "{8EDBF496-6D80-497B-A205-B8116C457038}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes", "src\legacy\Azure.Deployments.Extensibility.Providers.Kubernetes\Azure.Deployments.Extensibility.Providers.Kubernetes.csproj", "{8EDBF496-6D80-497B-A205-B8116C457038}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Core", "src\Azure.Deployments.Extensibility.Core\Azure.Deployments.Extensibility.Core.csproj", "{D0B72CE2-3037-418E-9926-FA175B9E7844}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Core.Tests.Unit", "src\Azure.Deployments.Extensibility.Core.Tests.Unit\Azure.Deployments.Extensibility.Core.Tests.Unit.csproj", "{E699C5C2-C63E-4B24-A537-7EB6F26CD480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit", "src\legacy\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Unit.csproj", "{551B9302-B7A3-47C5-8892-6B1598C70690}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.csproj", "{CEA4E336-491B-4D1A-A578-776E380EF463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration", "src\legacy\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration.csproj", "{CEA4E336-491B-4D1A-A578-776E380EF463}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core", "src\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core.csproj", "{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core", "src\legacy\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core\Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Core.csproj", "{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{A5D0B27B-E278-4619-863C-16EE38693FE2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.Providers.ThirdParty", "src\Azure.Deployments.Extensibility.Providers.ThirdParty\Azure.Deployments.Extensibility.Providers.ThirdParty.csproj", "{C9AA69F5-2811-4F73-A559-1560150623B8}"
-EndProject
+
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{B021F5BB-908A-4A29-B75B-5822094C64F1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -88,10 +85,7 @@ Global
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9AA69F5-2811-4F73-A559-1560150623B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9AA69F5-2811-4F73-A559-1560150623B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9AA69F5-2811-4F73-A559-1560150623B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9AA69F5-2811-4F73-A559-1560150623B8}.Release|Any CPU.Build.0 = Release|Any CPU
+
 		{27275487-FCD3-43F8-8381-6CB0DF270F9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27275487-FCD3-43F8-8381-6CB0DF270F9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27275487-FCD3-43F8-8381-6CB0DF270F9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -128,8 +122,7 @@ Global
 		{551B9302-B7A3-47C5-8892-6B1598C70690} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{CEA4E336-491B-4D1A-A578-776E380EF463} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
 		{CE6AF926-A2F5-41C3-B6CD-84D76AAF50CA} = {13E01E57-50E3-42B7-A0E2-5EA0709CB27B}
-		{A5D0B27B-E278-4619-863C-16EE38693FE2} = {71A5B95E-429D-4E5A-BCDD-69E963D79962}
-		{C9AA69F5-2811-4F73-A559-1560150623B8} = {A5D0B27B-E278-4619-863C-16EE38693FE2}
+
 		{27275487-FCD3-43F8-8381-6CB0DF270F9D} = {4FE8200D-5CAA-4C6C-AF00-01729C4DB4F9}
 		{0AFEE13C-D656-43BF-98F1-263D71E5C04A} = {367E997F-0686-4805-A692-0313A5AC9BE9}
 		{57DAF938-16F9-4AC3-8734-54B86A504CA8} = {0AFEE13C-D656-43BF-98F1-263D71E5C04A}
