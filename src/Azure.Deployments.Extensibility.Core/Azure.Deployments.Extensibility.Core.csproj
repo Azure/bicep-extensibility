@@ -9,10 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JsonPatch.Net" Version="3.3.0" />
+    <!-- DO NOT BUMP THE VERSIONS OF THE FOLLOWING PACKAGES -->
+    <!-- Their latest major versions include a EULA. See https://github.com/json-everything/json-everything/issues/981 for details. -->
+    <PackageReference Include="JsonPatch.Net" Version="3.3.0" /> 
     <PackageReference Include="JsonPath.Net" Version="2.1.1" />
     <PackageReference Include="JsonPointer.Net" Version="5.3.1" />
     <PackageReference Include="JsonSchema.Net" Version="7.3.4" />
+    <!-- DO NOT BUMP THE VERSIONS OF THE ABOVE PACKAGES -->
   </ItemGroup>
 
   <!-- Need to sign the assembly with a strong name in Official Build. -->
