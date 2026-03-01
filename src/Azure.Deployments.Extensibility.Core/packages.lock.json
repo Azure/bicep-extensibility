@@ -13,11 +13,11 @@
       },
       "JsonPath.Net": {
         "type": "Direct",
-        "requested": "[2.1.1, )",
-        "resolved": "2.1.1",
-        "contentHash": "HYq/rUkfpChS2O1tnkR0ocBxHL60jZDORNXd6nO3D6I21MA1M7Idvd0m31X9yLkriNSatAih0Ho3QRDvU/G0cg==",
+        "requested": "[3.0.1, )",
+        "resolved": "3.0.1",
+        "contentHash": "QvZ2k+tKFdnFZ4TnVyAps0vc/5gRjn4WF0dYPv98rputfu96MOu8kua+frpHS/p2r8TAxhFGZgM6nVMGyNwbJg==",
         "dependencies": {
-          "Json.More.Net": "2.1.1"
+          "Json.More.Net": "3.0.0"
         }
       },
       "JsonPointer.Net": {
@@ -68,8 +68,8 @@
       },
       "Json.More.Net": {
         "type": "Transitive",
-        "resolved": "2.1.1",
-        "contentHash": "ZXAKl2VsdnIZeUo1PFII3Oi1m1L4YQjEyDjygHfHln5vgsjgIo749X6xWkv7qFYp8RROES+vOEfDcvvoVgs8kA=="
+        "resolved": "3.0.0",
+        "contentHash": "+kj2dE04clW9+Bw4GoEVBFdLSiOKwLEkiiGbX+CK860DbytCtpD0QA68cEQISMnIrxyxQPw5gQAra22WCnRPUA=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
