@@ -26,18 +26,44 @@ paths:
       tags:
        - Resource
       summary: Preview a resource create or update operation
-      description: |
+      description: >-
         Preview a resource creation or update operation by simulating the process.
-
-        Upon successful simulation, the outcome must mirror a resource that has been either created or updated, based on the operation that was previewed. This resulting state should align with what would be obtained from a GET response, as if the genuine create or update operation had been carried out. This includes the inclusion of read-only properties and properties endowed with default values, as well as the exclusion of write-only properties like those containing sensitive information such as passwords and connection strings.
-        Additionally, the service must provide a configuration ID if a user configuration is received. This property should uniquely identify a deployment control plane and its format is decided by the extension. It is used as a checksum for some resource operations such as deletion.
-        A configuration ID is not required as input, however, if one is provided, it will be validated.
+        
+        
+        The preview resource properties and extension configuration in the request can contain ARM template language
+        expressions that could not be evaluated by the Deployment engine at the time of preview. An extension preview
+        implementation must be able to handle language expressions at any JSON node within resource properties and the
+        extension configuration. For example, instead of receiving an expected object for 'properties.foo', the engine
+        could send '"properties.foo": "[reference('resourceNotYetDeployed').someOutput]"'. For details on the language
+        expression format, see https://aka.ms/ArmTemplateExpressions. The paths for these properties will be present in
+        'metadata.unevaluated' of the request body, so there is no need to worry about escape patterns.
+        
+        
+        Given that resource properties and/or the extension configuration may be partially provided, the extension
+        should make a best-effort preview attempt with the information it has, or return an error if a preview cannot
+        be performed. Upon successful simulation, the outcome must mirror a resource that has been either
+        created or updated, based on the operation that was previewed. This resulting state should align with what
+        would be obtained from a GET response, as if the genuine create or update operation had been carried out. This
+        includes the inclusion of read-only properties and properties endowed with default values, as well as the
+        exclusion of write-only properties like those containing sensitive information such as passwords and connection
+        strings. The extension must echo back any properties with language expressions, as well as the unevaluated paths
+        in the 'metadata.unevaluated' property. The extension should also supply property metadata such as calculated
+        or unknown properties to assist in providing a more accurate and detailed preview experience for the end user.
+        For example, a property may be unknown if the deployment engine sent unevaluated expressions for some properties
+        in the resource payload.
+        
+        
+        The extension should echo back the configuration received, minus any secret properties. If a config property
+        is not echoed back, the Deployment engine will treat the property as a secret property.
+        
+        
+        Additionally, the extension must provide a configuration ID if a configuration is received. This property
+        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as
+        a checksum for some resource operations such as deletion. A configuration ID is not required as input, however,
+        if one is provided, it should be validated if possible.
+        
         
         Should the simulation encounter failure due to invalid properties, the response must detail the errors encountered.
-        
-        [TODO 1]: We need to explore strategies for handling ARM template expressions.
-          
-        [TODO 2]: A mechanism is required for extensions to report properties that cannot be determined during the preview phase, such as a timestamp. One idea is to utilize a placeholder ARM template expression, like `[unknown()]`, for these property values.
       operationId: previewResourceCreateOrUpdate
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -51,11 +77,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Resource'
+              $ref: '#/components/schemas/PreviewResource'
         required: true
       responses:
         '200':
-          $ref: '#/components/responses/ResourceResponse'
+          $ref: '#/components/responses/PreviewResourceResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '4XX':
@@ -67,16 +93,34 @@ paths:
       tags:
        - Resource
       summary: Create or update a resource
-      description: |
+      description: >-
         Create or update a resource.
         
-        Upon successful operation, the service must add an identifiers property to its response. This property is an object consisting of several sub-properties that, when combined with the resource's type and configuration, create a *globally unique* key for identifying the resource. The structure of the identifiers property is determined by the extension service and is opaque to the template deployment engine.
-        Additionally, the service must provide a configuration ID if a user configuration is received. This property should uniquely identify a deployment control plane and its format is decided by the extension. It is used as a checksum for some resource operations such as deletion.
-        A configuration ID is not required as input, however, if one is provided, it will be validated.
         
-        If the operation is synchronous or a resource based long-running operation (RELO), the response status code should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension service cannot determine whether the resource already exists, or if determining this is costly (e.g., requiring an additional query), it is acceptable to return a 200 OK status code.
+        Upon successful operation, the service must add an identifiers property to its response. This property is an
+        object consisting of several sub-properties that, when combined with the resource's type and configuration,
+        create a *globally unique* key for identifying the resource. The structure of the identifiers property is
+        determined by the extension service and is opaque to the template deployment engine.
+        
+        
+        The extension should echo back the configuration received, minus any secret properties. If a config property
+        is not echoed back, the Deployment engine will treat the property as a secret property.
 
-        If the operation is being implemented as a stepwise long-running operation (LRO), the response status code should be 202 Accepted.
+
+        Additionally, the service must provide a configuration ID if a user configuration is received. This property
+        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as
+        a checksum for some resource operations such as deletion. A configuration ID is not required as input, however,
+        if one is provided, it will be validated.
+        
+        
+        If the operation is synchronous or a resource based long-running operation (RELO), the response status code
+        should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension
+        service cannot determine whether the resource already exists, or if determining this is costly (e.g., requiring
+        an additional query), it is acceptable to return a 200 OK status code.
+
+
+        If the operation is being implemented as a stepwise long-running operation (LRO), the response status code
+        should be 202 Accepted.
       operationId: createOrUpdateResource
       parameters:
         - $ref: '#/components/parameters/HeaderAcceptLanguage'
@@ -322,6 +366,9 @@ components:
           example:
             identifiers:
               name: 'myApp'
+            config:
+              nonSecureProp: 'value'
+            configId: 'anIdOrHashOfConfig'
             status: Succeeded
             type: application
             apiVersion: v1
@@ -331,6 +378,49 @@ components:
               propTwo: 42
               readOnlyProp: false
               propWithDefaultValue: foobar
+    PreviewResourceResponse:
+      description: Successful preview operation.
+      headers:
+        Date:
+          $ref: '#/components/headers/Date'
+        Version:
+          $ref: '#/components/headers/Version'
+        x-ms-request-id:
+          $ref: '#/components/headers/RequestId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PreviewResource'
+          example:
+            identifiers:
+              name: 'myApp'
+            status: Succeeded
+            type: application
+            apiVersion: v1
+            config:
+              nonSecureProp: 'myValue'
+            configId: 'anIdOrHashOfConfig'
+            properties:
+              name: 'myApp'
+              propOne: true
+              propTwo: 42
+              readOnlyProp: false
+              immutableProp: 'immutableValue'
+              propWithDefaultValue: foobar
+              createdDate: '2026-03-04T00:00:00Z'
+              notEvaluated: "[reference('someResourceNotYetDeployed').someOutput]"
+              bracketedValue: "[this is not a language expression due to being absent in metadata.unevaluated]"
+            metadata:
+              readOnly:
+                - 'properties.readOnlyProp'
+              immutable:
+                - 'properties.immutableProp'
+              calculated:
+                - 'properties.createdDate'
+              unknown:
+                - 'properties.missingProp'
+              unevaluated:
+                - 'properties.notEvaluated'
   schemas:
     ErrorResponse:
       description: Schema for error responses that is compliant with Microsoft REST API Guideline and OData 4.0.
@@ -425,7 +515,6 @@ components:
           configItemTwo: 'value'
     Config:
       type: object
-      writeOnly: true
       description: Contains configuration items that are served as necessary context information for completing the resource operation. This is the user-supplied extension configuration in the Bicep or ARM template file.
     ConfigId:
       type: string
@@ -462,7 +551,56 @@ components:
             propOne: true
             propTwo: 42
             writeOnlyProp: secret
-
+    PreviewResource:
+      allOf:
+        - $ref: '#/components/schemas/Resource'
+        - type: object
+          properties:
+            metadata:
+              type: object
+              description: Metadata about properties in the request or response, such as the resource properties and extension configuration.
+              properties:
+                calculated:
+                  type: array
+                  description: An array of JSON paths to properties that are calculated at the time of the operation and would change if the operation was performed later.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.createdDate'
+                    - 'properties.modifiedDate'
+                immutable:
+                  type: array
+                  description: An array of JSON paths to properties that are immutable and cannot be changed later.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.immutableProp'
+                readOnly:
+                  type: array
+                  description: An array of JSON paths to properties that are read-only.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.readOnlyProp'
+                unevaluated:
+                  type: array
+                  description: An array of JSON paths to properties that contain unevaluated ARM template language expressions.
+                  items:
+                    type: string
+                  example:
+                    - 'properties.foo'
+                    - 'config.namespace'
+                unknown:
+                  type: array
+                  description: An array of JSON paths to properties that cannot be determined now.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.foo'
     Status:
       readOnly: true
       description: 'Indicates the provisioning status of the resource or long-running operation. There are three terminal status: defined Succeeded, Failed, and Canceled. A null or undefined status property is treated as Succeeded. Any other status is a non-terminal state and is defined by each extension (e.g., Running).'
