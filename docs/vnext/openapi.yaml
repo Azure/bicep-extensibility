@@ -30,34 +30,35 @@ paths:
         Preview a resource creation or update operation by simulating the process.
         
         
-        The preview resource properties and extension configuration in the request can contain ARM template language 
-        expressions that could not be evaluated by the Deployment engine at the time of preview. An extension preview 
+        The preview resource properties and extension configuration in the request can contain ARM template language
+        expressions that could not be evaluated by the Deployment engine at the time of preview. An extension preview
         implementation must be able to handle language expressions at any JSON node within resource properties and the
-        extension configuration. For example, instead of receiving an expected object for 'properties.foo', the engine 
+        extension configuration. For example, instead of receiving an expected object for 'properties.foo', the engine
         could send '"properties.foo": "[reference('resourceNotYetDeployed').someOutput]"'. For details on the language
         expression format, see https://aka.ms/ArmTemplateExpressions. The paths for these properties will be present in
         'metadata.unevaluated' of the request body, so there is no need to worry about escape patterns.
         
         
         Given that resource properties and/or the extension configuration may be partially provided, the extension
-        should make a best-effort preview attempt with the information it has, or return an error if a preview cannot 
-        be performed. Upon successful simulation, the outcome must mirror a resource that has been either 
+        should make a best-effort preview attempt with the information it has, or return an error if a preview cannot
+        be performed. Upon successful simulation, the outcome must mirror a resource that has been either
         created or updated, based on the operation that was previewed. This resulting state should align with what
         would be obtained from a GET response, as if the genuine create or update operation had been carried out. This
-        includes the inclusion of read-only properties and properties endowed with default values, as well as the 
-        exclusion of write-only properties like those containing sensitive information such as passwords and connection 
-        strings. The extension must echo back any properties with language expressions. The extension should also supply
-        property metadata such as calculated or unknown properties to assist in providing a more accurate and detailed
-        preview experience for the end user. For example, a property may be unknown if the deployment engine sent 
-        unevaluated expressions for some properties in the resource payload. 
+        includes the inclusion of read-only properties and properties endowed with default values, as well as the
+        exclusion of write-only properties like those containing sensitive information such as passwords and connection
+        strings. The extension must echo back any properties with language expressions, as well as the unevaluated paths
+        in the 'metadata.unevaluated' property. The extension should also supply property metadata such as calculated
+        or unknown properties to assist in providing a more accurate and detailed preview experience for the end user.
+        For example, a property may be unknown if the deployment engine sent unevaluated expressions for some properties
+        in the resource payload.
         
         
         The extension should echo back the configuration received, minus any secret properties. If a config property
         is not echoed back, the Deployment engine will treat the property as a secret property.
         
         
-        Additionally, the extension must provide a configuration ID if a configuration is received. This property 
-        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as 
+        Additionally, the extension must provide a configuration ID if a configuration is received. This property
+        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as
         a checksum for some resource operations such as deletion. A configuration ID is not required as input, however,
         if one is provided, it should be validated if possible.
         
@@ -96,9 +97,9 @@ paths:
         Create or update a resource.
         
         
-        Upon successful operation, the service must add an identifiers property to its response. This property is an 
-        object consisting of several sub-properties that, when combined with the resource's type and configuration, 
-        create a *globally unique* key for identifying the resource. The structure of the identifiers property is 
+        Upon successful operation, the service must add an identifiers property to its response. This property is an
+        object consisting of several sub-properties that, when combined with the resource's type and configuration,
+        create a *globally unique* key for identifying the resource. The structure of the identifiers property is
         determined by the extension service and is opaque to the template deployment engine.
         
         
@@ -107,18 +108,18 @@ paths:
 
 
         Additionally, the service must provide a configuration ID if a user configuration is received. This property
-        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as 
-        a checksum for some resource operations such as deletion. A configuration ID is not required as input, however, 
+        should uniquely identify a deployment control plane and its format is decided by the extension. It is used as
+        a checksum for some resource operations such as deletion. A configuration ID is not required as input, however,
         if one is provided, it will be validated.
         
         
-        If the operation is synchronous or a resource based long-running operation (RELO), the response status code 
-        should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension 
+        If the operation is synchronous or a resource based long-running operation (RELO), the response status code
+        should be 201 Created for nonexistent resource or 200 OK for existing resource. However, if the extension
         service cannot determine whether the resource already exists, or if determining this is costly (e.g., requiring
         an additional query), it is acceptable to return a 200 OK status code.
 
 
-        If the operation is being implemented as a stepwise long-running operation (LRO), the response status code 
+        If the operation is being implemented as a stepwise long-running operation (LRO), the response status code
         should be 202 Accepted.
       operationId: createOrUpdateResource
       parameters:
@@ -557,7 +558,7 @@ components:
           properties:
             metadata:
               type: object
-              description: Metadata about properties in the request, such as the resource properties and extension configuration.
+              description: Metadata about properties in the request or response, such as the resource properties and extension configuration.
               properties:
                 calculated:
                   type: array
