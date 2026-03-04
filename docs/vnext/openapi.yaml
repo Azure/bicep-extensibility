@@ -551,55 +551,55 @@ components:
             propTwo: 42
             writeOnlyProp: secret
     PreviewResource:
-      type: object
       allOf:
         - $ref: '#/components/schemas/Resource'
-      properties:
-        metadata:
-          type: object
-          description: Metadata about properties in the request, such as the resource properties and extension configuration.
+        - type: object
           properties:
-            calculated:
-              type: array
-              description: An array of JSON paths to properties that are calculated at the time of the operation and would change if the operation was performed later.
-              readOnly: true
-              items:
-                type: string
-              example:
-                - 'properties.createdDate'
-                - 'properties.modifiedDate'
-            immutable:
-              type: array
-              description: An array of JSON paths to properties that are immutable and cannot be changed later.
-              readOnly: true
-              items:
-                type: string
-              example:
-                - 'properties.immutableProp'
-            readOnly:
-              type: array
-              description: An array of JSON paths to properties that are read-only.
-              readOnly: true
-              items:
-                type: string
-              example:
-                - 'properties.readOnlyProp'
-            unevaluated:
-              type: array
-              description: An array of JSON paths to properties that contain unevaluated ARM template language expressions.
-              items:
-                type: string
-              example:
-                - 'properties.foo'
-                - 'config.namespace'
-            unknown:
-              type: array
-              description: An array of JSON paths to properties that cannot be determined now.
-              readOnly: true
-              items:
-                type: string
-              example:
-                - 'properties.foo'
+            metadata:
+              type: object
+              description: Metadata about properties in the request, such as the resource properties and extension configuration.
+              properties:
+                calculated:
+                  type: array
+                  description: An array of JSON paths to properties that are calculated at the time of the operation and would change if the operation was performed later.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.createdDate'
+                    - 'properties.modifiedDate'
+                immutable:
+                  type: array
+                  description: An array of JSON paths to properties that are immutable and cannot be changed later.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.immutableProp'
+                readOnly:
+                  type: array
+                  description: An array of JSON paths to properties that are read-only.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.readOnlyProp'
+                unevaluated:
+                  type: array
+                  description: An array of JSON paths to properties that contain unevaluated ARM template language expressions.
+                  items:
+                    type: string
+                  example:
+                    - 'properties.foo'
+                    - 'config.namespace'
+                unknown:
+                  type: array
+                  description: An array of JSON paths to properties that cannot be determined now.
+                  readOnly: true
+                  items:
+                    type: string
+                  example:
+                    - 'properties.foo'
     Status:
       readOnly: true
       description: 'Indicates the provisioning status of the resource or long-running operation. There are three terminal status: defined Succeeded, Failed, and Canceled. A null or undefined status property is treated as Succeeded. Any other status is a non-terminal state and is defined by each extension (e.g., Running).'
