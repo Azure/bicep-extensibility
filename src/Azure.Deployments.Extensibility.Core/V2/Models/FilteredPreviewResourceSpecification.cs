@@ -22,5 +22,8 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public FilteredJsonObject? FilteredProperties { get; set; }
 
         public FilteredJsonObject? FilteredConfig { get; set; }
+
+        // TODO(kylealbert): Add a method to get the merged resource spec. Use JsonDiffPatch to generate a patch that can be used (and potentially modified)
+        //  and apply the patch.
     }
 }

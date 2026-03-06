@@ -41,7 +41,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
                 ["unevaluated1"] = "[reference('abc').someOutput]",
                 ["obj1"] = new JsonObject
                 {
-                    ["nestedUnevaluated1"] = "[reference('abc').someOutput]"
+                    ["unevaluated2"] = "[reference('abc').someOutput]"
                 },
                 ["arr1"] = new JsonArray
                 {
@@ -52,6 +52,27 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
                     "first",
                     "[reference('abc').someOutput]",
                     "third"
+                },
+                ["obj2"] = new JsonObject
+                {
+                    ["arr3"] = new JsonArray
+                    {
+                        new JsonArray
+                        {
+                            new JsonObject
+                            {
+                                ["asdf"] = "asdfghjkl"
+                            }
+                        },
+                        new JsonArray
+                        {
+                            new JsonObject
+                            {
+                                ["asdf"] = "qwerty",
+                                ["unevaluated3"] = "[reference('abc').someOutput]"
+                            }
+                        }
+                    }
                 }
             };
 
@@ -59,9 +80,10 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
             {
                 JsonPointer.Parse("#/config/kubeconfig"),
                 JsonPointer.Parse("#/properties/unevaluated1"),
-                JsonPointer.Parse("#/properties/obj1/nestedUnevaluated1"),
+                JsonPointer.Parse("#/properties/obj1/unevaluated2"),
                 JsonPointer.Parse("#/properties/arr1/0"),
-                JsonPointer.Parse("#/properties/arr2/1")
+                JsonPointer.Parse("#/properties/arr2/1"),
+                JsonPointer.Parse("#/properties/obj2/arr3/1/0/unevaluated3")
             };
 
             var filteredResult = JsonNodeHelpers.RemovePaths(props, toRemove, out var mutated, JsonPointer.Parse("#/properties"));
@@ -76,6 +98,26 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
                 {
                     "first",
                     "third"
+                },
+                ["obj2"] = new JsonObject
+                {
+                    ["arr3"] = new JsonArray
+                    {
+                        new JsonArray
+                        {
+                            new JsonObject
+                            {
+                                ["asdf"] = "asdfghjkl"
+                            }
+                        },
+                        new JsonArray
+                        {
+                            new JsonObject
+                            {
+                                ["asdf"] = "qwerty"
+                            }
+                        }
+                    }
                 }
             };
 
@@ -84,25 +126,45 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
                 ["unevaluated1"] = "[reference('abc').someOutput]",
                 ["obj1"] = new JsonObject
                 {
-                    ["nestedUnevaluated1"] = "[reference('abc').someOutput]"
+                    ["unevaluated2"] = "[reference('abc').someOutput]"
                 },
-                ["arr1"] = new JsonArray
+                ["arr1"] = new JsonObject
                 {
-                    "[reference('abc').someOutput]"
+                    ["0"] = "[reference('abc').someOutput]"
                 },
                 ["arr2"] = new JsonObject
                 {
                     ["1"] = "[reference('abc').someOutput]"
+                },
+                ["obj2"] = new JsonObject
+                {
+                    ["arr3"] = new JsonObject
+                    {
+                        ["1"] = new JsonObject
+                        {
+                            ["0"] = new JsonObject
+                            {
+                                ["unevaluated3"] = "[reference('abc').someOutput]"
+                            }
+                        }
+                    }
                 }
             };
 
             mutated.Should().BeTrue();
 
-            JsonNode.DeepEquals(filteredResult.FilteredObject, expectedFilteredObj).Should().BeTrue();
+            filteredResult.FilteredObject.Should().DeepEqual(expectedFilteredObj);
             object.ReferenceEquals(filteredResult.FilteredObject, props).Should().BeTrue();
 
             filteredResult.RemovedObject.Should().NotBeNull();
-            JsonNode.DeepEquals(filteredResult.RemovedObject, expectedRemovedObj).Should().BeTrue();
+            filteredResult.RemovedObject.Should().DeepEqual(expectedRemovedObj);
+
+            filteredResult.ArrayPaths.Should().NotBeNullOrEmpty();
+            filteredResult.ArrayPaths.Should().ContainSingle(p => p == JsonPointer.Parse("#/arr1"));
+            filteredResult.ArrayPaths.Should().ContainSingle(p => p == JsonPointer.Parse("#/arr2"));
+            filteredResult.ArrayPaths.Should().ContainSingle(p => p == JsonPointer.Parse("#/obj2/arr3"));
+            filteredResult.ArrayPaths.Should().ContainSingle(p => p == JsonPointer.Parse("#/obj2/arr3/1"));
+            filteredResult.ArrayPaths.Should().HaveCount(4);
         }
     }
 }

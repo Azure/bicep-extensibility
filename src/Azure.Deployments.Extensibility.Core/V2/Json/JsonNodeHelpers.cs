@@ -34,7 +34,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             }
 
             var removed = new JsonObject();
-            var arrayPaths = new HashSet<JsonPointer>();
+            var allArrayPaths = new HashSet<JsonPointer>();
 
             // ReSharper disable once PossibleMultipleEnumeration
             foreach (var candidatePath in pathsToRemove)
@@ -54,16 +54,55 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
                     }
                 }
 
-                // Find the node and remove it.
-                if (pathToRemove.TryRemove(@object, out var removedNode))
+                // If it's not valid, do nothing
+                if (!pathToRemove.TryEvaluate(@object, out var nodeToRemove))
                 {
+                    continue;
+                }
+
+                // Collect all the array paths. These paths will be stored with the filtered JSON object for reconstruction purposes.
+                foreach (var arrPath in pathToRemove.CollectAllArrayPaths(@object))
+                {
+                    allArrayPaths.Add(arrPath);
+                }
+
+                // Remove the node.
+                var nodeWasRemoved = false;
+
+                if (nodeToRemove is not null)
+                {
+                    nodeToRemove.RemoveFromParent();
+                    nodeWasRemoved = true;
+                }
+                else if (pathToRemove.Count > 1 && pathToRemove.GetAncestor(1).TryEvaluate(@object, out var parentNodeOfRemoval))
+                {
+                    // removing a `null` object property or array element.
+                    switch (parentNodeOfRemoval)
+                    {
+                        case JsonObject parentObj:
+                            parentObj.Remove(pathToRemove[^1]);
+                            nodeWasRemoved = true;
+
+                            break;
+                        case JsonArray parentArr:
+                            parentArr.RemoveAt(Int32.Parse(pathToRemove[^1]));
+                            nodeWasRemoved = true;
+
+                            break;
+                    }
+                }
+
+                // Reconstruct the node in the "RemovedObject". The object's schema mirrors that of the input object except arrays are
+                // stored as dictionaries of indices to values. In combination with the cached array paths, the "RemovedObject" can be
+                // merged back into the filtered object at a later time.
+                if (nodeWasRemoved)
+                {
+                    removed.SetPropertyValue(pathToRemove, nodeToRemove);
                     mutated = true;
-                    // TODO(kylealbert): handle arrays
-                    removed.SetPropertyValue(pathToRemove, removedNode);
                 }
             }
 
-            return new FilteredJsonObject(@object, removed.Count > 0 ? removed : null, arrayPaths);
+            return new FilteredJsonObject(@object, removed.Count > 0 ? removed : null, allArrayPaths);
         }
 
         /// <inheritdoc cref="RemovePaths" />
@@ -76,12 +115,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             mutated = false;
 
             return @object is not null ? RemovePaths(@object, pathsToRemove, out mutated, parentPath) : null;
-        }
-
-        public static JsonObject Merge(JsonObject @base, JsonObject toMerge)
-        {
-            // TODO(kylealbert): implement
-            return @base;
         }
     }
 }

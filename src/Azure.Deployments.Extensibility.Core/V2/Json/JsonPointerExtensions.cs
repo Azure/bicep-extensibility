@@ -26,6 +26,27 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             return true;
         }
 
+        public static IEnumerable<JsonPointer> CollectAllArrayPaths(this JsonPointer pointer, JsonNode root)
+        {
+            // Start at the root node at work 
+            for (var depth = 1; depth <= pointer.Count; depth++)
+            {
+                var currentPointer = pointer.GetSubPointer(..depth);
+
+                if (currentPointer.TryEvaluate(root, out var intermediateNode))
+                {
+                    if (intermediateNode is JsonArray)
+                    {
+                        yield return currentPointer;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
         public static bool TryRemove(this JsonPointer pointer, JsonNode node, [NotNullWhen(true)] out JsonNode? removedNode)
         {
             removedNode = null;
