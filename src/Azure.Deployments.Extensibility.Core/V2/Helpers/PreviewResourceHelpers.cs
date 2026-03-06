@@ -17,7 +17,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Helpers
         /// <returns>A <see cref="FilteredPreviewResourceSpecification"/> that can be later remerged.</returns>
         /// <remarks>This is intended to be used on the incoming resource spec from the Deployments engine to assist with filtering out
         /// language expression nodes from the spec JSON.</remarks>
-        public static FilteredPreviewResourceSpecification WithUnevaluatedPathsRemoved(ResourceSpecification spec)
+        public static FilteredPreviewResourceSpecification FilterUnevaluatedPaths(ResourceSpecification spec)
         {
             if (spec.Metadata?.Unevaluated?.Any() is not true)
             {
@@ -29,7 +29,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Helpers
             // Process config.
             FilteredJsonObject? configResult = null;
 
-            if (spec.Config is not null && FindParentPointerInsensitively(spec.Metadata.Unevaluated, JsonPointer.Parse("#/config")) is { } configPointer)
+            if (spec.Config is not null && FindParentPointerInsensitively(spec.Metadata.Unevaluated, JsonPointer.Parse($"#/{nameof(ResourceSpecification.Config)}")) is { } configPointer)
             {
                 configResult = JsonNodeHelpers.RemovePathsNullable(spec.Config, spec.Metadata.Unevaluated, out var configMutated, configPointer);
                 changed |= configMutated;
@@ -38,7 +38,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Helpers
             // Process properties.
             FilteredJsonObject? propsResult = null;
 
-            if (FindParentPointerInsensitively(spec.Metadata.Unevaluated, JsonPointer.Parse("#/properties")) is { } propsPointer)
+            if (FindParentPointerInsensitively(spec.Metadata.Unevaluated, JsonPointer.Parse($"#/{nameof(ResourceSpecification.Properties)}")) is { } propsPointer)
             {
                 propsResult = JsonNodeHelpers.RemovePaths(spec.Properties, spec.Metadata.Unevaluated, out var propsMutated, propsPointer);
                 changed |= propsMutated;
@@ -57,7 +57,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Helpers
         }
 
         private static JsonPointer? FindParentPointerInsensitively(IEnumerable<JsonPointer>? pointers, JsonPointer find) =>
-            pointers?.FirstOrDefault(p => p.Count >= find.Count
+            pointers?.FirstOrDefault(p => p.Count > find.Count
                 && Enumerable.Range(0, find.Count).All(i => string.Equals(p[i], find[i], StringComparison.OrdinalIgnoreCase)));
     }
 }
