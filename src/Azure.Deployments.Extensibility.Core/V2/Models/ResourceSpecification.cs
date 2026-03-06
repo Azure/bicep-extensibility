@@ -6,7 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Models
 {
-    public record ResourceSpecification : ResourceSpecification<JsonObject, JsonObject>
+    public record ResourceSpecification : ResourceSpecification<JsonObject, JsonObject, ResourceMetadata>
     {
         public ResourceSpecification()
             : base()
@@ -14,26 +14,27 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         }
 
         [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config, string? configId = null)
-            : base(type, apiVersion, properties, config, configId)
+        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config, string? configId = null, ResourceMetadata? metadata = null)
+            : base(type, apiVersion, properties, config, configId, metadata)
         {
         }
     }
 
-    public record ResourceSpecification<TProperties, TConfig>
+    public record ResourceSpecification<TProperties, TConfig, TMetadata>
     {
         public ResourceSpecification()
         {
         }
 
         [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, TProperties properties, TConfig? config, string? configId = null)
+        public ResourceSpecification(string type, string? apiVersion, TProperties properties, TConfig? config, string? configId = null, TMetadata? metadata = default)
         {
             this.Type = type;
             this.ApiVersion = apiVersion;
             this.Properties = properties;
             this.Config = config;
             this.ConfigId = configId;
+            this.Metadata = metadata;
         }
 
         public required string Type { get; init; }
@@ -45,5 +46,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public TConfig? Config { get; init; }
 
         public string? ConfigId { get; init; }
+
+        public TMetadata? Metadata { get; init; }
     }
 }
