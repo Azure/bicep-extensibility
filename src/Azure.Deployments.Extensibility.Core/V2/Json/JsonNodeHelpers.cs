@@ -21,7 +21,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
         /// object but contains only the nodes removed.</returns>
         public static FilteredJsonObject RemovePaths(
             JsonObject @object,
-            IEnumerable<JsonPointer>? pathsToRemove,
+            ISet<JsonPointer>? pathsToRemove,
             out bool mutated,
             JsonPointer? parentPath = null)
         {
@@ -37,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             var allArrayPaths = new HashSet<JsonPointer>();
 
             // ReSharper disable once PossibleMultipleEnumeration
-            foreach (var candidatePath in pathsToRemove)
+            foreach (var candidatePath in SortPathsToRemove(pathsToRemove))
             {
                 var pathToRemove = candidatePath;
 
@@ -80,12 +80,12 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
                     switch (parentNodeOfRemoval)
                     {
                         case JsonObject parentObj:
-                            parentObj.Remove(pathToRemove[^1]);
+                            parentObj.Remove(pathToRemove.LastSegment()!);
                             nodeWasRemoved = true;
 
                             break;
                         case JsonArray parentArr:
-                            parentArr.RemoveAt(Int32.Parse(pathToRemove[^1]));
+                            parentArr.RemoveAt(Int32.Parse(pathToRemove.LastSegment()!));
                             nodeWasRemoved = true;
 
                             break;
@@ -95,20 +95,24 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
                 // Reconstruct the node in the "RemovedObject". The object's schema mirrors that of the input object except arrays are
                 // stored as dictionaries of indices to values. In combination with the cached array paths, the "RemovedObject" can be
                 // merged back into the filtered object at a later time.
-                if (nodeWasRemoved)
+                if (nodeWasRemoved) 
                 {
                     removed.SetPropertyValue(pathToRemove, nodeToRemove);
                     mutated = true;
                 }
             }
 
-            return new FilteredJsonObject(@object, removed.Count > 0 ? removed : null, allArrayPaths);
+            // Sort the array paths in index ascending order. When reconstructing the object, earlier indices need to be added first so
+            // later indices align.
+            var sortedArrayPaths = allArrayPaths.OrderBy(p => Int32.Parse(p[^1]));
+
+            return new FilteredJsonObject(@object, removed.Count > 0 ? removed : null, sortedArrayPaths.ToList());
         }
 
         /// <inheritdoc cref="RemovePaths" />
         public static FilteredJsonObject? RemovePathsNullable(
             JsonObject? @object,
-            IEnumerable<JsonPointer>? pathsToRemove,
+            ISet<JsonPointer>? pathsToRemove,
             out bool mutated,
             JsonPointer? parentPath = null)
         {
@@ -116,5 +120,15 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
 
             return @object is not null ? RemovePaths(@object, pathsToRemove, out mutated, parentPath) : null;
         }
+
+        private static IEnumerable<JsonPointer> SortPathsToRemove(IEnumerable<JsonPointer> pathsToRemove) =>
+            pathsToRemove
+                .OrderBy(p => p.Count)
+                .ThenByDescending(p => p.Count switch
+                {
+                    0 => Int32.MaxValue,
+                    // For numeric, sort by descending order so multiple removals from the same array process in the correct order.
+                    _ => Int32.TryParse(p.LastSegment(), out var number) ? number : -1
+                });
     }
 }

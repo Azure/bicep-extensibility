@@ -25,7 +25,7 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Json
             JsonNode.DeepEquals(result1.FilteredObject, props).Should().BeTrue();
             object.ReferenceEquals(result1.FilteredObject, props).Should().BeTrue();
 
-            var result2 = JsonNodeHelpers.RemovePaths(props, [JsonPointer.Parse("#/notThere")], out var mutated2);
+            var result2 = JsonNodeHelpers.RemovePaths(props, new HashSet<JsonPointer>([JsonPointer.Parse("#/notThere")]), out var mutated2);
             mutated2.Should().BeFalse();
             result2.FilteredObject.Should().BeNull();
             JsonNode.DeepEquals(result2.FilteredObject, props).Should().BeTrue();

@@ -9,6 +9,8 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
     public static class JsonPointerExtensions
     {
+        public static string? LastSegment(this JsonPointer pointer) => pointer.Count > 0 ? pointer[^1] : null;
+        
         public static bool IsDescendantOf(this JsonPointer pointer, JsonPointer parent) =>
             parent.Count < pointer.Count && pointer.GetAncestor(pointer.Count - parent.Count) == parent;
 
@@ -61,7 +63,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
                 case JsonObject parentObj:
                     removedNode = nodeToRemove;
 
-                    return parentObj.Remove(pointer[^1]);
+                    return parentObj.Remove(pointer.LastSegment()!);
                 case JsonArray parentArr:
                     removedNode = nodeToRemove;
 

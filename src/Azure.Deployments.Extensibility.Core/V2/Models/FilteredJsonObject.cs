@@ -12,17 +12,28 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
         public FilteredJsonObject() { }
 
         [SetsRequiredMembers]
-        public FilteredJsonObject(JsonObject filteredObject, JsonObject? removedObject = null, ISet<JsonPointer>? arrayPaths = null)
+        public FilteredJsonObject(JsonObject filteredObject, JsonObject? removedObject = null, IList<JsonPointer>? arrayPaths = null)
         {
             this.FilteredObject = filteredObject;
             this.RemovedObject = removedObject;
             this.ArrayPaths = arrayPaths;
         }
 
+        /// <summary>
+        /// The filtered object is a reflection of the original object without nodes that were removed.
+        /// </summary>
         public required JsonObject FilteredObject { get; init; }
 
+        /// <summary>
+        /// A reflection of the original object but with only nodes that were removed (and their partial parent nodes).
+        /// Arrays in this object are stored as dictionaries of array index to value. The array index is the insertion index for the value.
+        /// </summary>
         public JsonObject? RemovedObject { get; init; }
 
-        public ISet<JsonPointer>? ArrayPaths { get; init; }
+        /// <summary>
+        /// All array paths present in the original object that have at least 1 child node removed. The list is sorted in index ascending
+        /// order.
+        /// </summary>
+        public IList<JsonPointer>? ArrayPaths { get; init; }
     }
 }
