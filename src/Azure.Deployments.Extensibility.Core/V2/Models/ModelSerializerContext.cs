@@ -12,6 +12,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Models
     [JsonSerializable(typeof(ResourceSpecification))]
     [JsonSerializable(typeof(ResourceReference))]
     [JsonSerializable(typeof(ResourceOperation))]
+    [JsonSerializable(typeof(ResourceMetadata))]
     public partial class ModelSerializerContext : JsonSerializerContext
     {
     }
