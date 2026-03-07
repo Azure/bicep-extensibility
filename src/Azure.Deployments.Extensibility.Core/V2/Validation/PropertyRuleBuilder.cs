@@ -3,7 +3,7 @@
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
-    public class PropertyRuleBuilder<TModel, TProperty> : IPropertyRuleBuilder<TModel, TProperty>
+    internal class PropertyRuleBuilder<TModel, TProperty> : IPropertyRuleBuilder<TModel, TProperty>
     {
         private readonly PropertyRule<TModel, TProperty> rule;
 

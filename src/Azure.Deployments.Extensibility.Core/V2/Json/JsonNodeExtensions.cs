@@ -7,6 +7,9 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
+    /// <summary>
+    /// Extension methods for navigating and mutating <see cref="JsonNode"/> trees using JSON Pointers.
+    /// </summary>
     public static class JsonNodeExtensions
     {
         public static JsonNode? TryGetPropertyNode(this JsonNode? node, JsonPointerProxy propertyPath) =>

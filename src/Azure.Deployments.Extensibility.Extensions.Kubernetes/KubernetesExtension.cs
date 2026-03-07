@@ -4,7 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 {
+#pragma warning disable CS0618 // Type or member is obsolete
     internal class KubernetesExtension : IExtension
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         public const string ExtensionName = "Kubernetes";
 
@@ -115,7 +117,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 
             var @namespace = api.Namespaced ? identifiers.Namespace ?? client.DefaultNamespace : null;
 
-            return Results.NotFound(new ErrorData
+            return Results.NotFound(new ErrorResponse
             {
                 Error = new()
                 {
@@ -137,7 +139,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             // to ensure that the operation is performed on the correct cluster.
             if (resourceReference.ConfigId is null)
             {
-                return Results.BadRequest(new ErrorData
+                return Results.BadRequest(new ErrorResponse
                 {
                     Error = new()
                     {
@@ -172,7 +174,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             }
 
             errorResult = Results.UnprocessableEntity(
-                new ErrorData
+                new ErrorResponse
                 {
                     Error = new()
                     {
