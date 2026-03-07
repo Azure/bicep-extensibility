@@ -3,9 +3,9 @@
 
 using AutoFixture;
 using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Core.V2.Json;
-using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.TestFixtures;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;

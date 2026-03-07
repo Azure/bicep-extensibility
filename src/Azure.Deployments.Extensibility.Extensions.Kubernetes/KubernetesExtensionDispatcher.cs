@@ -2,14 +2,16 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
 using Semver;
 
 namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
 {
+#pragma warning disable CS0618 // Type or member is obsolete
     public class KubernetesExtensionDispatcher : IExtensionDispatcher
+#pragma warning restore CS0618 // Type or member is obsolete
     {
         private readonly IK8sResourceSpecificationValidator resourceSpecificationValidator;
         private readonly IK8sResourceReferenceValidator resourceReferenceValidator;
@@ -25,6 +27,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes
             this.clientFactory = clientFactory;
         }
 
+        [Obsolete]
         public IExtension DispatchExtension(string extensionVersion)
         {
             ValidateExtensionVersion(extensionVersion);
