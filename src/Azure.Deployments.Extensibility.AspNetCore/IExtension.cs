@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace Azure.Deployments.Extensibility.AspNetCore
 {
+    [Obsolete("This interface is deprecated and will be removed in a future release.")]
     public interface IExtension
     {
         Task<IResult> PreviewResourceCreateOrUpdateAsync(HttpContext httpContext, ResourceSpecification resourceSpecification, CancellationToken cancellationToken);

@@ -5,7 +5,7 @@ using System.Text.Json.Nodes;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
 using FluentAssertions;

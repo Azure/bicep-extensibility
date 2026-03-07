@@ -10,6 +10,9 @@ using System.Text.RegularExpressions;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
+    /// <summary>
+    /// Extension methods that add common validation criteria to an <see cref="IPropertyRuleBuilder{TModel, TProperty}"/>.
+    /// </summary>
     public static class PropertyRuleBuilderExtensions
     {
         public static PropertyRuleCriterionBuilder<TModel, string?> MustMatchRegex<TModel>(this IPropertyRuleBuilder<TModel, string?> builder, Regex regex)
