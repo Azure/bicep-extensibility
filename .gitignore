@@ -358,6 +358,9 @@ deploy/package.zip
 deploy/dev-host
 deploy/dev-host.zip
 
+# TypeSpec
+tsp-output/
+
 # JetBrains
 .idea/
 *.iml
