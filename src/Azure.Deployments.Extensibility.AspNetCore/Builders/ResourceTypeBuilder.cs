@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.AspNetCore.Decorators;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
-using Azure.Deployments.Extensibility.AspNetCore.Pipeline;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,20 +19,20 @@ public sealed class ResourceTypeBuilder
 {
     private readonly IServiceCollection services;
     private readonly HandlerRegistry registry;
-    private readonly HandlerPipelineRegistry pipelineRegistry;
+    private readonly HandlerDecoratorRegistry decoratorRegistry;
     private readonly SemVersionRange versionRange;
     private readonly string resourceType;
 
     internal ResourceTypeBuilder(
         IServiceCollection services,
         HandlerRegistry registry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         SemVersionRange versionRange,
         string resourceType)
     {
         this.services = services;
         this.registry = registry;
-        this.pipelineRegistry = pipelineRegistry;
+        this.decoratorRegistry = decoratorRegistry;
         this.versionRange = versionRange;
         this.resourceType = resourceType;
     }
@@ -41,15 +41,15 @@ public sealed class ResourceTypeBuilder
     /// Registers a handler by auto-detecting which handler interfaces it implements.
     /// </summary>
     public ResourceTypeBuilder AddHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] THandler>(
-        Action<HandlerPipelineBuilder>? configurePipeline = null)
+        Action<HandlerDecoratorBuilder>? configureDecorators = null)
         where THandler : class, IHandler
     {
         this.services.TryAddScoped<THandler>();
         this.registry.Register(typeof(THandler), this.versionRange, this.resourceType);
 
-        if (configurePipeline is not null)
+        if (configureDecorators is not null)
         {
-            configurePipeline(new HandlerPipelineBuilder(this.services, this.pipelineRegistry, typeof(THandler)));
+            configureDecorators(new HandlerDecoratorBuilder(this.services, this.decoratorRegistry, typeof(THandler)));
         }
 
         return this;

@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.AspNetCore.Decorators;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
-using Azure.Deployments.Extensibility.AspNetCore.Pipeline;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,31 +20,31 @@ public sealed class ExtensionVersionBuilder
 {
     private readonly IServiceCollection services;
     private readonly HandlerRegistry registry;
-    private readonly HandlerPipelineRegistry pipelineRegistry;
+    private readonly HandlerDecoratorRegistry decoratorRegistry;
     private readonly SemVersionRange versionRange;
 
     internal ExtensionVersionBuilder(
         IServiceCollection services,
         HandlerRegistry registry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         SemVersionRange versionRange)
     {
         this.services = services;
         this.registry = registry;
-        this.pipelineRegistry = pipelineRegistry;
+        this.decoratorRegistry = decoratorRegistry;
         this.versionRange = versionRange;
     }
 
     /// <summary>
-    /// Registers a pipeline behavior that will run for all handlers within this version range,
+    /// Registers a handler decorator that will run for all handlers within this version range,
     /// but not for handlers in other version ranges.
-    /// Version-scoped behaviors run after global behaviors but before handler-specific behaviors.
+    /// Version-scoped decorators run after global decorators but before handler-specific decorators.
     /// </summary>
-    public ExtensionVersionBuilder AddPipelineBehavior<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TBehavior>()
-        where TBehavior : class
+    public ExtensionVersionBuilder AddHandlerDecorator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TDecorator>()
+        where TDecorator : class
     {
-        this.services.TryAddScoped<TBehavior>();
-        this.pipelineRegistry.AddVersionScoped(this.versionRange, typeof(TBehavior));
+        this.services.TryAddScoped<TDecorator>();
+        this.decoratorRegistry.AddVersionScoped(this.versionRange, typeof(TDecorator));
 
         return this;
     }
@@ -59,7 +59,7 @@ public sealed class ExtensionVersionBuilder
         var builder = new ResourceTypeBuilder(
             this.services,
             this.registry,
-            this.pipelineRegistry,
+            this.decoratorRegistry,
             this.versionRange,
             resourceType);
 
@@ -73,15 +73,15 @@ public sealed class ExtensionVersionBuilder
     /// The handler is registered as a default (generic) handler for this version range.
     /// </summary>
     public ExtensionVersionBuilder AddHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] THandler>(
-        Action<HandlerPipelineBuilder>? configurePipeline = null)
+        Action<HandlerDecoratorBuilder>? configureDecorators = null)
         where THandler : class, IHandler
     {
         this.services.TryAddScoped<THandler>();
         this.registry.Register(typeof(THandler), this.versionRange, resourceType: null);
 
-        if (configurePipeline is not null)
+        if (configureDecorators is not null)
         {
-            configurePipeline(new HandlerPipelineBuilder(this.services, this.pipelineRegistry, typeof(THandler)));
+            configureDecorators(new HandlerDecoratorBuilder(this.services, this.decoratorRegistry, typeof(THandler)));
         }
 
         return this;

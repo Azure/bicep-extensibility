@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.AspNetCore.Decorators;
 using Azure.Deployments.Extensibility.AspNetCore.Models;
-using Azure.Deployments.Extensibility.AspNetCore.Pipeline;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
@@ -19,14 +19,14 @@ internal static class HandlerDispatcher
         string extensionVersion,
         ResourcePreviewSpecification request,
         HandlerRegistry handlerRegistry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var (handler, versionRange) = handlerRegistry.ResolveHandler<IResourcePreviewHandler>(extensionVersion, request.Type, serviceProvider);
-        var behaviors = pipelineRegistry.Resolve<ResourcePreviewSpecification, OneOf<ResourcePreview, ErrorResponse>>(handler.GetType(), versionRange, serviceProvider);
+        var decorators = decoratorRegistry.Resolve<ResourcePreviewSpecification, OneOf<ResourcePreview, ErrorResponse>>(handler.GetType(), versionRange, serviceProvider);
 
-        var response = await ExecutePipelineAsync(request, behaviors, req => handler.HandleAsync(req, cancellationToken), cancellationToken);
+        var response = await ExecuteDecoratorChainAsync(request, decorators, req => handler.HandleAsync(req, cancellationToken), cancellationToken);
 
         return response.Match(
             resourcePreview => Ok(resourcePreview),
@@ -37,16 +37,16 @@ internal static class HandlerDispatcher
         string extensionVersion,
         ResourceSpecification specification,
         HandlerRegistry handlerRegistry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var (handler, versionRange) = handlerRegistry.ResolveHandler<IResourceCreateOrUpdateHandler>(extensionVersion, specification.Type, serviceProvider);
-        var behaviors = pipelineRegistry.Resolve<ResourceSpecification, OneOf<Resource, LongRunningOperation, ErrorResponse>>(
+        var decorators = decoratorRegistry.Resolve<ResourceSpecification, OneOf<Resource, LongRunningOperation, ErrorResponse>>(
             handler.GetType(), versionRange, serviceProvider);
 
-        var response = await ExecutePipelineAsync(
-            specification, behaviors,
+        var response = await ExecuteDecoratorChainAsync(
+            specification, decorators,
             req => handler.HandleAsync(req, cancellationToken),
             cancellationToken);
 
@@ -60,16 +60,16 @@ internal static class HandlerDispatcher
         string extensionVersion,
         ResourceReference reference,
         HandlerRegistry handlerRegistry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var (handler, versionRange) = handlerRegistry.ResolveHandler<IResourceGetHandler>(extensionVersion, reference.Type, serviceProvider);
-        var behaviors = pipelineRegistry.Resolve<ResourceReference, OneOf<Resource?, ErrorResponse>>(
+        var decorators = decoratorRegistry.Resolve<ResourceReference, OneOf<Resource?, ErrorResponse>>(
             handler.GetType(), versionRange, serviceProvider);
 
-        var response = await ExecutePipelineAsync(
-            reference, behaviors,
+        var response = await ExecuteDecoratorChainAsync(
+            reference, decorators,
             req => handler.HandleAsync(req, cancellationToken),
             cancellationToken);
 
@@ -82,16 +82,16 @@ internal static class HandlerDispatcher
         string extensionVersion,
         ResourceReference reference,
         HandlerRegistry handlerRegistry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var (handler, versionRange) = handlerRegistry.ResolveHandler<IResourceDeleteHandler>(extensionVersion, reference.Type, serviceProvider);
-        var behaviors = pipelineRegistry.Resolve<ResourceReference, OneOf<Resource?, LongRunningOperation, ErrorResponse>>(
+        var decorators = decoratorRegistry.Resolve<ResourceReference, OneOf<Resource?, LongRunningOperation, ErrorResponse>>(
             handler.GetType(), versionRange, serviceProvider);
 
-        var response = await ExecutePipelineAsync(
-            reference, behaviors,
+        var response = await ExecuteDecoratorChainAsync(
+            reference, decorators,
             req => handler.HandleAsync(req, cancellationToken),
             cancellationToken);
 
@@ -108,16 +108,16 @@ internal static class HandlerDispatcher
         string extensionVersion,
         JsonObject operationHandle,
         HandlerRegistry handlerRegistry,
-        HandlerPipelineRegistry pipelineRegistry,
+        HandlerDecoratorRegistry decoratorRegistry,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var (handler, versionRange) = handlerRegistry.ResolveHandler<ILongRunningOperationGetHandler>(extensionVersion, resourceType: null, serviceProvider);
-        var behaviors = pipelineRegistry.Resolve<JsonObject, OneOf<LongRunningOperation, ErrorResponse>>(
+        var decorators = decoratorRegistry.Resolve<JsonObject, OneOf<LongRunningOperation, ErrorResponse>>(
             handler.GetType(), versionRange, serviceProvider);
 
-        var response = await ExecutePipelineAsync(
-            operationHandle, behaviors,
+        var response = await ExecuteDecoratorChainAsync(
+            operationHandle, decorators,
             req => handler.HandleAsync(req, cancellationToken),
             cancellationToken);
 
@@ -126,20 +126,20 @@ internal static class HandlerDispatcher
             errorResponse => ErrorResponseToHttpResult(errorResponse));
     }
 
-    private static Task<TResponse> ExecutePipelineAsync<TRequest, TResponse>(
+    private static Task<TResponse> ExecuteDecoratorChainAsync<TRequest, TResponse>(
         TRequest request,
-        IReadOnlyList<IHandlerPipelineBehavior<TRequest, TResponse>> behaviors,
+        IReadOnlyList<IHandlerDecorator<TRequest, TResponse>> decorators,
         HandlerDelegate<TRequest, TResponse> innerHandler,
         CancellationToken cancellationToken)
     {
         HandlerDelegate<TRequest, TResponse> next = innerHandler;
 
-        // Build chain from inside out - first registered behavior is outermost.
-        for (var i = behaviors.Count - 1; i >= 0; i--)
+        // Build chain from inside out - first registered decorator is outermost.
+        for (var i = decorators.Count - 1; i >= 0; i--)
         {
-            var behavior = behaviors[i];
+            var decorator = decorators[i];
             var current = next;
-            next = req => behavior.HandleAsync(req, current, cancellationToken);
+            next = req => decorator.HandleAsync(req, current, cancellationToken);
         }
 
         return next(request);

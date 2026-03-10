@@ -15,7 +15,7 @@ internal static class WebApplicationExtensions
     /// <summary>
     /// Adds the extensibility middleware pipeline, including exception handling, request culture, and request correlation.
     /// </summary>
-    public static WebApplication UseExtensionApplicationMiddlewares(this WebApplication app)
+    public static WebApplication UseExtensionPipeline(this WebApplication app)
     {
         app.UseExceptionHandler();
         app.UseWhen(

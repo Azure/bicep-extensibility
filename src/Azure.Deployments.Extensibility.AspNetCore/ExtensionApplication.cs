@@ -3,8 +3,8 @@
 
 using Azure.Deployments.Extensibility.AspNetCore.Builders;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
+using Azure.Deployments.Extensibility.AspNetCore.Decorators;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
-using Azure.Deployments.Extensibility.AspNetCore.Pipeline;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,28 +20,27 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// and pipeline behavior configuration automatically.
 /// </summary>
 /// <example>
-/// <code>
+/// <code><![CDATA[
 /// ExtensionApplication.Create(args)
-///     .AddExtensionVersion("&gt;=1.0.0", v =&gt; v
-///         .ForResourceType("apps/Deployment", rt =&gt; rt
-///             .AddHandler&lt;DeploymentHandler&gt;())
-///         .AddHandler&lt;FallbackHandler&gt;())
+///     .AddExtensionVersion(">=1.0.0", v => v
+///         .ForResourceType("apps/Deployment", rt => rt
+///             .AddHandler<DeploymentHandler>())
+///         .AddHandler<FallbackHandler>())
 ///     .Run();
-/// </code>
+/// ]]></code>
 /// </example>
 public class ExtensionApplication
 {
-    private readonly WebApplicationBuilder webApplicationBuilder;
     private readonly HandlerRegistry handlerRegistry = new();
-    private readonly HandlerPipelineRegistry pipelineRegistry = new();
-    private Action<OpenApiExamplesBuilder>? apiExplorerConfigurator;
-    private string? apiExplorerTitle;
-    private string[]? apiExplorerExtensionVersions;
+    private readonly HandlerDecoratorRegistry decoratorRegistry = new();
+
+    private ScalarApiExplorerBuilder? apiExplorerBuilder;
+    private WebApplication? webApp;
     private Action<WebApplication>? middlewareConfigurator;
 
     private ExtensionApplication(string[] args)
     {
-        this.webApplicationBuilder = WebApplication.CreateBuilder(args);
+        this.Builder = WebApplication.CreateBuilder(args);
     }
 
     /// <summary>
@@ -52,7 +51,7 @@ public class ExtensionApplication
     /// <summary>
     /// The underlying <see cref="WebApplicationBuilder"/> for advanced configuration.
     /// </summary>
-    public WebApplicationBuilder Builder => this.webApplicationBuilder;
+    public WebApplicationBuilder Builder { get; }
 
     /// <summary>
     /// Registers handlers for a specific extension version range.
@@ -70,9 +69,9 @@ public class ExtensionApplication
         var range = SemVersionRange.Parse(versionRange);
 
         configure(new ExtensionVersionBuilder(
-            this.webApplicationBuilder.Services,
+            this.Builder.Services,
             this.handlerRegistry,
-            this.pipelineRegistry,
+            this.decoratorRegistry,
             range));
 
         this.handlerRegistry.TrackVersionRange(range);
@@ -81,14 +80,14 @@ public class ExtensionApplication
     }
 
     /// <summary>
-    /// Registers a global pipeline behavior that wraps every handler,
+    /// Registers a global handler decorator that wraps every handler,
     /// regardless of version range or resource type.
     /// </summary>
-    public ExtensionApplication AddGlobalPipelineBehavior<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TBehavior>()
-        where TBehavior : class
+    public ExtensionApplication AddGlobalHandlerDecorator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TDecorator>()
+        where TDecorator : class
     {
-        this.webApplicationBuilder.Services.TryAddScoped<TBehavior>();
-        this.pipelineRegistry.AddGlobal(typeof(TBehavior));
+        this.Builder.Services.TryAddScoped<TDecorator>();
+        this.decoratorRegistry.AddGlobal(typeof(TDecorator));
 
         return this;
     }
@@ -98,30 +97,30 @@ public class ExtensionApplication
     /// </summary>
     public ExtensionApplication ConfigureServices(Action<IServiceCollection> configure)
     {
-        configure(this.webApplicationBuilder.Services);
+        configure(this.Builder.Services);
         return this;
     }
 
     /// <summary>
-    /// Configures custom middlewares on the application pipeline.
+    /// Configures custom ASP.NET core middlewares on the application pipeline.
     /// The callback is invoked after the built-in middlewares but before endpoint routing.
     /// </summary>
-    public ExtensionApplication ConfigureMiddlewares(Action<WebApplication> configure)
+    public ExtensionApplication ConfigureHttpPipeline(Action<WebApplication> configure)
     {
-        this.middlewareConfigurator = configure;
+        this.middlewareConfigurator += configure;
         return this;
     }
 
     /// <summary>
-    /// Enables the Scalar API explorer with optional request/response examples.
+    /// Enables the Scalar API explorer with optional configuration.
     /// Only served in the Development environment.
     /// </summary>
-    public ExtensionApplication EnableDevelopmentScalarApiExplorer(Action<OpenApiExamplesBuilder>? configureExamples = null, string? title = null, string[]? extensionVersions = null)
+    public ExtensionApplication EnableDevelopmentScalarApiExplorer(Action<ScalarApiExplorerBuilder>? configure = null)
     {
-        // Use a no-op delegate to distinguish "enabled without examples" from "not enabled".
-        this.apiExplorerConfigurator = configureExamples ?? (_ => { });
-        this.apiExplorerTitle = title;
-        this.apiExplorerExtensionVersions = extensionVersions;
+        var builder = new ScalarApiExplorerBuilder();
+        configure?.Invoke(builder);
+        this.apiExplorerBuilder = builder;
+
         return this;
     }
 
@@ -137,41 +136,51 @@ public class ExtensionApplication
 
     private WebApplication Build()
     {
+        if (this.webApp is not null)
+        {
+            throw new InvalidOperationException("ExtensionApplication has already been built.");
+        }
+
         this.handlerRegistry.Validate();
         this.RegisterDefaultServices();
 
-        var app = this.webApplicationBuilder.Build();
+        var app = this.Builder.Build();
 
-        app.UseExtensionApplicationMiddlewares();
+        app.UseExtensionPipeline();
         this.middlewareConfigurator?.Invoke(app);
 
-        this.MapEndpoints(app);
+        this.MapExtensionEndpoints(app);
 
+        webApp = app;
         return app;
     }
 
+    /// <remarks>
+    /// <see cref="ErrorResponseExceptionHandlingBehavior"/> is always registered
+    /// as the outermost pipeline layer and cannot be removed.
+    /// </remarks>
     private void RegisterDefaultServices()
     {
-        var services = this.webApplicationBuilder.Services;
+        var services = this.Builder.Services;
 
-        // Built-in exception-handling behavior runs as the outermost pipeline layer.
+        // Built-in exception-handling decorator runs as the outermost decorator.
         services.TryAddScoped<ErrorResponseExceptionHandlingBehavior>();
-        this.pipelineRegistry.AddGlobal(typeof(ErrorResponseExceptionHandlingBehavior));
+        this.decoratorRegistry.AddGlobal(typeof(ErrorResponseExceptionHandlingBehavior));
 
         services.AddSingleton(this.handlerRegistry);
-        services.AddSingleton(this.pipelineRegistry);
+        services.AddSingleton(this.decoratorRegistry);
 
-        this.webApplicationBuilder.AddExtensionInfrastructure();
+        this.Builder.AddExtensionInfrastructure();
     }
 
-    private void MapEndpoints(WebApplication app)
+    private void MapExtensionEndpoints(WebApplication app)
     {
-        if (this.apiExplorerConfigurator is not null)
+        if (this.apiExplorerBuilder is { } explorer)
         {
             app.MapDevelopmentScalarApiExplorer(
-                this.apiExplorerConfigurator,
-                this.apiExplorerTitle ?? ScalarExtensions.DefaultTitle,
-                this.apiExplorerExtensionVersions);
+                explorer.ExamplesConfigurator,
+                explorer.Title,
+                explorer.ExtensionVersions);
         }
 
         app.MapResourceActions();
