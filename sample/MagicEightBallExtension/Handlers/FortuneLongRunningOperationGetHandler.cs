@@ -1,12 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using MagicEightBallExtension.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Text.Json.Nodes;
 
@@ -16,18 +14,18 @@ namespace MagicEightBallExtension.Handlers;
 /// Retrieves the status of a long-running "cosmic contemplation" operation.
 /// Simulates a delay: the operation completes after 5 seconds.
 /// </summary>
-[SupportedExtensionVersionRange(">=1.0.0")]
-public class FortuneLongRunningOperationGetHandler : HttpHandler, ILongRunningOperationGetHandler
+public class FortuneLongRunningOperationGetHandler : ILongRunningOperationGetHandler
 {
-    private static readonly TimeSpan CosmicContemplationDuration = TimeSpan.FromSeconds(5);
-
     private readonly FortuneStore store;
+    private readonly ILogger<FortuneLongRunningOperationGetHandler> logger;
 
-    public FortuneLongRunningOperationGetHandler(IHttpContextAccessor httpContextAccessor, FortuneStore store)
-        : base(httpContextAccessor)
+    public FortuneLongRunningOperationGetHandler(FortuneStore store, ILogger<FortuneLongRunningOperationGetHandler> logger)
     {
         this.store = store;
+        this.logger = logger;
     }
+
+    private static readonly TimeSpan CosmicContemplationDuration = TimeSpan.FromSeconds(5);
 
     public Task<OneOf<LongRunningOperation, ErrorResponse>> HandleAsync(
         JsonObject operationHandle, CancellationToken cancellationToken)
@@ -48,7 +46,7 @@ public class FortuneLongRunningOperationGetHandler : HttpHandler, ILongRunningOp
 
         if (pending is null)
         {
-            Logger.LogInformation("LRO '{OperationId}': already completed or not found.", operationId);
+            this.logger.LogInformation("LRO '{OperationId}': already completed or not found.", operationId);
             return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(
                 new LongRunningOperation { Status = "Succeeded" });
         }
@@ -57,14 +55,14 @@ public class FortuneLongRunningOperationGetHandler : HttpHandler, ILongRunningOp
 
         if (elapsed >= CosmicContemplationDuration)
         {
-            Logger.LogInformation("LRO '{OperationId}': cosmic contemplation complete after {Elapsed}.", operationId, elapsed);
+            this.logger.LogInformation("LRO '{OperationId}': cosmic contemplation complete after {Elapsed}.", operationId, elapsed);
             this.store.CompletePendingOperation(operationId);
 
             return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(
                 new LongRunningOperation { Status = "Succeeded" });
         }
 
-        Logger.LogInformation("LRO '{OperationId}': still contemplating ({Elapsed} elapsed, need {Duration}).", operationId, elapsed, CosmicContemplationDuration);
+        this.logger.LogInformation("LRO '{OperationId}': still contemplating ({Elapsed} elapsed).", operationId, elapsed);
 
         // Still contemplating — return a non-terminal status with the same handle.
         return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(

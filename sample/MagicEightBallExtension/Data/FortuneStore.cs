@@ -55,14 +55,9 @@ public class FortuneStore
         fortune == Fortunes[^1];
 
     /// <summary>
-    /// Builds a resource key from type + identifiers.
+    /// Builds a resource key from type + name.
     /// </summary>
-    public static string GetResourceKey(string type, JsonObject identifiers)
-    {
-        var name = identifiers["name"]?.GetValue<string>()
-            ?? throw new InvalidOperationException("Missing 'name' identifier.");
-        return $"{type}::{name}";
-    }
+    public static string GetResourceKey(string type, string name) => $"{type}::{name}";
 
     public Resource? TryGetResource(string key) =>
         resources.TryGetValue(key, out var resource) ? resource : null;
