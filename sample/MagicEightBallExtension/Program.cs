@@ -27,14 +27,14 @@ app.ConfigureServices(services =>
 });
 
 // Global decorators — run for every handler invocation.
-app.AddGlobalHandlerDecorator<NameValidationBehavior>();
-app.AddGlobalHandlerDecorator<ResponseLoggingBehavior>();
-app.AddGlobalHandlerDecorator<PreviewMetadataProcessingBehavior>();
+app.AddGlobalHandlerDecorator<NameValidationDecorator>();
+app.AddGlobalHandlerDecorator<ResponseLoggingDecorator>();
+app.AddGlobalHandlerDecorator<PreviewMetadataProcessingDecorator>();
 
 // v1 handlers (extensionVersion >= 1.0.0 and < 2.0.0).
 app.AddExtensionVersion(">=1.0.0 <2.0.0", version => version
-    // Version-scoped decorator — validates that the resource API version is "2024-01-01".
-    .AddHandlerDecorator<PipelineV1.ApiVersionValidationBehavior>()
+    // Version-scoped decorator — validates that the resource API version is 2024-01-01 or 2024-01-01-preview.
+    .AddHandlerDecorator<PipelineV1.ApiVersionValidationDecorator>()
     // Generic (default) handler — not scoped to a resource type.
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     // Resource-type-specific handlers for "Fortune".
@@ -46,7 +46,7 @@ app.AddExtensionVersion(">=1.0.0 <2.0.0", version => version
 
 // v2 handlers (extensionVersion >= 2.0.0).
 app.AddExtensionVersion(">=2.0.0", version => version
-    .AddHandlerDecorator<PipelineV2.ApiVersionValidationBehavior>()
+    .AddHandlerDecorator<PipelineV2.ApiVersionValidationDecorator>() // 2025-01-01 or 2025-01-01-preview
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     .ForResourceType("Fortune", type => type
         .AddHandler<V2.FortunePreviewHandler>()

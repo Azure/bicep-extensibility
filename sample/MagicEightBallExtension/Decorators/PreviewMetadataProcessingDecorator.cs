@@ -27,7 +27,7 @@ namespace MagicEightBallExtension.Decorators;
 ///   </item>
 /// </list>
 /// </summary>
-public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewDecorator
+public sealed class PreviewMetadataProcessingDecorator : IResourcePreviewDecorator
 {
     private const string PropertiesPrefix = "/properties/";
 

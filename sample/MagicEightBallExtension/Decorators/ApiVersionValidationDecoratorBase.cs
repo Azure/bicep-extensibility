@@ -11,7 +11,7 @@ namespace MagicEightBallExtension.Decorators;
 /// Base class for version-scoped API version validation decorators.
 /// Subclasses supply the accepted API versions (e.g. stable + preview) via the constructor.
 /// </summary>
-public abstract class ApiVersionValidationBehaviorBase :
+public abstract class ApiVersionValidationDecoratorBase :
     IResourcePreviewDecorator,
     IResourceCreateOrUpdateDecorator,
     IResourceGetDecorator,
@@ -19,7 +19,7 @@ public abstract class ApiVersionValidationBehaviorBase :
 {
     private readonly IReadOnlySet<string> acceptedApiVersions;
 
-    protected ApiVersionValidationBehaviorBase(params string[] acceptedApiVersions)
+    protected ApiVersionValidationDecoratorBase(params string[] acceptedApiVersions)
     {
         this.acceptedApiVersions = new HashSet<string>(acceptedApiVersions, StringComparer.OrdinalIgnoreCase);
     }

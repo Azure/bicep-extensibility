@@ -14,16 +14,16 @@ namespace MagicEightBallExtension.Decorators;
 /// A global decorator that logs the result of every handler invocation.
 /// If the response contains identifiers, they are included in the log record.
 /// </summary>
-public sealed partial class ResponseLoggingBehavior :
+public sealed partial class ResponseLoggingDecorator :
     IResourcePreviewDecorator,
     IResourceCreateOrUpdateDecorator,
     IResourceGetDecorator,
     IResourceDeleteDecorator,
     ILongRunningOperationGetDecorator
 {
-    private readonly ILogger<ResponseLoggingBehavior> logger;
+    private readonly ILogger<ResponseLoggingDecorator> logger;
 
-    public ResponseLoggingBehavior(ILogger<ResponseLoggingBehavior> logger)
+    public ResponseLoggingDecorator(ILogger<ResponseLoggingDecorator> logger)
     {
         this.logger = logger;
     }

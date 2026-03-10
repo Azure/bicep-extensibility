@@ -36,7 +36,7 @@ public class ExtensionApplication
 
     private ScalarApiExplorerBuilder? apiExplorerBuilder;
     private WebApplication? webApp;
-    private Action<WebApplication>? middlewareConfigurator;
+    private Action<WebApplication>? pipelineConfigurator;
 
     private ExtensionApplication(string[] args)
     {
@@ -105,9 +105,9 @@ public class ExtensionApplication
     /// Configures custom ASP.NET core middlewares on the application pipeline.
     /// The callback is invoked after the built-in middlewares but before endpoint routing.
     /// </summary>
-    public ExtensionApplication ConfigureHttpPipeline(Action<WebApplication> configure)
+    public ExtensionApplication ConfigurePipeline(Action<WebApplication> configure)
     {
-        this.middlewareConfigurator += configure;
+        this.pipelineConfigurator += configure;
         return this;
     }
 
@@ -147,7 +147,7 @@ public class ExtensionApplication
         var app = this.Builder.Build();
 
         app.UseExtensionPipeline();
-        this.middlewareConfigurator?.Invoke(app);
+        this.pipelineConfigurator?.Invoke(app);
 
         this.MapExtensionEndpoints(app);
 

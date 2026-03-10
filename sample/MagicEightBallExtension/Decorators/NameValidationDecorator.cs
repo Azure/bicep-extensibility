@@ -12,7 +12,7 @@ namespace MagicEightBallExtension.Decorators;
 /// For create/update and preview, it validates that the required 'name' property is present.
 /// For get and delete, it validates that the required 'name' identifier is present.
 /// </summary>
-public sealed class NameValidationBehavior : IResourceCreateOrUpdateDecorator, IResourcePreviewDecorator, IResourceGetDecorator, IResourceDeleteDecorator
+public sealed class NameValidationDecorator : IResourceCreateOrUpdateDecorator, IResourcePreviewDecorator, IResourceGetDecorator, IResourceDeleteDecorator
 {
     Task<OneOf<Resource, LongRunningOperation, ErrorResponse>> IResourceCreateOrUpdateDecorator.HandleAsync(
         ResourceSpecification request,
