@@ -101,6 +101,11 @@
         "resolved": "10.0.103",
         "contentHash": "cMtGW5/r0ck72Jg2QwZcNTX59z+iB/B1kW84VMa/eX8L19DhHIuIcQjfK0pgLLBxd60Jl0Bj9GUolcM0MnJnZA=="
       },
+      "Scalar.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "2.4.18",
+        "contentHash": "QLM+w01k2Rn2MU2AZRTshM06FbjYkhRZCnGhBDZNAKZLTbLcz2LyNTasbdwGcT+81VbrWFl8CFvpdR8+6ZvT9A=="
+      },
       "Semver": {
         "type": "Transitive",
         "resolved": "3.0.0",
@@ -118,6 +123,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "Scalar.AspNetCore": "[2.4.18, )",
           "Semver": "[3.0.0, )"
         }
       },

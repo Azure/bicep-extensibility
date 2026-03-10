@@ -21,6 +21,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
 
-        public readonly static ModelSerializerContext SerializerContext = new(SerializerOptions);
+        public readonly static ModelSerializerContext SerializerContext = new(new(SerializerOptions));
     }
 }

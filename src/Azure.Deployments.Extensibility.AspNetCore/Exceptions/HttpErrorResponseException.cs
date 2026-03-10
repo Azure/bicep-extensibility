@@ -4,6 +4,7 @@
 using Azure.Deployments.Extensibility.AspNetCore.Models;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
+using Azure.Deployments.Extensibility.Core.V2.Json;
 using Json.Pointer;
 using System.Text.Json.Nodes;
 
@@ -14,7 +15,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Exceptions;
 /// </summary>
 public class HttpErrorResponseException : ErrorResponseException
 {
-    public HttpErrorResponseException(int statusCode, string code, string message, JsonPointer? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
+    public HttpErrorResponseException(int statusCode, string code, string message, JsonPointerProxy? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
         : this(statusCode, new Error(code, message, target, details, innerError))
     {
     }

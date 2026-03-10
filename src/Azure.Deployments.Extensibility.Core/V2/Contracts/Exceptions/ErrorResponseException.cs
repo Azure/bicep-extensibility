@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
+using Azure.Deployments.Extensibility.Core.V2.Json;
 using Json.Pointer;
 using System.Text.Json.Nodes;
 
@@ -20,7 +21,7 @@ public class ErrorResponseException : Exception
     /// <param name="target">The target of the error as a JSON Pointer.</param>
     /// <param name="details">An array of additional error details.</param>
     /// <param name="innerError">An object containing more specific information about the error.</param>
-    public ErrorResponseException(string code, string message, JsonPointer? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
+    public ErrorResponseException(string code, string message, JsonPointerProxy? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
         : this(new Error(code, message, target, details, innerError))
     {
     }

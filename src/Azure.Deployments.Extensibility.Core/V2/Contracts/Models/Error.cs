@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
+using Azure.Deployments.Extensibility.Core.V2.Json;
 using Json.Pointer;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Nodes;
@@ -26,7 +27,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
         }
 
         [SetsRequiredMembers]
-        public Error(string code, string message, JsonPointer? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
+        public Error(string code, string message, JsonPointerProxy? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
         {
             this.Code = code;
             this.Message = message;

@@ -5,12 +5,12 @@ using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.AspNetCore.Middlewares;
 using Microsoft.AspNetCore.Builder;
 
-namespace Azure.Deployments.Extensibility.AspNetCore;
+namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
 
 /// <summary>
-/// Extension methods for configuring extensibility middleware and routing on <see cref="WebApplication"/>.
+/// Internal extension methods for configuring extensibility middleware and routing on <see cref="WebApplication"/>.
 /// </summary>
-public static class WebApplicationExtensions
+internal static class WebApplicationExtensions
 {
     /// <summary>
     /// Adds the extensibility middleware pipeline, including exception handling, request culture, and request correlation.
@@ -18,8 +18,14 @@ public static class WebApplicationExtensions
     public static WebApplication UseExtensionApplicationMiddlewares(this WebApplication app)
     {
         app.UseExceptionHandler();
-        app.UseMiddleware<RequestCultureMiddleware>();
-        app.UseMiddleware<RequestCorrelationMiddleware>();
+        app.UseWhen(
+            ctx => ctx.Request.Path.Value?.Contains("/resource/", StringComparison.OrdinalIgnoreCase) == true ||
+                   ctx.Request.Path.Value?.Contains("/longRunningOperation/", StringComparison.OrdinalIgnoreCase) == true,
+            branch =>
+            {
+                branch.UseMiddleware<RequestCultureMiddleware>();
+                branch.UseMiddleware<RequestCorrelationMiddleware>();
+            });
 
         return app;
     }

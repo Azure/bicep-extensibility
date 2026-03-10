@@ -6,25 +6,8 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
 {
-    /// <summary>
-    /// Represents what the user declares in their template to specify the desired state of a resource.
-    /// </summary>
-    public record ResourceSpecification
+    public record ResourceSpecification<TProperties, TConfig>
     {
-        public ResourceSpecification()
-        {
-        }
-
-        [SetsRequiredMembers]
-        public ResourceSpecification(string type, string? apiVersion, JsonObject properties, JsonObject? config, string? configId = null)
-        {
-            this.Type = type;
-            this.ApiVersion = apiVersion;
-            this.Properties = properties;
-            this.Config = config;
-            this.ConfigId = configId;
-        }
-
         /// <summary>
         /// The type of the resource.
         /// </summary>
@@ -38,12 +21,12 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
         /// <summary>
         /// The properties of the resource.
         /// </summary>
-        public required JsonObject Properties { get; init; }
+        public required TProperties Properties { get; init; }
 
         /// <summary>
         /// The configuration for the resource.
         /// </summary>
-        public JsonObject? Config { get; init; }
+        public TConfig? Config { get; init; }
 
         /// <summary>
         /// The ID of the configuration for the resource.
@@ -59,5 +42,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
         /// are performed on the correct cluster.
         /// </remarks>
         public string? ConfigId { get; init; }
+    }
+    
+    public record ResourceSpecification<TProperties> : ResourceSpecification<TProperties, JsonObject?>
+    {
+    }
+    
+    public record ResourceSpecification : ResourceSpecification<JsonObject, JsonObject?>
+    {
     }
 }

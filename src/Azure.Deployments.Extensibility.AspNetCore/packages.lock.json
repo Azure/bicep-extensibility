@@ -24,6 +24,12 @@
         "resolved": "3.9.50",
         "contentHash": "HtOgGF6jZ+WYbXnCUCYPT8Y2d6mIJo9ozjK/FINTRsXdm4Zgv9GehUMa7EFoGQkqrMcDJNOIDwCmENnvXg4UbA=="
       },
+      "Scalar.AspNetCore": {
+        "type": "Direct",
+        "requested": "[2.4.18, )",
+        "resolved": "2.4.18",
+        "contentHash": "QLM+w01k2Rn2MU2AZRTshM06FbjYkhRZCnGhBDZNAKZLTbLcz2LyNTasbdwGcT+81VbrWFl8CFvpdR8+6ZvT9A=="
+      },
       "Semver": {
         "type": "Direct",
         "requested": "[3.0.0, )",

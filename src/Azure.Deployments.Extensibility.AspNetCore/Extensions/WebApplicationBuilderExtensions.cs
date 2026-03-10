@@ -9,22 +9,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Azure.Deployments.Extensibility.AspNetCore;
+namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
 
 /// <summary>
-/// Extension methods for configuring an extensibility application on <see cref="WebApplicationBuilder"/>.
+/// Internal extension methods for configuring extensibility infrastructure on <see cref="WebApplicationBuilder"/>.
 /// </summary>
-public static class WebApplicationBuilderExtensions
+internal static class WebApplicationBuilderExtensions
 {
     /// <summary>
-    /// Registers the extensibility application services, including JSON serialization defaults,
+    /// Registers extensibility infrastructure services: JSON serialization defaults,
     /// exception handling, and problem details formatting.
     /// </summary>
-    public static ExtensionApplicationBuilder AddExtensionApplication(this WebApplicationBuilder builder, Action<ExtensionApplicationBuilder> configureApp)
+    public static WebApplicationBuilder AddExtensionInfrastructure(this WebApplicationBuilder builder)
     {
-        var extensionApplicationBuilder = new ExtensionApplicationBuilder(builder.Services);
-
-        // Setting JsonOptions before configureApp to allow users to override it if needed.
         builder.Services.Configure<JsonOptions>(options =>
         {
             options.SerializerOptions.TypeInfoResolverChain.Insert(0, JsonDefaults.SerializerContext);
@@ -34,13 +31,11 @@ public static class WebApplicationBuilderExtensions
             options.SerializerOptions.Encoder = JsonDefaults.SerializerOptions.Encoder;
         });
 
-        configureApp(extensionApplicationBuilder);
-
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddExceptionHandler<DefaultExceptionHandler>();
         builder.Services.AddExtensibilityApiCompliantProblemDetails();
 
-        return extensionApplicationBuilder;
+        return builder;
     }
 
     private static IServiceCollection AddExtensibilityApiCompliantProblemDetails(this IServiceCollection services)

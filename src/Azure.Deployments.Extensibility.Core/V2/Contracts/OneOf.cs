@@ -39,6 +39,16 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts
             _ => throw new UnreachableException(),
         };
 
+        public void Switch(Action<T0> onT0, Action<T1> onT1)
+        {
+            switch (this.index)
+            {
+                case 0: onT0(this.value0!); break;
+                case 1: onT1(this.value1!); break;
+                default: throw new UnreachableException();
+            }
+        }
+
         public static implicit operator OneOf<T0, T1>(T0 value) => new(0, value, default);
         public static implicit operator OneOf<T0, T1>(T1 value) => new(1, default, value);
     }
@@ -83,6 +93,17 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts
             2 => onT2(this.value2!),
             _ => throw new UnreachableException(),
         };
+
+        public void Switch(Action<T0> onT0, Action<T1> onT1, Action<T2> onT2)
+        {
+            switch (this.index)
+            {
+                case 0: onT0(this.value0!); break;
+                case 1: onT1(this.value1!); break;
+                case 2: onT2(this.value2!); break;
+                default: throw new UnreachableException();
+            }
+        }
 
         public static implicit operator OneOf<T0, T1, T2>(T0 value) => new(0, value, default, default);
         public static implicit operator OneOf<T0, T1, T2>(T1 value) => new(1, default, value, default);

@@ -4,7 +4,9 @@
   "private": true,
   "description": "TypeSpec definitions for the Bicep Extensibility Provider API",
   "scripts": {
-    "build": "tsp compile .",
+    "build": "tsp compile . && tsp compile . --option \"@typespec/openapi3.output-file=openapi.json\"",
+    "build:yaml": "tsp compile .",
+    "build:json": "tsp compile . --option \"@typespec/openapi3.output-file=openapi.json\"",
     "format": "tsp format **/*.tsp",
     "watch": "tsp compile . --watch",
     "lint": "tsp compile . --no-emit"

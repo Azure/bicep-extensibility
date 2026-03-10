@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "MagicEightBallExtension": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "scalar/v2",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}
