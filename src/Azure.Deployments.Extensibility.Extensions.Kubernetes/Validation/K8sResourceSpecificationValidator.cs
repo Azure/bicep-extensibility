@@ -11,27 +11,28 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation
     {
         public K8sResourceSpecificationValidator()
         {
-            this.AnyValid(x => x.Type)
-                .MustMatchRegex(RegexPatterns.ResourceType())
-                    .WithErrorCode("InvalidResourceType");
+            var typeRule = this.Ensure(x => x.Type)
+                .MatchesRegex(RegexPatterns.ResourceType(), error => error
+                    .WithCode("InvalidResourceType"));
 
-            this.AnyValid(x => x.ApiVersion)
-                .MustNotBeNull()
-                    .WithErrorCode("NullApiVersion")
-                    .WithErrorMessage("The Kubernetes resource API version must be provided and cannot be null.").AndThen
-                .MustMatchRegex(RegexPatterns.ApiVersion())
-                    .WithErrorCode("InvalidApiVersion");
+            var apiVersionRule = this.Ensure(x => x.ApiVersion)
+                .NotNull(error => error
+                    .WithCode("NullApiVersion")
+                    .WithMessage("The Kubernetes resource API version must be provided and cannot be null."))
+                .MatchesRegex(RegexPatterns.ApiVersion(), error => error
+                    .WithCode("InvalidApiVersion"));
 
-            this.WhenPrecedingRulesSatisfied(x => x.Properties)
-                .MustMatchJsonSchema(JsonSchemas.K8sResourceProperties)
-                    .WithErrorCode("InvalidProperty");
+            this.Ensure(x => x.Properties)
+                .MatchesJsonSchema(JsonSchemas.K8sResourceProperties, configureError: error => error
+                    .WithCode("InvalidProperty"))
+                .DependsOn(typeRule, apiVersionRule);
 
-            this.AnyValid(x => x.Config)
-                .MustNotBeNull()
-                    .WithErrorCode("NullConfig")
-                    .WithErrorMessage("The Kubernetes config must be provided and cannot be null.").AndThen
-                .MustMatchJsonSchema(JsonSchemas.K8sResourceConfig)
-                    .WithErrorCode("InvalidConfig");
+            this.Ensure(x => x.Config)
+                .NotNull(error => error
+                    .WithCode("NullConfig")
+                    .WithMessage("The Kubernetes config must be provided and cannot be null."))
+                .MatchesJsonSchema(JsonSchemas.K8sResourceConfig, configureError: error => error
+                    .WithCode("InvalidConfig"));
         }
     }
 }

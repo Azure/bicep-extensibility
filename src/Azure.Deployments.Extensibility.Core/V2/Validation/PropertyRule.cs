@@ -10,11 +10,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     internal class PropertyRule<TModel, TProperty> : IModelValidationRule<TModel>
     {
         private readonly List<IPropertyRuleCriterion<TModel, TProperty>> criteria = [];
-        private readonly Expression<Func<TModel, TProperty>> propertyExpression;
+        private readonly Func<TModel, TProperty> compiledExpression;
+        private readonly JsonPointer propertyPointer;
 
         public PropertyRule(Expression<Func<TModel, TProperty>> propertyExpression)
         {
-            this.propertyExpression = propertyExpression;
+            this.compiledExpression = propertyExpression.Compile();
+            this.propertyPointer = CreatePropertyPointer(propertyExpression);
         }
 
         public void AddCriterion(IPropertyRuleCriterion<TModel, TProperty> criterion) => this.criteria.Add(criterion);
@@ -26,14 +28,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
                 yield break;
             }
 
-            var property = this.propertyExpression.Compile().Invoke(model);
-            var propertyPointer = this.CreatePropertyPointer();
+            var property = this.compiledExpression(model);
 
             foreach (var criterion in this.criteria)
             {
                 var criterionSatisfied = true;
 
-                foreach (var errorDetail in criterion.Evaluate(model, property, propertyPointer))
+                foreach (var errorDetail in criterion.Evaluate(model, property, this.propertyPointer))
                 {
                     criterionSatisfied = false;
                     yield return errorDetail;
@@ -41,15 +42,15 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
 
                 if (!criterionSatisfied)
                 {
-                    // Do not evaluate the next statement if the current one is not satisfied.
+                    // Do not evaluate subsequent criteria if the current one failed.
                     yield break;
                 }
             }
         }
 
-        private JsonPointer CreatePropertyPointer() => JsonPointer.Create(
+        private static JsonPointer CreatePropertyPointer(Expression<Func<TModel, TProperty>> propertyExpression) => JsonPointer.Create(
             Expression.Lambda<Func<TModel, object>>(
-                Expression.Convert(this.propertyExpression.Body, typeof(object)), this.propertyExpression.Parameters),
+                Expression.Convert(propertyExpression.Body, typeof(object)), propertyExpression.Parameters),
             new PointerCreationOptions
             {
                 PropertyNameResolver = PropertyNameResolvers.CamelCase,

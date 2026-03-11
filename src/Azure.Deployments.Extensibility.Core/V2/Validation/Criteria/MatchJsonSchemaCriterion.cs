@@ -8,7 +8,7 @@ using Json.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Validation.Rules
+namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
 {
     /// <summary>
     /// Resolves a <see cref="JsonSchema"/> from the model being validated.
