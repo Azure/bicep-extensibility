@@ -3,7 +3,7 @@
 
 using Azure.Deployments.Extensibility.Core.Tests.Unit.Fixtures.Attributes;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
-using Azure.Deployments.Extensibility.Core.V2.Validation.Rules;
+using Azure.Deployments.Extensibility.Core.V2.Validation.Criteria;
 using FluentAssertions;
 using Json.Pointer;
 using Json.Schema;
@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Xunit;
 
-namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validation.Rules
+namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validation.Criteria
 {
     public class MatchJsonSchemaCriterionTests
     {
