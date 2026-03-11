@@ -3,7 +3,7 @@
 
 using Azure.Deployments.Extensibility.AspNetCore.Builders;
 using Azure.Deployments.Extensibility.AspNetCore.Extensions;
-using Azure.Deployments.Extensibility.AspNetCore.Decorators;
+using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Microsoft.AspNetCore.Builder;
@@ -32,7 +32,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 public class ExtensionApplication
 {
     private readonly HandlerRegistry handlerRegistry = new();
-    private readonly HandlerDecoratorRegistry decoratorRegistry = new();
+    private readonly HandlerBehaviorRegistry decoratorRegistry = new();
 
     private ScalarApiExplorerBuilder? apiExplorerBuilder;
     private WebApplication? webApp;
@@ -80,14 +80,29 @@ public class ExtensionApplication
     }
 
     /// <summary>
-    /// Registers a global handler decorator that wraps every handler,
+    /// Registers a global handler behavior that wraps every handler,
     /// regardless of version range or resource type.
+    /// The behavior is resolved from the DI container as a scoped service per request.
     /// </summary>
-    public ExtensionApplication AddGlobalHandlerDecorator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TDecorator>()
-        where TDecorator : class
+    public ExtensionApplication AddGlobalHandlerBehavior<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TBehavior>()
+        where TBehavior : class
     {
-        this.Builder.Services.TryAddScoped<TDecorator>();
-        this.decoratorRegistry.AddGlobal(typeof(TDecorator));
+        this.Builder.Services.TryAddScoped<TBehavior>();
+        this.decoratorRegistry.AddGlobal(sp => sp.GetRequiredService<TBehavior>());
+
+        return this;
+    }
+
+    /// <summary>
+    /// Registers a global handler behavior using a factory that wraps every handler,
+    /// regardless of version range or resource type.
+    /// The factory is invoked on every request; the returned instance is not managed by the DI container.
+    /// Use this overload when the behavior requires constructor arguments not available in DI.
+    /// </summary>
+    public ExtensionApplication AddGlobalHandlerBehavior<TBehavior>(Func<IServiceProvider, TBehavior> factory)
+        where TBehavior : class
+    {
+        this.decoratorRegistry.AddGlobal(sp => factory(sp));
 
         return this;
     }
@@ -163,9 +178,9 @@ public class ExtensionApplication
     {
         var services = this.Builder.Services;
 
-        // Built-in exception-handling decorator runs as the outermost decorator.
+        // Built-in exception-handling behavior runs as the outermost behavior.
         services.TryAddScoped<ErrorResponseExceptionHandlingBehavior>();
-        this.decoratorRegistry.AddGlobal(typeof(ErrorResponseExceptionHandlingBehavior));
+        this.decoratorRegistry.AddGlobal(sp => sp.GetRequiredService<ErrorResponseExceptionHandlingBehavior>());
 
         services.AddSingleton(this.handlerRegistry);
         services.AddSingleton(this.decoratorRegistry);

@@ -3,14 +3,12 @@
 
 using Azure.Deployments.Extensibility.AspNetCore;
 using MagicEightBallExtension;
-using MagicEightBallExtension.Decorators;
+using MagicEightBallExtension.Behaviors;
 using MagicEightBallExtension.Data;
 using MagicEightBallExtension.Handlers;
 using Microsoft.AspNetCore.Http.Json;
 using V1 = MagicEightBallExtension.Handlers.V1;
 using V2 = MagicEightBallExtension.Handlers.V2;
-using PipelineV1 = MagicEightBallExtension.Decorators.V1;
-using PipelineV2 = MagicEightBallExtension.Decorators.V2;
 
 var app = ExtensionApplication.Create(args);
 
@@ -26,15 +24,15 @@ app.ConfigureServices(services =>
     });
 });
 
-// Global decorators — run for every handler invocation.
-app.AddGlobalHandlerDecorator<NameValidationDecorator>();
-app.AddGlobalHandlerDecorator<ResponseLoggingDecorator>();
-app.AddGlobalHandlerDecorator<PreviewMetadataProcessingDecorator>();
+// Global behaviors — run for every handler invocation.
+app.AddGlobalHandlerBehavior<ResponseLoggingBehavior>();
+app.AddGlobalHandlerBehavior<NameValidationBehavior>();
+app.AddGlobalHandlerBehavior<PreviewMetadataProcessingBehavior>();
 
-// v1 handlers (extensionVersion >= 1.0.0 and < 2.0.0).
-app.AddExtensionVersion(">=1.0.0 <2.0.0", version => version
-    // Version-scoped decorator — validates that the resource API version is 2024-01-01 or 2024-01-01-preview.
-    .AddHandlerDecorator<PipelineV1.ApiVersionValidationDecorator>()
+// v1 handlers
+app.AddExtensionVersion("1.*.*", version => version
+    // Version-scoped behavior — validates that the resource API version is 2024-01-01 or 2024-01-01-preview.
+    .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01", "2024-01-01-preview"))
     // Generic (default) handler — not scoped to a resource type.
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     // Resource-type-specific handlers for "Fortune".
@@ -44,9 +42,9 @@ app.AddExtensionVersion(">=1.0.0 <2.0.0", version => version
         .AddHandler<V1.FortuneGetHandler>()
         .AddHandler<V1.FortuneDeleteHandler>()));
 
-// v2 handlers (extensionVersion >= 2.0.0).
-app.AddExtensionVersion(">=2.0.0", version => version
-    .AddHandlerDecorator<PipelineV2.ApiVersionValidationDecorator>() // 2025-01-01 or 2025-01-01-preview
+// v2 handlers
+app.AddExtensionVersion("2.*.*", version => version
+    .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2025-01-01", "2025-01-01-preview")) // 2025-01-01 or 2025-01-01-preview
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     .ForResourceType("Fortune", type => type
         .AddHandler<V2.FortunePreviewHandler>()

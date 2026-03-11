@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "windows": "pwsh -NoProfile -File .github/hooks/csharp-coding-style.ps1",
+        "command": "pwsh -NoProfile -File .github/hooks/csharp-coding-style.ps1",
+        "timeout": 5
+      }
+    ]
+  }
+}

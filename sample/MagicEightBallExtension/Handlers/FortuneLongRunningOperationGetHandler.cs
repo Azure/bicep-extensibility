@@ -46,7 +46,7 @@ public class FortuneLongRunningOperationGetHandler : ILongRunningOperationGetHan
 
         if (pending is null)
         {
-            this.logger.LogInformation("LRO '{OperationId}': already completed or not found.", operationId);
+            this.logger.LogInformation(1, "LRO '{OperationId}': already completed or not found.", operationId);
             return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(
                 new LongRunningOperation { Status = "Succeeded" });
         }
@@ -55,14 +55,14 @@ public class FortuneLongRunningOperationGetHandler : ILongRunningOperationGetHan
 
         if (elapsed >= CosmicContemplationDuration)
         {
-            this.logger.LogInformation("LRO '{OperationId}': cosmic contemplation complete after {Elapsed}.", operationId, elapsed);
+            this.logger.LogInformation(2, "LRO '{OperationId}': cosmic contemplation complete after {Elapsed}.", operationId, elapsed);
             this.store.CompletePendingOperation(operationId);
 
             return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(
                 new LongRunningOperation { Status = "Succeeded" });
         }
 
-        this.logger.LogInformation("LRO '{OperationId}': still contemplating ({Elapsed} elapsed).", operationId, elapsed);
+        this.logger.LogInformation(3, "LRO '{OperationId}': still contemplating ({Elapsed} elapsed).", operationId, elapsed);
 
         // Still contemplating — return a non-terminal status with the same handle.
         return Task.FromResult<OneOf<LongRunningOperation, ErrorResponse>>(

@@ -50,7 +50,7 @@ internal static class ScalarExtensions
             return app;
         }
 
-        var openApiJson = BuildOpenApiDocument(configureExamples, extensionVersions);
+        var openApiJson = BuildOpenApiDocument(configureExamples, extensionVersions, title);
 
         app.MapGet($"/openapi/{OpenApiDocumentName}.json", (HttpRequest request) =>
         {
@@ -70,7 +70,7 @@ internal static class ScalarExtensions
         return app;
     }
 
-    private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions)
+    private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions, string title)
     {
         var assembly = typeof(ScalarExtensions).Assembly;
         using var stream = assembly.GetManifestResourceStream("openapi.json")
@@ -78,6 +78,11 @@ internal static class ScalarExtensions
 
         var document = JsonNode.Parse(stream)
             ?? throw new InvalidOperationException("Failed to parse OpenAPI specification.");
+
+        if (document["info"] is JsonObject info)
+        {
+            info["title"] = title;
+        }
 
         InjectParameterExamples(document, extensionVersions);
 

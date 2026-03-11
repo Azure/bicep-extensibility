@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Decorators;
+using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +20,13 @@ public sealed class ExtensionVersionBuilder
 {
     private readonly IServiceCollection services;
     private readonly HandlerRegistry registry;
-    private readonly HandlerDecoratorRegistry decoratorRegistry;
+    private readonly HandlerBehaviorRegistry decoratorRegistry;
     private readonly SemVersionRange versionRange;
 
     internal ExtensionVersionBuilder(
         IServiceCollection services,
         HandlerRegistry registry,
-        HandlerDecoratorRegistry decoratorRegistry,
+        HandlerBehaviorRegistry decoratorRegistry,
         SemVersionRange versionRange)
     {
         this.services = services;
@@ -36,15 +36,31 @@ public sealed class ExtensionVersionBuilder
     }
 
     /// <summary>
-    /// Registers a handler decorator that will run for all handlers within this version range,
+    /// Registers a handler behavior that will run for all handlers within this version range,
     /// but not for handlers in other version ranges.
-    /// Version-scoped decorators run after global decorators but before handler-specific decorators.
+    /// The behavior is resolved from the DI container as a scoped service per request.
+    /// Version-scoped behaviors run after global behaviors but before resource-type-scoped behaviors.
     /// </summary>
-    public ExtensionVersionBuilder AddHandlerDecorator<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TDecorator>()
-        where TDecorator : class
+    public ExtensionVersionBuilder AddHandlerBehavior<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TBehavior>()
+        where TBehavior : class
     {
-        this.services.TryAddScoped<TDecorator>();
-        this.decoratorRegistry.AddVersionScoped(this.versionRange, typeof(TDecorator));
+        this.services.TryAddScoped<TBehavior>();
+        this.decoratorRegistry.AddVersionScoped(this.versionRange, sp => sp.GetRequiredService<TBehavior>());
+
+        return this;
+    }
+
+    /// <summary>
+    /// Registers a handler behavior using a factory that will run for all handlers within this version range,
+    /// but not for handlers in other version ranges.
+    /// The factory is invoked on every request; the returned instance is not managed by the DI container.
+    /// Use this overload when the behavior requires constructor arguments not available in DI.
+    /// Version-scoped behaviors run after global behaviors but before resource-type-scoped behaviors.
+    /// </summary>
+    public ExtensionVersionBuilder AddHandlerBehavior<TBehavior>(Func<IServiceProvider, TBehavior> factory)
+        where TBehavior : class
+    {
+        this.decoratorRegistry.AddVersionScoped(this.versionRange, sp => factory(sp));
 
         return this;
     }
@@ -72,17 +88,11 @@ public sealed class ExtensionVersionBuilder
     /// Registers a handler by auto-detecting which handler interfaces it implements.
     /// The handler is registered as a default (generic) handler for this version range.
     /// </summary>
-    public ExtensionVersionBuilder AddHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] THandler>(
-        Action<HandlerDecoratorBuilder>? configureDecorators = null)
+    public ExtensionVersionBuilder AddHandler<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] THandler>()
         where THandler : class, IHandler
     {
         this.services.TryAddScoped<THandler>();
         this.registry.Register(typeof(THandler), this.versionRange, resourceType: null);
-
-        if (configureDecorators is not null)
-        {
-            configureDecorators(new HandlerDecoratorBuilder(this.services, this.decoratorRegistry, typeof(THandler)));
-        }
 
         return this;
     }
