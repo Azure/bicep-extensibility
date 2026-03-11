@@ -5,6 +5,7 @@ This document defines the contract between the Bicep Extensibility Host, a compo
 A Bicep extension is an API abstraction that enables users to deploy Azure data-plane or non-Azure resources (extensible resources) through Bicep files or ARM templates.
 
 ## Table of Contents
+- [API Operations Overview](#api-operations-overview)
 - [Core Models](#core-models)
   - [Error Models](#error-models)
   - [Resource Reference](#resource-reference)
@@ -23,6 +24,18 @@ A Bicep extension is an API abstraction that enables users to deploy Azure data-
   - [OpenAPI Specification](#openapi-specification)
   - [Authentication](#authentication)
   - [Limits and Constraints](#limits-and-constraints)
+- [Operational Requirements for 3P Extensions](#operational-requirements-for-3p-extensions)
+  - [Health Check](#health-check)
+
+## API Operations Overview
+
+| Operation | Required | Description |
+|-----------|----------|-------------|
+| [Preview Resource](#preview-resource) | Yes | Simulates a create or update without persisting changes. Used for preflight validation and What-If. |
+| [Create or Update Resource](#create-or-update-resource) | Yes | Creates or updates a resource, synchronously or via a long-running operation. |
+| [Get Resource](#get-resource) | Yes | Retrieves the current state of a resource. |
+| [Delete Resource](#delete-resource) | Yes | Deletes a resource, synchronously or via a long-running operation. |
+| [Get Long-Running Operation](#long-running-operations) | No | Polls the status of a long-running operation. Only required if the extension supports the [stepwise LRO pattern](async-operations.md). |
 
 ## Core Models
 
@@ -292,3 +305,11 @@ The maximum size of a request body that ARM will accept is 4 MB. Any request wit
 #### Maximum Response Size
 
 To keep it consistent with ARM's limit, the extensibility host does not accept any single resource response that exceeds 20 MB in size. When this happens, the response body will be dropped.
+
+## Operational Requirements for 3P Extensions
+
+This section documents operational requirements that apply to **Bicep third-party (3P) and local extensions**. These requirements are enforced by the Extensibility Host but are separate from the public API contract.
+
+### Health Check
+
+> TODO: Document the health check API that 3P and local extensions should implement.
