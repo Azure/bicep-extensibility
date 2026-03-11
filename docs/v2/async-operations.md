@@ -63,12 +63,12 @@ The `status` field is an open union. Extensions may define custom non-terminal v
 ### How It Works
 
 1. The Extensibility Host sends a createOrUpdate or delete request.
-2. The extension accepts the request and returns the `Resource` with a non-terminal `status` (HTTP: `200 OK`).
+2. The extension accepts the request and returns the `Resource` with a non-terminal `status`.
 3. The Extensibility Host polls the resource by sending repeated get requests.
-4. While the operation is in progress, the get response includes a non-terminal `status` (HTTP: `200 OK`).
+4. While the operation is in progress, the get response includes a non-terminal `status`.
 5. When the operation completes:
-   - **Create or update:** The get response includes the `Resource` with `status: "Succeeded"` (HTTP: `200 OK`).
-   - **Delete:** The get response returns a not-found error (HTTP: `404 Not Found`), which the Extensibility Host interprets as a successful deletion.
+   - **Create or update:** The get response includes the `Resource` with `status: "Succeeded"`.
+   - **Delete:** The get response returns a not-found error, which the Extensibility Host interprets as a successful deletion.
 
 #### Create or Update
 
@@ -130,7 +130,7 @@ sequenceDiagram
 }
 ```
 
-**Step 2: Extension accepts and returns resource with non-terminal status (HTTP `200 OK`)**
+**Step 2: Extension accepts and returns resource with non-terminal status**
 
 ```json
 {
@@ -172,7 +172,7 @@ Get request:
 }
 ```
 
-Get response (HTTP `200 OK`, in progress):
+Get response:
 
 ```json
 {
@@ -240,7 +240,7 @@ Get response (HTTP `200 OK`, in progress):
 }
 ```
 
-**Step 2: Extension accepts and returns resource with non-terminal status (HTTP `200 OK`)**
+**Step 2: Extension accepts and returns resource with non-terminal status**
 
 ```json
 {
@@ -303,7 +303,7 @@ The Extensibility Host interprets a not-found error during RELO delete polling a
 
 ### Example: RELO Failure
 
-If the operation fails, the extension returns the resource (HTTP `200 OK`) with `status` set to `"Failed"` and the `error` property populated:
+If the operation fails, the extension returns the resource with `status` set to `"Failed"` and the `error` property populated:
 
 ```json
 {
@@ -340,23 +340,45 @@ This failed state must persist across subsequent get requests until the user ini
 ### How It Works
 
 1. The Extensibility Host sends a createOrUpdate or delete request.
-2. The extension accepts the request and returns a `LongRunningOperation` with a non-terminal `status` and an `operationHandle` (HTTP: `202 Accepted`).
+2. The extension accepts the request and returns a `LongRunningOperation` with a non-terminal `status` and an `operationHandle`.
 3. The Extensibility Host polls the extension using the operation handle via the Get Long-Running Operation endpoint.
-4. While in progress, the extension returns a `LongRunningOperation` with a non-terminal `status` and optionally a `retryAfterSeconds` value (HTTP: `200 OK`).
-5. When complete, the extension returns a `LongRunningOperation` with a terminal `status` (`"Succeeded"` or `"Failed"` / `"Canceled"` with an `error`) (HTTP: `200 OK`).
+4. While in progress, the extension returns a `LongRunningOperation` with a non-terminal `status` and optionally a `retryAfterSeconds` value.
+5. When complete, the extension returns a `LongRunningOperation` with a terminal `status` (`"Succeeded"` or `"Failed"` / `"Canceled"` with an `error`).
 
-The flow is the same for both create/update and delete:
+The flow differs slightly between create/update and delete: after a successful create or update, the Extensibility Host issues a final get to retrieve the resource state. Delete does not require a final get.
+
+#### Create or Update
 
 ```mermaid
 sequenceDiagram
     participant Host as Extensibility Host
     participant Ext as Extension
 
-    Host->>Ext: createOrUpdate / delete
+    Host->>Ext: createOrUpdate
     Ext-->>Host: LRO (status: Running, handle: ...)
 
     Host->>Ext: getLongRunningOperation(handle)
     Ext-->>Host: LRO (status: Running, retry: 10)
+
+    Host->>Ext: getLongRunningOperation(handle)
+    Ext-->>Host: LRO (status: Succeeded)
+
+    Host->>Ext: get
+    Ext-->>Host: Resource (status: Succeeded)
+```
+
+#### Delete
+
+```mermaid
+sequenceDiagram
+    participant Host as Extensibility Host
+    participant Ext as Extension
+
+    Host->>Ext: delete
+    Ext-->>Host: LRO (status: Deleting, handle: ...)
+
+    Host->>Ext: getLongRunningOperation(handle)
+    Ext-->>Host: LRO (status: Deleting, retry: 10)
 
     Host->>Ext: getLongRunningOperation(handle)
     Ext-->>Host: LRO (status: Succeeded)
@@ -389,7 +411,7 @@ sequenceDiagram
 }
 ```
 
-**Step 2: Extension accepts and returns LRO with operation handle (HTTP `202 Accepted`)**
+**Step 2: Extension accepts and returns LRO with operation handle**
 
 ```json
 {
@@ -415,7 +437,7 @@ The Extensibility Host sends the `operationHandle` to the Get Long-Running Opera
 }
 ```
 
-Response (HTTP `200 OK`):
+Response:
 
 ```json
 {
@@ -437,7 +459,49 @@ Response (HTTP `200 OK`):
 }
 ```
 
-After a terminal status is received, the Extensibility Host issues a get request to retrieve the final resource state.
+**Step 5: Extensibility Host issues a final get to retrieve the resource state**
+
+Get request:
+
+```json
+{
+  "type": "Contoso.HR/employees",
+  "apiVersion": "2024-04-01",
+  "identifiers": {
+    "employeeId": "emp-00043"
+  },
+  "config": {
+    "endpoint": "https://hr-api.contoso.com"
+  },
+  "configId": "sha256:a1b2c3d4"
+}
+```
+
+Get response:
+
+```json
+{
+  "type": "Contoso.HR/employees",
+  "apiVersion": "2024-04-01",
+  "identifiers": {
+    "employeeId": "emp-00043"
+  },
+  "properties": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "department": "Marketing",
+    "role": "Manager",
+    "onboardingState": "Succeeded",
+    "email": "jane.doe@contoso.com",
+    "badgeNumber": "B-5678"
+  },
+  "config": {
+    "endpoint": "https://hr-api.contoso.com"
+  },
+  "configId": "sha256:a1b2c3d4",
+  "status": "Succeeded"
+}
+```
 
 ### Example: LRO Delete
 
@@ -457,7 +521,7 @@ After a terminal status is received, the Extensibility Host issues a get request
 }
 ```
 
-**Step 2: Extension accepts and returns LRO with operation handle (HTTP `202 Accepted`)**
+**Step 2: Extension accepts and returns LRO with operation handle**
 
 ```json
 {
@@ -495,7 +559,7 @@ After a terminal status is received, the Extensibility Host issues a get request
 
 ### Example: LRO Failure
 
-If the operation fails, the polling response (HTTP `200 OK`) includes `status: "Failed"` and an `error` object:
+If the operation fails, the polling response includes `status: "Failed"` and an `error` object:
 
 ```json
 {
@@ -516,7 +580,7 @@ If the operation fails, the polling response (HTTP `200 OK`) includes `status: "
 
 ### Example: LRO Cancellation
 
-If the operation is canceled (e.g., the deployment is canceled by the user), the polling response (HTTP `200 OK`) includes `status: "Canceled"`:
+If the operation is canceled (e.g., the deployment is canceled by the user), the polling response includes `status: "Canceled"`:
 
 ```json
 {
@@ -527,6 +591,27 @@ If the operation is canceled (e.g., the deployment is canceled by the user), the
   }
 }
 ```
+
+---
+
+## HTTP Binding
+
+### RELO
+
+| Scenario | Status Code |
+|----------|-------------|
+| CreateOrUpdate / delete accepted (operation in progress) | `200 OK` |
+| Get polling — operation in progress or succeeded | `200 OK` |
+| Get polling — delete succeeded (resource not found) | `404 Not Found` |
+
+### LRO
+
+| Scenario | Status Code |
+|----------|-------------|
+| CreateOrUpdate / delete accepted (operation in progress) | `202 Accepted` |
+| Get Long-Running Operation — in progress or terminal | `200 OK` |
+| Get Long-Running Operation — polling failure (not an operation failure) | `4xx / 5xx` |
+| Final get after successful createOrUpdate | `200 OK` |
 
 ---
 

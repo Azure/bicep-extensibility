@@ -202,6 +202,8 @@ The request may contain ARM template language expressions that the deployment en
 
 On success, the response must represent the resource state as if the create or update had been performed, equivalent to what a subsequent get operation would return. The extension should also supply preview metadata (`readOnly`, `immutable`, `calculated`, `unknown`, `unevaluated`) to enable a richer preview experience.
 
+Preview is a **best-effort operation**. If the extension cannot produce a meaningful preview (e.g., because the identifiers or configuration are unevaluated), it should return an `ErrorResponse` with error code `UnprocessablePreview`. When this happens, preflight validation does not fail, and What-If reports the resource with change type **Unsupported**.
+
 For detailed guidance, metadata field definitions, and end-to-end examples, see [Preview Operation](preview-operation.md).
 
 ---

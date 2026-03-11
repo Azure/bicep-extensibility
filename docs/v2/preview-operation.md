@@ -6,6 +6,8 @@ This document provides detailed guidance and examples for implementing the previ
 
 The preview operation simulates a resource creation or update without persisting any changes. It enables the deployment engine to show users what a deployment *would* produce (read-only properties, default values, validation errors, etc.) before any real changes are made.
 
+Preview is a **best-effort operation**. Extensions should implement it as completely as possible, but are not required to handle every scenario. When a preview cannot be meaningfully produced — for example, because the identifiers, configuration, or other key properties are unevaluated — the extension may return a `UnprocessablePreview` error instead of a partial or misleading response. See [Unprocessable Preview](#unprocessable-preview) for details.
+
 | | Type |
 |---|---|
 | **Input** | `ResourcePreviewSpecification` |
@@ -15,7 +17,7 @@ The preview operation simulates a resource creation or update without persisting
 
 The deployment engine calls the preview operation in two contexts:
 
-1. **Preflight validation.** Triggered by both deployment validate and resource PUT requests. The deployment engine calls preview to surface validation errors early, before any resources are created.
+1. **Preflight validation.** Triggered by both deployment validate and PUT requests. The deployment engine calls preview to surface validation errors early, before any resources are created.
 2. **[What-If](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-what-if).** Computes a diff between the current and desired state of each resource in the template. The deployment engine:
    1. Calls **preview** to obtain the *future state* of the resource (what the resource would look like after the deployment).
    2. Calls **get** to obtain the *current state* of the resource (or determines that the resource does not yet exist).
@@ -126,10 +128,6 @@ The response must represent the resource state as if the create or update operat
 | Unevaluated expressions | Echo back the raw expression string as-is. |
 | Identifiers | Include the `identifiers` object with the best available values. |
 
-### Best-Effort Behavior
-
-The extension should return the most complete preview it can, even when some inputs are missing or contain unevaluated expressions. Only return an error if the preview is genuinely not possible (e.g., a required identifier is unevaluated and no meaningful preview can be constructed).
-
 ## Preview Metadata
 
 The metadata object enables the deployment engine to give users a richer preview experience by distinguishing between different categories of property values.
@@ -201,6 +199,59 @@ Properties containing ARM template language expressions that the deployment engi
   }
 }
 ```
+
+## Unprocessable Preview
+
+When the extension cannot produce any meaningful preview — for instance because the identifiers, configuration endpoint, or other essential inputs are unevaluated — it should return an `ErrorResponse` with error code `UnprocessablePreview` and an error message explaining the reason.
+
+### Effect on the Deployment Engine
+
+| Context | Behavior |
+|---------|----------|
+| **Preflight validation** | The error is ignored. Preflight does **not** fail. |
+| **What-If** | The resource is reported with change type **Unsupported**, and the `UnprocessablePreview` error message is shown as the unsupported reason. |
+
+### Example: Unprocessable Preview
+
+**Request** (identifiers are unevaluated):
+
+```json
+{
+  "type": "Contoso.HR/employees",
+  "apiVersion": "2024-04-01",
+  "properties": {
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "employeeId": "[reference('idProvider').nextEmployeeId]",
+    "role": "Engineer"
+  },
+  "config": {
+    "endpoint": "https://hr-api.contoso.com"
+  },
+  "metadata": {
+    "unevaluated": ["/properties/employeeId"]
+  }
+}
+```
+
+**Response** (HTTP 422):
+
+```json
+{
+  "error": {
+    "code": "UnprocessablePreview",
+    "message": "Preview cannot be performed because the identifier 'employeeId' is unevaluated."
+  }
+}
+```
+
+## HTTP Binding
+
+| Scenario | Status Code |
+|----------|-------------|
+| Preview succeeded | `200 OK` |
+| Preview unprocessable (`UnprocessablePreview`) | `422 Unprocessable Content` |
+| Validation error or other client error | `400 Bad Request` |
 
 ## Configuration Handling
 
