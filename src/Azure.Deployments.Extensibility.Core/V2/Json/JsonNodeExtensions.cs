@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using Json.Patch;
 using Json.Pointer;
-using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
@@ -60,10 +60,10 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             return patchResult.Result ?? throw new InvalidOperationException(patchResult.Error);
         }
 
-        public static JsonNode SetPropertyValue(this JsonNode? node, JsonPointerProxy propertyPath, JsonNode propertyValue) =>
+        public static JsonNode SetPropertyValue(this JsonNode? node, JsonPointerProxy propertyPath, JsonNode? propertyValue) =>
             SetPropertyValue(node, propertyPath.ToJsonPointer(), propertyValue);
 
-        public static JsonNode SetPropertyValue(this JsonNode? node, JsonPointer propertyPath, JsonNode propertyValue)
+        public static JsonNode SetPropertyValue(this JsonNode? node, JsonPointer propertyPath, JsonNode? propertyValue)
         {
             ArgumentNullException.ThrowIfNull(node, nameof(node));
 
@@ -99,5 +99,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
 
             return node;
         }
+
+        public static bool RemoveFromParent(this JsonNode node) =>
+            node.Parent switch
+            {
+                JsonObject parentObj => parentObj.FirstOrDefault(pair => object.ReferenceEquals(pair.Value, node)) is { Key: not null } nodePair && parentObj.Remove(nodePair.Key),
+                JsonArray parentArr => parentArr.Remove(node),
+                _ => false
+            };
     }
 }
