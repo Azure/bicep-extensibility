@@ -1,11 +1,17 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using System.Linq.Expressions;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
+    /// <summary>
+    /// Abstract base class for building fluent model validators.
+    /// Subclasses define validation rules using <see cref="AnyValid{TProperty}"/> and
+    /// <see cref="WhenPrecedingRulesSatisfied{TProperty}"/> in their constructors.
+    /// </summary>
+    /// <typeparam name="TModel">The type of model to validate.</typeparam>
     public abstract class ModelValidator<TModel> : IModelValidator<TModel>
         where TModel : class
     {

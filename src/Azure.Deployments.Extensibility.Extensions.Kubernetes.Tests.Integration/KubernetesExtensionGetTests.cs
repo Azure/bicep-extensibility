@@ -3,6 +3,7 @@
 
 using AutoFixture;
 using AutoFixture.Xunit2;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Core.V2.Json;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.TestFixtures;
@@ -55,7 +56,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
             var result = await GetResourceAsync(reference);
 
             // Assert.
-            var errorData = result.Should().BeOfType<NotFound<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<NotFound<ErrorResponse>>().Subject.Value!;
 
             errorData.Error.Code.Should().Be("ObjectNotFound");
             errorData.Error.Message.Should().Be($"The referenced Kubernetes object (GroupVersionKind=v1/Namespace, Name={namespaceName}) was not found.");
@@ -109,7 +110,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
             var result = await GetResourceAsync(reference);
 
             // Assert.
-            var errorData = result.Should().BeOfType<NotFound<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<NotFound<ErrorResponse>>().Subject.Value!;
 
             errorData.Error.Code.Should().Be("ObjectNotFound");
             errorData.Error.Message.Should().Be($"The referenced Kubernetes object (GroupVersionKind=apps/v1/Deployment, Name={specification.Name}, Namespace=default) was not found.");

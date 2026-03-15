@@ -10,10 +10,12 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.DependencyInject
 {
     public static class IServiceCollectionExtensions
     {
+#pragma warning disable CS0618 // Type or member is obsolete
         public static IServiceCollection AddKubernetesExtensionDispatcher(this IServiceCollection services) => services
             .AddSingleton<IK8sResourceSpecificationValidator, K8sResourceSpecificationValidator>()
             .AddSingleton<IK8sResourceReferenceValidator, K8sResourceReferenceValidator>()
             .AddSingleton<IK8sClientFactory, K8sClientFactory>()
             .AddKeyedSingleton<IExtensionDispatcher, KubernetesExtensionDispatcher>(KubernetesExtension.ExtensionName);
+#pragma warning restore CS0618 // Type or member is obsolete
     }
 }
