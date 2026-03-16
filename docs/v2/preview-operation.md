@@ -202,7 +202,7 @@ Properties containing ARM template language expressions that the deployment engi
 
 ## Unprocessable Preview
 
-When the extension cannot produce any meaningful preview — for instance because the identifiers, configuration endpoint, or other essential inputs are unevaluated — it should return an `ErrorResponse` with error code `UnprocessablePreview` and an error message explaining the reason.
+When the extension cannot produce any meaningful preview — for instance because the identifiers, configuration, or other essential inputs are unevaluated — it should return an `ErrorResponse` with error code `UnprocessablePreview` and an error message explaining the reason.
 
 ### Effect on the Deployment Engine
 
