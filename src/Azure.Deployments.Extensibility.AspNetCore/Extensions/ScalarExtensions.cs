@@ -4,7 +4,10 @@
 using Azure.Deployments.Extensibility.AspNetCore.Builders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 using System.Reflection;
 using System.Text.Json;
@@ -50,7 +53,8 @@ internal static class ScalarExtensions
             return app;
         }
 
-        var openApiJson = BuildOpenApiDocument(configureExamples, extensionVersions, title);
+        var serializerOptions = app.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
+        var openApiJson = BuildOpenApiDocument(configureExamples, extensionVersions, title, serializerOptions);
 
         app.MapGet($"/openapi/{OpenApiDocumentName}.json", (HttpRequest request) =>
         {
@@ -70,7 +74,7 @@ internal static class ScalarExtensions
         return app;
     }
 
-    private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions, string title)
+    private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions, string title, JsonSerializerOptions serializerOptions)
     {
         var assembly = typeof(ScalarExtensions).Assembly;
         using var stream = assembly.GetManifestResourceStream("openapi.json")
@@ -90,7 +94,7 @@ internal static class ScalarExtensions
         {
             var builder = new OpenApiExamplesBuilder();
             configureExamples(builder);
-            InjectOperationExamples(document, builder);
+            InjectOperationExamples(document, builder, serializerOptions);
         }
 
         return document.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
@@ -148,7 +152,7 @@ internal static class ScalarExtensions
         }
     }
 
-    private static void InjectOperationExamples(JsonNode document, OpenApiExamplesBuilder builder)
+    private static void InjectOperationExamples(JsonNode document, OpenApiExamplesBuilder builder, JsonSerializerOptions serializerOptions)
     {
         var paths = document["paths"]?.AsObject();
 
@@ -176,7 +180,7 @@ internal static class ScalarExtensions
                 {
                     requestExamples[exampleName] = new JsonObject
                     {
-                        ["value"] = JsonSerializer.SerializeToNode(example.Request),
+                        ["value"] = JsonSerializer.SerializeToNode(example.Request, serializerOptions),
                     };
                 }
 
@@ -184,7 +188,7 @@ internal static class ScalarExtensions
                 {
                     responseExamples[exampleName] = new JsonObject
                     {
-                        ["value"] = JsonSerializer.SerializeToNode(example.Response),
+                        ["value"] = JsonSerializer.SerializeToNode(example.Response, serializerOptions),
                     };
                 }
             }
