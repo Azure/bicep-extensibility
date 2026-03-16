@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi.Writers;
 using Scalar.AspNetCore;
 using System.Reflection;
 using System.Text.Json;
@@ -77,10 +79,10 @@ internal static class ScalarExtensions
     private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions, string title, JsonSerializerOptions serializerOptions)
     {
         var assembly = typeof(ScalarExtensions).Assembly;
-        using var stream = assembly.GetManifestResourceStream("openapi.json")
+        using var stream = assembly.GetManifestResourceStream("openapi.yaml")
             ?? throw new InvalidOperationException("Embedded OpenAPI specification not found.");
 
-        var document = JsonNode.Parse(stream)
+        var document = JsonNode.Parse(ConvertYamlToJson(stream))
             ?? throw new InvalidOperationException("Failed to parse OpenAPI specification.");
 
         if (document["info"] is JsonObject info)
@@ -213,5 +215,23 @@ internal static class ScalarExtensions
                 }
             }
         }
+    }
+
+    private static string ConvertYamlToJson(Stream yamlStream)
+    {
+        var reader = new OpenApiStreamReader();
+        var openApiDocument = reader.Read(yamlStream, out var diagnostic);
+
+        if (diagnostic.Errors.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Failed to parse OpenAPI YAML: {string.Join(", ", diagnostic.Errors)}");
+        }
+
+        using var stringWriter = new StringWriter();
+        var jsonWriter = new OpenApiJsonWriter(stringWriter);
+        openApiDocument.SerializeAsV3(jsonWriter);
+
+        return stringWriter.ToString();
     }
 }

@@ -8,6 +8,16 @@
         "resolved": "3.3.4",
         "contentHash": "0k2Jwpc8eq0hjOtX6TxRkHm9clkJ2PAQ3heEHgqIJZcsfdFosC/iyz18nsgTVDDWpID80rC7aiYK7ripx+Qndg=="
       },
+      "Microsoft.OpenApi.Readers": {
+        "type": "Direct",
+        "requested": "[1.6.28, )",
+        "resolved": "1.6.28",
+        "contentHash": "Cr3fyrUX4g3Envix0zPiS31f5QxyaS4U/tRJh5yDLr7SleluM+2RrqugmzLhEM834c4dFVaI4oDPfmrkLAkzjA==",
+        "dependencies": {
+          "Microsoft.OpenApi": "1.6.28",
+          "SharpYaml": "2.1.1"
+        }
+      },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[10.0.103, )",
@@ -92,10 +102,20 @@
         "resolved": "5.0.1",
         "contentHash": "5WPSmL4YeP7eW+Vc8XZ4DwjYWBAiSwDV9Hm63JJWcz1Ie3Xjv4KuJXzgCstj48LkLfVCYa7mLcx7y+q6yqVvtw=="
       },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "1.6.28",
+        "contentHash": "qJX/Ge76pWsAGAx6pomlNs3W3KJsdjeOEmMolLSefm2g5noUCFLP+sXzB7MQwYVTBWjzGF8boL2iG6eCVmP+1Q=="
+      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "10.0.103",
         "contentHash": "cMtGW5/r0ck72Jg2QwZcNTX59z+iB/B1kW84VMa/eX8L19DhHIuIcQjfK0pgLLBxd60Jl0Bj9GUolcM0MnJnZA=="
+      },
+      "SharpYaml": {
+        "type": "Transitive",
+        "resolved": "2.1.1",
+        "contentHash": "BISoFuW2AwZYXxrZGaBnedo21BvrdgC4kkWd6QYrOdhOGSsZB0RSqcBw09l9caUE1g3sykJoRfSbtSzZS6tYig=="
       },
       "azure.deployments.extensibility.core": {
         "type": "Project",

@@ -107,6 +107,20 @@
         "resolved": "5.0.1",
         "contentHash": "5WPSmL4YeP7eW+Vc8XZ4DwjYWBAiSwDV9Hm63JJWcz1Ie3Xjv4KuJXzgCstj48LkLfVCYa7mLcx7y+q6yqVvtw=="
       },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "1.6.28",
+        "contentHash": "qJX/Ge76pWsAGAx6pomlNs3W3KJsdjeOEmMolLSefm2g5noUCFLP+sXzB7MQwYVTBWjzGF8boL2iG6eCVmP+1Q=="
+      },
+      "Microsoft.OpenApi.Readers": {
+        "type": "Transitive",
+        "resolved": "1.6.28",
+        "contentHash": "Cr3fyrUX4g3Envix0zPiS31f5QxyaS4U/tRJh5yDLr7SleluM+2RrqugmzLhEM834c4dFVaI4oDPfmrkLAkzjA==",
+        "dependencies": {
+          "Microsoft.OpenApi": "1.6.28",
+          "SharpYaml": "2.1.1"
+        }
+      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "10.0.103",
@@ -117,6 +131,11 @@
         "resolved": "2.4.18",
         "contentHash": "QLM+w01k2Rn2MU2AZRTshM06FbjYkhRZCnGhBDZNAKZLTbLcz2LyNTasbdwGcT+81VbrWFl8CFvpdR8+6ZvT9A=="
       },
+      "SharpYaml": {
+        "type": "Transitive",
+        "resolved": "2.1.1",
+        "contentHash": "BISoFuW2AwZYXxrZGaBnedo21BvrdgC4kkWd6QYrOdhOGSsZB0RSqcBw09l9caUE1g3sykJoRfSbtSzZS6tYig=="
+      },
       "YamlDotNet": {
         "type": "Transitive",
         "resolved": "16.3.0",
@@ -126,6 +145,7 @@
         "type": "Project",
         "dependencies": {
           "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "Microsoft.OpenApi.Readers": "[1.6.28, )",
           "Scalar.AspNetCore": "[2.4.18, )",
           "Semver": "[3.0.0, )"
         }
