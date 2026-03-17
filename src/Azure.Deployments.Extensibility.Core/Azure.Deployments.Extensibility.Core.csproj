@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- DO NOT BUMP THE VERSIONS OF THE FOLLOWING PACKAGES -->
     <!-- Their latest major versions include a EULA. See https://github.com/json-everything/json-everything/issues/981 for details. -->
     <PackageReference Include="JsonPatch.Net" Version="3.3.0" /> 
@@ -16,6 +21,7 @@
     <PackageReference Include="JsonPointer.Net" Version="5.3.1" />
     <PackageReference Include="JsonSchema.Net" Version="7.3.4" />
     <!-- DO NOT BUMP THE VERSIONS OF THE ABOVE PACKAGES -->
+    <PackageReference Include="Semver" Version="3.0.0" />
   </ItemGroup>
 
   <!-- Need to sign the assembly with a strong name in Official Build. -->

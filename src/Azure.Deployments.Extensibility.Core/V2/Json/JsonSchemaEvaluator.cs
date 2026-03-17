@@ -8,9 +8,9 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
-    public record JsonSchemaViolation(JsonPointer InstanceLocation, string ErrorMessage);
+    internal record JsonSchemaViolation(JsonPointer InstanceLocation, string ErrorMessage);
 
-    public class JsonSchemaEvaluator
+    internal class JsonSchemaEvaluator
     {
         private readonly JsonSchema schema;
         private readonly EvaluationOptions evaluationOptions;

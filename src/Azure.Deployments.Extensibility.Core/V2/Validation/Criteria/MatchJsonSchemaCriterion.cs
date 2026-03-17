@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Core.V2.Json;
-using Azure.Deployments.Extensibility.Core.V2.Models;
 using Json.Pointer;
 using Json.Schema;
 using System.Text.Json;
@@ -10,8 +10,14 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation.Rules
 {
+    /// <summary>
+    /// Resolves a <see cref="JsonSchema"/> from the model being validated.
+    /// </summary>
     public delegate JsonSchema JsonSchemaResolver<TModel>(TModel model);
 
+    /// <summary>
+    /// A validation criterion that fails when a JSON property does not conform to the specified JSON schema.
+    /// </summary>
     public class MatchJsonSchemaCriterion<TModel> : IPropertyRuleCriterion<TModel, JsonNode?>, IPropertyRuleCriterion<TModel, JsonElement>
     {
         private readonly JsonSchemaResolver<TModel> schemaResolver;

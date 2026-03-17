@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Json.Pointer;
 using System.Linq.Expressions;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
-    public class PropertyRule<TModel, TProperty> : IModelValidationRule<TModel>
+    internal class PropertyRule<TModel, TProperty> : IModelValidationRule<TModel>
     {
         private readonly List<IPropertyRuleCriterion<TModel, TProperty>> criteria = [];
         private readonly Expression<Func<TModel, TProperty>> propertyExpression;

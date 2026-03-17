@@ -3,6 +3,11 @@
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
+    /// <summary>
+    /// Fluent builder for configuring a validation criterion's error code and message.
+    /// </summary>
+    /// <typeparam name="TModel">The type of model being validated.</typeparam>
+    /// <typeparam name="TProperty">The type of the property being validated.</typeparam>
     public class PropertyRuleCriterionBuilder<TModel, TProperty>
     {
         private readonly IPropertyRuleBuilder<TModel, TProperty> ruleBuilder;
