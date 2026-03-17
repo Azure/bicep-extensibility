@@ -3,7 +3,7 @@
 
 using AutoFixture;
 using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
 using FluentAssertions;
 using Json.Pointer;

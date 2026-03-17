@@ -4,7 +4,7 @@
 using System.Text.Json.Nodes;
 using AutoFixture;
 using AutoFixture.Xunit2;
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Core.V2.Validation;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Validation;
@@ -50,7 +50,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
 
             var result = await sut.DeleteResourceAsync(new DefaultHttpContext(), resourceReference, default);
 
-            var errorData = result.Should().BeOfType<BadRequest<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<BadRequest<ErrorResponse>>().Subject.Value!;
 
             errorData.Should().NotBeNull();
             errorData.Error.Code.Should().Be("InvalidConfigId");
@@ -89,7 +89,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit
 
             var result = await sut.DeleteResourceAsync(httpContext, resourceReference, default);
 
-            var errorData = result.Should().BeOfType<UnprocessableEntity<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<UnprocessableEntity<ErrorResponse>>().Subject.Value!;
 
             errorData.Should().NotBeNull();
             errorData.Error.Code.Should().Be("ClusterMismatch");

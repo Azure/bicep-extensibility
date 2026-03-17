@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.DependencyInjection;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.TestFixtures;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +42,9 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
         private static KubernetesExtension CreateSut()
         {
             var serviceProvider = new ServiceCollection().AddKubernetesExtensionDispatcher().BuildServiceProvider();
+#pragma warning disable CS0618 // Type or member is obsolete
             var extensionDispatcher = serviceProvider.GetRequiredKeyedService<IExtensionDispatcher>(KubernetesExtension.ExtensionName);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             return (KubernetesExtension)extensionDispatcher.DispatchExtension("1.0.0");
         }

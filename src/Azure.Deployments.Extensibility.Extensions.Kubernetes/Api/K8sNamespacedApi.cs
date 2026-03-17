@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;
 using Json.Pointer;
