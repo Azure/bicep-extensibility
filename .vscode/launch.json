@@ -5,23 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": "Launch MagicEightBall Sample",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Azure.Deployments.Extensibility.DevHost/bin/Debug/net6.0/Azure.Deployments.Extensibility.DevHost.dll",
+            "program": "${workspaceFolder}/sample/MagicEightBallExtension/bin/Debug/net8.0/MagicEightBallExtension.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/Azure.Deployments.Extensibility.DevHost",
+            "cwd": "${workspaceFolder}/sample/MagicEightBallExtension",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s/scalar"
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
             }
         },
         {
