@@ -15,15 +15,14 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
 
         [SetsRequiredMembers]
         public K8sResourceSpecification(string type, string apiVersion, string propertiesJson)
-            : base(
-                  type,
-                  apiVersion,
-                  JsonNode.Parse(propertiesJson)?.AsObject() ?? throw new ArgumentException("Argument is not a valid JSON object.", nameof(propertiesJson)),
-                  new JsonObject
-                  {
-                    ["kubeconfig"] = Base64EncodedKubeconfig,
-                  })
         {
+            this.Type = type;
+            this.ApiVersion = apiVersion;
+            this.Properties = JsonNode.Parse(propertiesJson)?.AsObject() ?? throw new ArgumentException("Argument is not a valid JSON object.", nameof(propertiesJson));
+            this.Config = new JsonObject
+            {
+                ["kubeconfig"] = Base64EncodedKubeconfig,
+            };
         }
 
         public string Name => this.Properties.GetPropertyValue<string>("/metadata/name");

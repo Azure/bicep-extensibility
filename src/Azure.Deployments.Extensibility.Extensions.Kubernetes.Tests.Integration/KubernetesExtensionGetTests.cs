@@ -24,11 +24,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
 
             await CreateOrUpdateNamespaceAsync(specification);
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                specification.Properties.AsObject(),
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = specification.Properties.AsObject(),
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
@@ -46,11 +48,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
             // Arrange.
             var namespaceName = fixture.Create<string>();
             var specification = new K8sNamespaceSpecification(namespaceName);
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                specification.Properties.AsObject(),
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = specification.Properties.AsObject(),
+                Config = specification.Config,
+            };
 
             // Act
             var result = await GetResourceAsync(reference);
@@ -73,11 +77,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
                 ["metadata"] = specification.Properties["metadata"]?.DeepClone(),
             };
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                identifiers,
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = identifiers,
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
@@ -100,11 +106,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
                 ["metadata"] = specification.Properties["metadata"]?.DeepClone(),
             };
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                identifiers,
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = identifiers,
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
