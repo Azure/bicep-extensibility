@@ -18,6 +18,10 @@ updates:
     ignore:
       - dependency-name: "Moq"
       - dependency-name: "FluentAssertions"
+      - dependency-name: "JsonPatch.Net"
+      - dependency-name: "JsonPath.Net"
+      - dependency-name: "JsonPointer.Net"
+      - dependency-name: "JsonSchema.Net"
   - package-ecosystem: dotnet-sdk
     directory: /
     schedule:
