@@ -26,6 +26,19 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validation.Criteria
             errorDetails.Should().BeEmpty();
         }
 
+        [Fact]
+        public void Evaluate_NullValue_ReturnsSingleErrorDetail()
+        {
+            var sut = new MatchRegexCriterion(DummyRegex());
+
+            var errorDetails = sut.Evaluate(null, null, JsonPointer.Empty).ToArray();
+
+            errorDetails.Should().HaveCount(1);
+            errorDetails[0].Code.Should().Be("RegularExpressionMismatch");
+            errorDetails[0].Message.Should().Be("Value does not match the regular expression /^foobar$/.");
+            errorDetails[0].Target.Should().BeEquivalentTo(JsonPointer.Empty);
+        }
+
 
         [Theory, AutoData]
         public void Evaluate_InvalidValue_ReturnsSingleErrorDetail(string invalidValue)

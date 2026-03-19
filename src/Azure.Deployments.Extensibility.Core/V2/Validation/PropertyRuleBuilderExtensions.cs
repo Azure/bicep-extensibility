@@ -81,7 +81,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
-        private static void ApplyErrorOverrides(dynamic criterion, Action<ErrorBuilder>? configureError)
+        private static void ApplyErrorOverrides(IConfigurableErrorCriterion criterion, Action<ErrorBuilder>? configureError)
         {
             if (configureError is null)
             {

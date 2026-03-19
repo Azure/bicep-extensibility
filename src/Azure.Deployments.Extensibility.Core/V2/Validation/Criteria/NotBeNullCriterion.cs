@@ -9,7 +9,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
     /// <summary>
     /// A validation criterion that fails when the property value is null.
     /// </summary>
-    public class NotBeNullCriterion<TModel, TProperty> : IPropertyRuleCriterion<TModel, TProperty>
+    public class NotBeNullCriterion<TModel, TProperty> : IPropertyRuleCriterion<TModel, TProperty>, IConfigurableErrorCriterion
     {
         public string ErrorCode { get; set; } = "ValueMustNotBeNull";
 
