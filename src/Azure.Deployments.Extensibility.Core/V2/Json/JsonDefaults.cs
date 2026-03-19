@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
+    /// <summary>
+    /// Provides default JSON serialization options and a source-generated serializer context for the extensibility API models.
+    /// </summary>
     public static class JsonDefaults
     {
         public readonly static JsonSerializerOptions SerializerOptions = new()
@@ -18,6 +21,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
 
-        public readonly static ModelSerializerContext SerializerContext = new(SerializerOptions);
+        public readonly static ModelSerializerContext SerializerContext = new(new(SerializerOptions));
     }
 }

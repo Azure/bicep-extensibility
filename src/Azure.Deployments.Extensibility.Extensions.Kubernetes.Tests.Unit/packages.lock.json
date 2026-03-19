@@ -225,6 +225,20 @@
         "resolved": "1.1.0",
         "contentHash": "aOZA3BWfz9RXjpzt0sRJJMjAscAUm3Hoa4UWAfceV9UTYxgwZ1lZt5nO2myFf+/jetYQo4uTP7zS8sJY67BBxg=="
       },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "1.6.28",
+        "contentHash": "qJX/Ge76pWsAGAx6pomlNs3W3KJsdjeOEmMolLSefm2g5noUCFLP+sXzB7MQwYVTBWjzGF8boL2iG6eCVmP+1Q=="
+      },
+      "Microsoft.OpenApi.Readers": {
+        "type": "Transitive",
+        "resolved": "1.6.28",
+        "contentHash": "Cr3fyrUX4g3Envix0zPiS31f5QxyaS4U/tRJh5yDLr7SleluM+2RrqugmzLhEM834c4dFVaI4oDPfmrkLAkzjA==",
+        "dependencies": {
+          "Microsoft.OpenApi": "1.6.28",
+          "SharpYaml": "2.1.1"
+        }
+      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "10.0.103",
@@ -448,6 +462,11 @@
         "resolved": "4.3.0",
         "contentHash": "VB5cn/7OzUfzdnC8tqAIMQciVLiq2epm2NrAm1E9OjNRyG4lVhfR61SMcLizejzQP8R8Uf/0l5qOIbUEi+RdEg=="
       },
+      "Scalar.AspNetCore": {
+        "type": "Transitive",
+        "resolved": "2.4.18",
+        "contentHash": "QLM+w01k2Rn2MU2AZRTshM06FbjYkhRZCnGhBDZNAKZLTbLcz2LyNTasbdwGcT+81VbrWFl8CFvpdR8+6ZvT9A=="
+      },
       "Semver": {
         "type": "Transitive",
         "resolved": "3.0.0",
@@ -455,6 +474,11 @@
         "dependencies": {
           "Microsoft.Extensions.Primitives": "5.0.1"
         }
+      },
+      "SharpYaml": {
+        "type": "Transitive",
+        "resolved": "2.1.1",
+        "contentHash": "BISoFuW2AwZYXxrZGaBnedo21BvrdgC4kkWd6QYrOdhOGSsZB0RSqcBw09l9caUE1g3sykJoRfSbtSzZS6tYig=="
       },
       "System.AppContext": {
         "type": "Transitive",
@@ -1429,7 +1453,10 @@
       "azure.deployments.extensibility.aspnetcore": {
         "type": "Project",
         "dependencies": {
-          "Azure.Deployments.Extensibility.Core": "[1.0.0, )"
+          "Azure.Deployments.Extensibility.Core": "[1.0.0, )",
+          "Microsoft.OpenApi.Readers": "[1.6.28, )",
+          "Scalar.AspNetCore": "[2.4.18, )",
+          "Semver": "[3.0.0, )"
         }
       },
       "azure.deployments.extensibility.core": {
@@ -1438,7 +1465,8 @@
           "JsonPatch.Net": "[3.3.0, )",
           "JsonPath.Net": "[2.1.1, )",
           "JsonPointer.Net": "[5.3.1, )",
-          "JsonSchema.Net": "[7.3.4, )"
+          "JsonSchema.Net": "[7.3.4, )",
+          "Semver": "[3.0.0, )"
         }
       },
       "azure.deployments.extensibility.extensions.kubernetes": {

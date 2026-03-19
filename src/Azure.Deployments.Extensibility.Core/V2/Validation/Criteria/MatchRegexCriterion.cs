@@ -1,12 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Models;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Json.Pointer;
 using System.Text.RegularExpressions;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation.Rules
 {
+    /// <summary>
+    /// A validation criterion that fails when a string property does not match the specified regular expression.
+    /// </summary>
     public class MatchRegexCriterion<TModel>(Regex regex) : IPropertyRuleCriterion<TModel, string?>
     {
         public string ErrorCode { get; set; } = "RegularExpressionMismatch";

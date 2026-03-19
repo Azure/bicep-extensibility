@@ -93,10 +93,23 @@
         "resolved": "10.0.103",
         "contentHash": "QoiCMcPuxC6eqRQmrmF9zBY96ejIznXtve/lJJbonGD9I5Aygf2AUCOWslGiCEtBbfWRSuUnepBjuuVOdAl5ag=="
       },
+      "Microsoft.Extensions.Primitives": {
+        "type": "Transitive",
+        "resolved": "5.0.1",
+        "contentHash": "5WPSmL4YeP7eW+Vc8XZ4DwjYWBAiSwDV9Hm63JJWcz1Ie3Xjv4KuJXzgCstj48LkLfVCYa7mLcx7y+q6yqVvtw=="
+      },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
         "resolved": "10.0.103",
         "contentHash": "cMtGW5/r0ck72Jg2QwZcNTX59z+iB/B1kW84VMa/eX8L19DhHIuIcQjfK0pgLLBxd60Jl0Bj9GUolcM0MnJnZA=="
+      },
+      "Semver": {
+        "type": "Transitive",
+        "resolved": "3.0.0",
+        "contentHash": "9jZCicsVgTebqkAujRWtC9J1A5EQVlu0TVKHcgoCuv345ve5DYf4D1MjhKEnQjdRZo6x/vdv6QQrYFs7ilGzLA==",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "5.0.1"
+        }
       },
       "YamlDotNet": {
         "type": "Transitive",
@@ -109,7 +122,8 @@
           "JsonPatch.Net": "[3.3.0, )",
           "JsonPath.Net": "[2.1.1, )",
           "JsonPointer.Net": "[5.3.1, )",
-          "JsonSchema.Net": "[7.3.4, )"
+          "JsonSchema.Net": "[7.3.4, )",
+          "Semver": "[3.0.0, )"
         }
       }
     }

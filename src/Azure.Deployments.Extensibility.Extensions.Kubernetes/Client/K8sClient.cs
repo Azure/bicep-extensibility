@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Exceptions;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Json;
 using k8s;
 using k8s.Autorest;
@@ -37,7 +37,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -92,7 +92,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -113,7 +113,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -157,7 +157,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             }
             catch (HttpOperationException exception) when (IsClientError(exception))
             {
-                throw ConvertToErrorResponseException(exception);
+                throw ConvertToErrorException(exception);
             }
         }
 
@@ -180,7 +180,7 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Client
             return new V1Patch(patchContent, V1Patch.PatchType.ApplyPatch);
         }
 
-        private static ErrorResponseException ConvertToErrorResponseException(HttpOperationException exception) => new("KubernetesOperationFailure", exception.Message);
+        private static ErrorResponseException ConvertToErrorException(HttpOperationException exception) => new("KubernetesOperationFailure", exception.Message);
 
         private static bool IsNotFound(HttpOperationException exception) => exception.Response.StatusCode is HttpStatusCode.NotFound;
 

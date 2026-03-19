@@ -3,6 +3,7 @@
 
 using AutoFixture;
 using AutoFixture.Xunit2;
+using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Core.V2.Json;
 using Azure.Deployments.Extensibility.Core.V2.Models;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration.TestFixtures;
@@ -23,11 +24,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
 
             await CreateOrUpdateNamespaceAsync(specification);
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                specification.Properties.AsObject(),
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = specification.Properties.AsObject(),
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
@@ -45,17 +48,19 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
             // Arrange.
             var namespaceName = fixture.Create<string>();
             var specification = new K8sNamespaceSpecification(namespaceName);
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                specification.Properties.AsObject(),
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = specification.Properties.AsObject(),
+                Config = specification.Config,
+            };
 
             // Act
             var result = await GetResourceAsync(reference);
 
             // Assert.
-            var errorData = result.Should().BeOfType<NotFound<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<NotFound<ErrorResponse>>().Subject.Value!;
 
             errorData.Error.Code.Should().Be("ObjectNotFound");
             errorData.Error.Message.Should().Be($"The referenced Kubernetes object (GroupVersionKind=v1/Namespace, Name={namespaceName}) was not found.");
@@ -72,11 +77,13 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
                 ["metadata"] = specification.Properties["metadata"]?.DeepClone(),
             };
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                identifiers,
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = identifiers,
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
@@ -99,17 +106,19 @@ namespace Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integratio
                 ["metadata"] = specification.Properties["metadata"]?.DeepClone(),
             };
 
-            var reference = new ResourceReference(
-                specification.Type,
-                specification.ApiVersion,
-                identifiers,
-                specification.Config);
+            var reference = new ResourceReference
+            {
+                Type = specification.Type,
+                ApiVersion = specification.ApiVersion,
+                Identifiers = identifiers,
+                Config = specification.Config,
+            };
 
             // Act.
             var result = await GetResourceAsync(reference);
 
             // Assert.
-            var errorData = result.Should().BeOfType<NotFound<ErrorData>>().Subject.Value!;
+            var errorData = result.Should().BeOfType<NotFound<ErrorResponse>>().Subject.Value!;
 
             errorData.Error.Code.Should().Be("ObjectNotFound");
             errorData.Error.Message.Should().Be($"The referenced Kubernetes object (GroupVersionKind=apps/v1/Deployment, Name={specification.Name}, Namespace=default) was not found.");

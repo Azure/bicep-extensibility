@@ -108,7 +108,7 @@ sequenceDiagram
 
 - The `status` property must persist across all subsequent get requests until another operation transitions the resource to a non-terminal state.
 - If an update fails, the extension should revert modified properties to their previous values when that best reflects the final resource state.
-- If a delete fails, the resource must remain accessible via get with `status` set to `"Failed"` and the `error` property populated.
+- If a delete fails, the resource must remain accessible via get with `status` set to `"Failed"`. The `error` property should be populated if possible.
 
 ### Example: RELO Create or Update
 
@@ -196,7 +196,7 @@ Get response:
 }
 ```
 
-**Step 4: Extensibility Host polls via get (operation succeeded, HTTP `200 OK`)**
+**Step 4: Extensibility Host polls via get (operation succeeded)**
 
 ```json
 {
@@ -264,7 +264,7 @@ Get response:
 }
 ```
 
-**Step 3: Extensibility Host polls via get (deletion still in progress, HTTP `200 OK`)**
+**Step 3: Extensibility Host polls via get (deletion still in progress)**
 
 ```json
 {
@@ -288,7 +288,7 @@ Get response:
 }
 ```
 
-**Step 4: Extensibility Host polls via get, resource not found (deletion succeeded, HTTP `404 Not Found`)**
+**Step 4: Extensibility Host polls via get, resource not found (deletion succeeded)**
 
 ```json
 {
@@ -451,7 +451,7 @@ Response:
 }
 ```
 
-**Step 4: Extensibility Host polls (operation succeeded, HTTP `200 OK`)**
+**Step 4: Extensibility Host polls (operation succeeded)**
 
 ```json
 {
@@ -535,7 +535,7 @@ Get response:
 }
 ```
 
-**Step 3: Extensibility Host polls (deletion in progress, HTTP `200 OK`)**
+**Step 3: Extensibility Host polls (deletion in progress)**
 
 ```json
 {
@@ -549,7 +549,7 @@ Get response:
 }
 ```
 
-**Step 4: Extensibility Host polls (deletion succeeded, HTTP `200 OK`)**
+**Step 4: Extensibility Host polls (deletion succeeded)**
 
 ```json
 {

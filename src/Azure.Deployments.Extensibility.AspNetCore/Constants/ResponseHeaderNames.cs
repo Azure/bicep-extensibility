@@ -3,7 +3,10 @@
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Constants
 {
-    public class ResponseHeaderNames
+    /// <summary>
+    /// Constants for extensibility API response header names.
+    /// </summary>
+    public static class ResponseHeaderNames
     {
         public const string RequestId = "x-ms-request-id";
     }
