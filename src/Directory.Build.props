@@ -9,8 +9,6 @@
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <!-- disable nuget packing on all projects by default -->
     <IsPackable>false</IsPackable>
