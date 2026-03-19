@@ -4,10 +4,6 @@
     <EnableNuget>true</EnableNuget>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" />
