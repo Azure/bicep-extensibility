@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" Key="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" Key="$(StrongNamePublicKey)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +20,5 @@
     <PackageReference Include="Semver" Version="3.0.0" />
   </ItemGroup>
 
-  <!-- Need to sign the assembly with a strong name in Official Build. -->
-  <Import Project="$(EnlistmentRoot)\StrongName.props" />
 
 </Project>
