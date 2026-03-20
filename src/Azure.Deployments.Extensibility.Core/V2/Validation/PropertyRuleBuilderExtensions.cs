@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.Core.V2.Validation.Criteria;
-using Azure.Deployments.Extensibility.Core.V2.Validation.Rules;
 using Json.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -15,47 +14,92 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     /// </summary>
     public static class PropertyRuleBuilderExtensions
     {
-        public static PropertyRuleCriterionBuilder<TModel, string?> MustMatchRegex<TModel>(this IPropertyRuleBuilder<TModel, string?> builder, Regex regex)
-        {
-            var criterion = new MatchRegexCriterion<TModel>(regex);
-
-            builder.AddCriterion(criterion);
-
-            return new(builder, criterion);
-        }
-
-        public static PropertyRuleCriterionBuilder<TModel, TProperty> MustNotBeNull<TModel, TProperty>(this IPropertyRuleBuilder<TModel, TProperty> builder)
+        public static IPropertyRuleBuilder<TModel, TProperty> NotNull<TModel, TProperty>(
+            this IPropertyRuleBuilder<TModel, TProperty> builder,
+            Action<ErrorBuilder>? configureError = null)
         {
             var criterion = new NotBeNullCriterion<TModel, TProperty>();
 
+            ApplyErrorOverrides(criterion, configureError);
             builder.AddCriterion(criterion);
 
-            return new(builder, criterion);
+            return builder;
         }
 
-        public static PropertyRuleCriterionBuilder<TModel, TJsonNode?> MustMatchJsonSchema<TModel, TJsonNode>(
+        public static IPropertyRuleBuilder<TModel, string?> MatchesRegex<TModel>(
+            this IPropertyRuleBuilder<TModel, string?> builder,
+            Regex regex,
+            Action<ErrorBuilder>? configureError = null)
+        {
+            var criterion = new MatchRegexCriterion<TModel>(regex);
+
+            ApplyErrorOverrides(criterion, configureError);
+            builder.AddCriterion(criterion);
+
+            return builder;
+        }
+
+        public static IPropertyRuleBuilder<TModel, TJsonNode?> MatchesJsonSchema<TModel, TJsonNode>(
             this IPropertyRuleBuilder<TModel, TJsonNode?> builder,
             JsonSchema schema,
-            SpecVersion schemaSpecVersion = SpecVersion.Draft7)
+            SpecVersion schemaSpecVersion = SpecVersion.Draft7,
+            Action<ErrorBuilder>? configureError = null)
             where TJsonNode : JsonNode
         {
             var criterion = new MatchJsonSchemaCriterion<TModel>(_ => schema, schemaSpecVersion);
 
+            ApplyErrorOverrides(criterion, configureError);
             builder.AddCriterion(criterion);
 
-            return new(builder, criterion);
+            return builder;
         }
 
-        public static PropertyRuleCriterionBuilder<TModel, JsonElement> MustMatchJsonSchema<TModel>(
+        public static IPropertyRuleBuilder<TModel, JsonElement> MatchesJsonSchema<TModel>(
             this IPropertyRuleBuilder<TModel, JsonElement> builder,
             JsonSchemaResolver<TModel> schemaResolver,
-            SpecVersion schemaSpecVersion = SpecVersion.Draft7)
+            SpecVersion schemaSpecVersion = SpecVersion.Draft7,
+            Action<ErrorBuilder>? configureError = null)
         {
             var criterion = new MatchJsonSchemaCriterion<TModel>(schemaResolver, schemaSpecVersion);
 
+            ApplyErrorOverrides(criterion, configureError);
             builder.AddCriterion(criterion);
 
-            return new(builder, criterion);
+            return builder;
+        }
+
+        public static IPropertyRuleBuilder<TModel, TProperty> Satisfies<TModel, TProperty>(
+            this IPropertyRuleBuilder<TModel, TProperty> builder,
+            Func<TProperty, bool> predicate,
+            Action<ErrorBuilder>? configureError = null)
+        {
+            var criterion = new SatisfiesCriterion<TModel, TProperty>(predicate);
+
+            ApplyErrorOverrides(criterion, configureError);
+            builder.AddCriterion(criterion);
+
+            return builder;
+        }
+
+        private static void ApplyErrorOverrides(IConfigurableErrorCriterion criterion, Action<ErrorBuilder>? configureError)
+        {
+            if (configureError is null)
+            {
+                return;
+            }
+
+            var errorBuilder = new ErrorBuilder();
+            configureError(errorBuilder);
+
+            if (errorBuilder.Code is not null)
+            {
+                criterion.ErrorCode = errorBuilder.Code;
+            }
+
+            if (errorBuilder.Message is not null)
+            {
+                criterion.ErrorMessage = errorBuilder.Message;
+            }
         }
     }
 }

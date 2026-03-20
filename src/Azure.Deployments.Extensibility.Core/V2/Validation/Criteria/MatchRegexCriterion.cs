@@ -5,12 +5,12 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Json.Pointer;
 using System.Text.RegularExpressions;
 
-namespace Azure.Deployments.Extensibility.Core.V2.Validation.Rules
+namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
 {
     /// <summary>
     /// A validation criterion that fails when a string property does not match the specified regular expression.
     /// </summary>
-    public class MatchRegexCriterion<TModel>(Regex regex) : IPropertyRuleCriterion<TModel, string?>
+    public class MatchRegexCriterion<TModel>(Regex regex) : IPropertyRuleCriterion<TModel, string?>, IConfigurableErrorCriterion
     {
         public string ErrorCode { get; set; } = "RegularExpressionMismatch";
 
@@ -18,9 +18,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Rules
 
         public IEnumerable<ErrorDetail> Evaluate(TModel model, string? propertyValue, JsonPointer propertyPointer)
         {
-            ArgumentNullException.ThrowIfNull(propertyValue, nameof(propertyValue));
-
-            if (!regex.IsMatch(propertyValue))
+            if (propertyValue is null || !regex.IsMatch(propertyValue))
             {
                 yield return new(this.ErrorCode, this.ErrorMessage, propertyPointer);
             }

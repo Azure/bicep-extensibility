@@ -8,53 +8,51 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
     /// <summary>
     /// Abstract base class for building fluent model validators.
-    /// Subclasses define validation rules using <see cref="AnyValid{TProperty}"/> and
-    /// <see cref="WhenPrecedingRulesSatisfied{TProperty}"/> in their constructors.
+    /// Subclasses define validation rules using <see cref="Ensure{TProperty}"/> in their constructors.
+    /// Rules can declare dependencies on other rules using
+    /// <see cref="IPropertyRuleBuilder{TModel,TProperty}.DependsOn"/>, causing them to be skipped
+    /// if any dependency rule produced errors.
     /// </summary>
     /// <typeparam name="TModel">The type of model to validate.</typeparam>
     public abstract class ModelValidator<TModel> : IModelValidator<TModel>
         where TModel : class
     {
-        private readonly List<IModelValidationRule<TModel>> rules = [];
+        private readonly List<(IModelValidationRule<TModel> Rule, IPropertyRuleBuilderInternal Builder)> rules = [];
 
-        private readonly HashSet<IModelValidationRule<TModel>> dependentRules = [];
-
-        public IPropertyRuleBuilder<TModel, TProperty> AnyValid<TProperty>(Expression<Func<TModel,  TProperty>> propertyExpression)
+        public IPropertyRuleBuilder<TModel, TProperty> Ensure<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression)
         {
             var rule = new PropertyRule<TModel, TProperty>(propertyExpression);
+            var builder = new PropertyRuleBuilder<TModel, TProperty>(rule);
 
-            this.rules.Add(rule);
+            this.rules.Add((rule, builder));
 
-            return new PropertyRuleBuilder<TModel, TProperty>(rule);
-        }
-
-        public IPropertyRuleBuilder<TModel, TProperty> WhenPrecedingRulesSatisfied<TProperty>(Expression<Func<TModel,  TProperty>> propertyExpression)
-        {
-            var rule = new PropertyRule<TModel, TProperty>(propertyExpression);
-
-            this.rules.Add(rule);
-            this.dependentRules.Add(rule);
-
-            return new PropertyRuleBuilder<TModel, TProperty>(rule);
+            return builder;
         }
 
         public Error? Validate(TModel model) => AggregateErrorDetails(this.ValidateRules(model).ToArray());
 
         private IEnumerable<ErrorDetail> ValidateRules(TModel model)
         {
-            var dependencyRulesSatisfied = true;
+            var failedBuilders = new HashSet<IPropertyRuleBuilder>();
 
-            foreach (var rule in this.rules)
+            foreach (var (rule, builder) in this.rules)
             {
-                if (this.dependentRules.Contains(rule) && !dependencyRulesSatisfied)
+                if (builder.Dependencies.Any(dep => failedBuilders.Contains(dep)))
                 {
                     continue;
                 }
 
+                var hadErrors = false;
+
                 foreach (var errorDetail in rule.Validate(model))
                 {
-                    dependencyRulesSatisfied = false;
+                    hadErrors = true;
                     yield return errorDetail;
+                }
+
+                if (hadErrors)
+                {
+                    failedBuilders.Add(builder);
                 }
             }
         }

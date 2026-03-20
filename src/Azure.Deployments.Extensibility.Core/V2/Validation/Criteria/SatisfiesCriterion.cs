@@ -7,17 +7,17 @@ using Json.Pointer;
 namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
 {
     /// <summary>
-    /// A validation criterion that fails when the property value is null.
+    /// A validation criterion that fails when the property value does not satisfy the specified predicate.
     /// </summary>
-    public class NotBeNullCriterion<TModel, TProperty> : IPropertyRuleCriterion<TModel, TProperty>, IConfigurableErrorCriterion
+    public class SatisfiesCriterion<TModel, TProperty>(Func<TProperty, bool> predicate) : IPropertyRuleCriterion<TModel, TProperty>, IConfigurableErrorCriterion
     {
-        public string ErrorCode { get; set; } = "ValueMustNotBeNull";
+        public string ErrorCode { get; set; } = "ConditionNotSatisfied";
 
-        public string ErrorMessage { get; set; } = "Value must not be null.";
+        public string ErrorMessage { get; set; } = "Value does not satisfy the required condition.";
 
         public IEnumerable<ErrorDetail> Evaluate(TModel model, TProperty propertyValue, JsonPointer propertyPointer)
         {
-            if (propertyValue is null)
+            if (!predicate(propertyValue))
             {
                 yield return new(this.ErrorCode, this.ErrorMessage, propertyPointer);
             }

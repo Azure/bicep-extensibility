@@ -13,10 +13,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     /// <typeparam name="TProperty">The type of the property being validated.</typeparam>
     public interface IPropertyRuleCriterion<TModel, in TProperty>
     {
-        public string ErrorCode { get; set; }
-
-        public string ErrorMessage { get; set; }
-
         public IEnumerable<ErrorDetail> Evaluate(TModel model, TProperty propertyValue, JsonPointer propertyPointer);
     }
 }

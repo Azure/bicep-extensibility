@@ -17,18 +17,18 @@ namespace Azure.Deployments.Extensibility.Core.Tests.Unit.V2.Validation
         {
             public DummyModelValidator()
             {
-                this.AnyValid(x => x.Foo)
-                    .MustNotBeNull().WithErrorCode("FooMustNotBeNull");
+                var fooRule = this.Ensure(x => x.Foo)
+                    .NotNull(error => error.WithCode("FooMustNotBeNull"));
 
-                this.AnyValid(x => x.Bar)
-                    .MustNotBeNull().WithErrorCode("BarMustNotBeNull");
+                var barRule = this.Ensure(x => x.Bar)
+                    .NotNull(error => error.WithCode("BarMustNotBeNull"));
 
-                this.WhenPrecedingRulesSatisfied(x => x.Baz)
-                    .MustNotBeNull()
-                        .WithErrorCode("BazMustNotBeNull").AndThen
-                    .MustMatchRegex(DummyRegex())
-                        .WithErrorCode("BazMustMatchRegex")
-                        .WithErrorMessage("Baz must match regex.");
+                this.Ensure(x => x.Baz)
+                    .NotNull(error => error.WithCode("BazMustNotBeNull"))
+                    .MatchesRegex(DummyRegex(), error => error
+                        .WithCode("BazMustMatchRegex")
+                        .WithMessage("Baz must match regex."))
+                    .DependsOn(fooRule, barRule);
             }
 
             [GeneratedRegex("bicep")]
