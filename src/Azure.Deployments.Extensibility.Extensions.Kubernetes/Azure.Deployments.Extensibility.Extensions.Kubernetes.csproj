@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator" />
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit" />
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.ApiCatalogGenerator" Key="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Unit" Key="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes.Tests.Integration" Key="$(StrongNamePublicKey)" />
   </ItemGroup>
 
   <ItemGroup>
