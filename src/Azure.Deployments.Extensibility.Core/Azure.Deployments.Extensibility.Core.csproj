@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" Key="$(StrongNamePublicKey)" />
-    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" Key="$(StrongNamePublicKey)" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>
