@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Contracts;
+using System.Collections.Immutable;
+using System.Text.Json.Nodes;
 using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
+using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Json.Patch;
 using Json.Pointer;
-using System.Collections.Immutable;
-using System.Text.Json.Nodes;
 
 namespace MagicEightBallExtension.Behaviors;
 
@@ -29,7 +29,41 @@ namespace MagicEightBallExtension.Behaviors;
 /// </summary>
 public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
 {
+    /// <summary>
+    /// A delegate that provides fake values for unevaluated property values in a resource preview context.
+    /// </summary>
+    /// <param name="jsonPointer">A JSON pointer indicating the location of the property in the resource properties tree.</param>
+    /// <param name="originalValue">The original, unevaluated value of the property.</param>
+    /// <param name="resourceType">The type of the resource being processed.</param>
+    /// <param name="apiVersion">The API version of the resource.</param>
+    /// <returns>A fake value to replace the unevaluated property.</returns>
+    public delegate JsonNode? FakeValueProviderDelegate(JsonPointer jsonPointer, JsonNode? originalValue, string resourceType, string? apiVersion);
+
+    /// <summary>
+    /// A delegate that determines the final value for a resource preview property before the preview is returned.
+    /// </summary>
+    /// <param name="jsonPointer">A JSON pointer indicating the location of the property in the resource properties tree.</param>
+    /// <param name="originalValue">The original, unevaluated value of the property.</param>
+    /// <param name="newValue">The current outgoing value of the property.</param>
+    /// <param name="resourceType">The type of the resource being processed.</param>
+    /// <param name="apiVersion">The API version of the resource.</param>
+    /// <returns>The final value to use for the property.</returns>
+    public delegate JsonNode? MergeValueDelegate(JsonPointer jsonPointer, JsonNode? originalValue, JsonNode? newValue, string resourceType, string? apiVersion);
+
+    public static FakeValueProviderDelegate DefaultFakeValueProvider { get; } = (_, _, _, _) => JsonValue.Create("<preview-placeholder>");
+    public static MergeValueDelegate DefaultMergeValueProvider { get; } = (_, originalValue, _, _, _) => originalValue;
+
+    private FakeValueProviderDelegate FakeValueProvider { get; }
+
+    private MergeValueDelegate MergeValueProvider { get; }
+                                                
     private const string PropertiesPrefix = "/properties/";
+
+    public PreviewMetadataProcessingBehavior(FakeValueProviderDelegate? fakeValueProvider = null, MergeValueDelegate? mergeValueProvider = null)
+    {
+        this.FakeValueProvider = fakeValueProvider ?? DefaultFakeValueProvider;
+        this.MergeValueProvider = mergeValueProvider ?? DefaultMergeValueProvider;
+    }
 
     public async Task<OneOf<ResourcePreview, ErrorResponse>> HandleAsync(
         ResourcePreviewSpecification request,
@@ -37,13 +71,11 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
         CancellationToken cancellationToken)
     {
         var unevaluated = request.Metadata?.Unevaluated;
-        var originalProperties = request.Properties;
 
         // Before: replace unevaluated ARM template expressions with fake valid values.
         if (unevaluated is { Length: > 0 } paths)
         {
-            var properties = request.Properties.DeepClone().AsObject();
-            properties = ApplyFakeValues(properties, paths);
+            var properties = this.ApplyFakeValues(request, paths);
             request = request with { Properties = properties };
         }
 
@@ -53,7 +85,7 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
         if (unevaluated is { Length: > 0 } && response.IsT0)
         {
             var preview = response.AsT0;
-            var restoredProperties = RestoreOriginalValues(preview.Properties.DeepClone().AsObject(), originalProperties, unevaluated.Value);
+            var restoredProperties = this.RestoreOriginalValues(preview.Properties.DeepClone().AsObject(), request, unevaluated.Value);
             response = preview with { Properties = restoredProperties };
         }
 
@@ -64,8 +96,9 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
     /// Builds a <see cref="JsonPatch"/> that replaces every reachable unevaluated
     /// path under <c>/properties/</c> with a valid placeholder value, then applies it.
     /// </summary>
-    private static JsonObject ApplyFakeValues(JsonObject properties, ImmutableArray<JsonPointer> pointers)
+    private JsonObject ApplyFakeValues(ResourcePreviewSpecification request, ImmutableArray<JsonPointer> pointers)
     {
+        var properties = request.Properties.DeepClone().AsObject();
         var operations = new List<PatchOperation>();
 
         foreach (var pointer in pointers)
@@ -79,10 +112,10 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
 
             var relativePointer = JsonPointer.Parse("/" + path[PropertiesPrefix.Length..]);
 
-            if (relativePointer.TryEvaluate(properties, out _))
+            if (relativePointer.TryEvaluate(properties, out var originalValue))
             {
-                // In real world scenarios, you might want to generate different dummy values based on the expected type of the property.
-                operations.Add(PatchOperation.Replace(relativePointer, JsonValue.Create("<preview-placeholder>")));
+                var newValue = this.FakeValueProvider.Invoke(relativePointer, originalValue, request.Type, request.ApiVersion)?.DeepClone();
+                operations.Add(PatchOperation.Replace(relativePointer, newValue));
             }
         }
 
@@ -101,8 +134,9 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
     /// Builds a <see cref="JsonPatch"/> that restores every reachable unevaluated
     /// path under <c>/properties/</c> to its original value from the request, then applies it.
     /// </summary>
-    private static JsonObject RestoreOriginalValues(JsonObject responseProperties, JsonNode originalProperties, ImmutableArray<JsonPointer> pointers)
+    private JsonObject RestoreOriginalValues(JsonObject responseProperties, ResourcePreviewSpecification request, ImmutableArray<JsonPointer> pointers)
     {
+        var originalProperties = request.Properties.DeepClone().AsObject();
         var operations = new List<PatchOperation>();
 
         foreach (var pointer in pointers)
@@ -117,9 +151,10 @@ public sealed class PreviewMetadataProcessingBehavior : IResourcePreviewBehavior
             var relativePointer = JsonPointer.Parse("/" + path[PropertiesPrefix.Length..]);
 
             if (relativePointer.TryEvaluate(originalProperties, out var originalValue) &&
-                relativePointer.TryEvaluate(responseProperties, out _))
+                relativePointer.TryEvaluate(responseProperties, out var replacedValue))
             {
-                operations.Add(PatchOperation.Replace(relativePointer, originalValue!.DeepClone()));
+                var newValue = this.MergeValueProvider.Invoke(relativePointer, originalValue, replacedValue, request.Type, request.ApiVersion)?.DeepClone();
+                operations.Add(PatchOperation.Replace(relativePointer, newValue));
             }
         }
 
