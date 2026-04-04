@@ -41,5 +41,9 @@ public class ErrorResponseException : Exception
     /// </summary>
     public Error Error { get; }
 
+    /// <summary>
+    /// Converts this exception into an <see cref="ErrorResponse"/>.
+    /// </summary>
+    /// <returns>An <see cref="ErrorResponse"/> containing the <see cref="Error"/>.</returns>
     public virtual ErrorResponse ToErrorResponse() => new(this.Error);
 }

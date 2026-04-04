@@ -16,6 +16,12 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     /// <typeparam name="TProperty">The type of the property being validated.</typeparam>
     public interface IPropertyRuleBuilder<TModel, out TProperty> : IPropertyRuleBuilder
     {
+        /// <summary>
+        /// Add a validation criterion to this rule.
+        /// </summary>
+        /// <typeparam name="TCriterion">The type of criterion to add.</typeparam>
+        /// <param name="criterion">The criterion instance.</param>
+        /// <returns>This builder for chaining.</returns>
         public IPropertyRuleBuilder<TModel, TProperty> AddCriterion<TCriterion>(TCriterion criterion)
             where TCriterion : IPropertyRuleCriterion<TModel, TProperty>;
 

@@ -19,6 +19,12 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     {
         private readonly List<(IModelValidationRule<TModel> Rule, IPropertyRuleBuilderInternal Builder)> rules = [];
 
+        /// <summary>
+        /// Define a validation rule for the specified property.
+        /// </summary>
+        /// <typeparam name="TProperty">The type of the property.</typeparam>
+        /// <param name="propertyExpression">An expression selecting the property to validate.</param>
+        /// <returns>A rule builder for adding criteria to the property rule.</returns>
         public IPropertyRuleBuilder<TModel, TProperty> Ensure<TProperty>(Expression<Func<TModel, TProperty>> propertyExpression)
         {
             var rule = new PropertyRule<TModel, TProperty>(propertyExpression);
@@ -29,6 +35,11 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Validate the specified model by running all defined rules.
+        /// </summary>
+        /// <param name="model">The model instance to validate.</param>
+        /// <returns>An <see cref="Error"/> if any rule fails; otherwise, <see langword="null"/>.</returns>
         public Error? Validate(TModel model) => AggregateErrorDetails(this.ValidateRules(model).ToArray());
 
         private IEnumerable<ErrorDetail> ValidateRules(TModel model)

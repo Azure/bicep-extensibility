@@ -7,12 +7,48 @@ using System.Text.Json.Nodes;
 namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
 /// <summary>
-/// Represents a reference to a resource, which contains necessary information to
-/// uniquely identify the resource, including its type, API version, and identifiers,
-/// and optionally a configuration object.
+/// Represents a reference to a resource. Contains the information needed to uniquely identify
+/// a resource, including its type, API version, identifiers, and optionally a configuration object.
+/// Used as input to the get and delete operations.
 /// </summary>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
+/// <typeparam name="TConfig">The type representing the extension configuration.</typeparam>
+/// <remarks>
+/// See the "Resource Reference" model in <see href="https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md#resource-reference">contract.md</see>.
+/// </remarks>
 public record ResourceReference<TIdentifiers, TConfig>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceReference{TIdentifiers, TConfig}"/> record.
+    /// </summary>
+    public ResourceReference()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ResourceReference{TIdentifiers, TConfig}"/> record
+    /// with the specified properties.
+    /// </summary>
+    /// <param name="type">The type of the resource.</param>
+    /// <param name="identifiers">The identifiers that uniquely identify the resource.</param>
+    /// <param name="apiVersion">The API version of the resource.</param>
+    /// <param name="config">The configuration for the resource.</param>
+    /// <param name="configId">A checksum that identifies the configuration.</param>
+    [SetsRequiredMembers]
+    public ResourceReference(
+        string type,
+        TIdentifiers identifiers,
+        string? apiVersion = null,
+        TConfig? config = default,
+        string? configId = null)
+    {
+        this.Type = type;
+        this.Identifiers = identifiers;
+        this.ApiVersion = apiVersion;
+        this.Config = config;
+        this.ConfigId = configId;
+    }
+
     /// <summary>
     /// The type of the resource.
     /// </summary>
@@ -43,15 +79,22 @@ public record ResourceReference<TIdentifiers, TConfig>
     public TConfig? Config { get; init; }
 
     /// <summary>
-    /// The ID of the configuration for the resource.
+    /// A checksum that identifies the configuration. Required for delete operations when
+    /// a configuration is present. If provided, the extension must validate it.
     /// </summary>
     public string? ConfigId { get; init; }
 }
 
+/// <inheritdoc cref="ResourceReference{TIdentifiers, TConfig}"/>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public record ResourceReference<TIdentifiers> : ResourceReference<TIdentifiers, JsonObject>
 {
 }
 
+/// <summary>
+/// Represents a resource reference with untyped JSON identifiers and configuration.
+/// </summary>
+/// <inheritdoc cref="ResourceReference{TIdentifiers, TConfig}"/>
 public record ResourceReference : ResourceReference<JsonObject>
 {
 }

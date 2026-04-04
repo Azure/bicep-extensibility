@@ -8,15 +8,27 @@ using System.Text.Json;
 
 namespace Azure.Deployments.Extensibility.Core.Validators
 {
+    /// <summary>
+    /// Validates an extensible import configuration against a JSON Schema.
+    /// </summary>
     public class ExtensibleImportValidator
     {
         private readonly JsonSchema configSchema;
 
+        /// <summary>
+        /// Initializes a new instance with the specified configuration JSON Schema.
+        /// </summary>
+        /// <param name="configSchema">The JSON Schema for the import configuration.</param>
         public ExtensibleImportValidator(JsonSchema configSchema)
         {
             this.configSchema = configSchema;
         }
 
+        /// <summary>
+        /// Validate the import configuration.
+        /// </summary>
+        /// <param name="import">The import to validate.</param>
+        /// <returns>An enumerable of <see cref="ExtensibilityError"/> instances for each validation failure.</returns>
         public IEnumerable<ExtensibilityError> Validate(ExtensibleImport<JsonElement> import)
         {
             var violations = JsonSchemaValidator.Validate(this.configSchema, import.Config);

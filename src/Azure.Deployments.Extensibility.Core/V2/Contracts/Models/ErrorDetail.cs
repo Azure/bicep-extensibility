@@ -11,12 +11,21 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
     /// </summary>
     public record ErrorDetail
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorDetail"/> record.
+        /// </summary>
         public ErrorDetail()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ErrorDetail"/> record with the specified details.
+        /// </summary>
+        /// <param name="code">A service-defined error code that classifies the error.</param>
+        /// <param name="message">A human-readable description of the error.</param>
+        /// <param name="target">The JSON Pointer to the location that caused the error.</param>
         [SetsRequiredMembers]
-        public ErrorDetail(string code, string message, JsonPointer? target)
+        public ErrorDetail(string code, string message, JsonPointer? target = null)
         {
             this.Code = code;
             this.Message = message;

@@ -12,5 +12,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation;
 public class AlwaysValidValidator<TModel> : IModelValidator<TModel>
     where TModel : class
 {
+    /// <inheritdoc/>
     public Error? Validate(TModel model) => null;
 }

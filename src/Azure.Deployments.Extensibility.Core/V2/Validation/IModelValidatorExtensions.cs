@@ -11,6 +11,13 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Extensions
     /// </summary>
     public static class IModelValidatorExtensions
     {
+        /// <summary>
+        /// Validate the model and throw an <see cref="ErrorResponseException"/> if validation fails.
+        /// </summary>
+        /// <typeparam name="TModel">The type of model to validate.</typeparam>
+        /// <param name="validator">The validator instance.</param>
+        /// <param name="model">The model instance to validate.</param>
+        /// <exception cref="ErrorResponseException">Thrown when validation fails.</exception>
         public static void ValidateAndThrow<TModel>(this IModelValidator<TModel> validator, TModel model)
             where TModel : class
         {

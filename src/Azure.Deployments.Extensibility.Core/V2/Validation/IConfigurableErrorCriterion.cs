@@ -8,8 +8,14 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     /// </summary>
     public interface IConfigurableErrorCriterion
     {
+        /// <summary>
+        /// Gets or sets the error code reported when this criterion fails.
+        /// </summary>
         string ErrorCode { get; set; }
 
+        /// <summary>
+        /// Gets or sets the error message reported when this criterion fails.
+        /// </summary>
         string ErrorMessage { get; set; }
     }
 }

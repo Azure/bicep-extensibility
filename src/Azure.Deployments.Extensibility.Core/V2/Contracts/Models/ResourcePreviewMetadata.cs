@@ -7,36 +7,41 @@ using System.Collections.Immutable;
 namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
 /// <summary>
-/// Contains metadata about a resource preview, indicating which properties are read-only,
-/// immutable, calculated, or unevaluated.
+/// Contains metadata about a resource preview response, classifying properties by their
+/// mutability and evaluability characteristics for use by the deployment engine in
+/// What-If and preflight validation.
 /// </summary>
+/// <remarks>
+/// See <see href="https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/preview-operation.md#preview-metadata">preview-operation.md</see>.
+/// </remarks>
 public record ResourcePreviewMetadata
 {
     /// <summary>
-    /// Contains the JSON Pointers to the properties that are read-only.
-    /// These properties are managed by the service and cannot be set by the client.
+    /// JSON Pointers to properties managed entirely by the service. The user cannot set these.
     /// </summary>
     public ImmutableArray<JsonPointer>? ReadOnly { get; init; }
 
     /// <summary>
-    /// Contains the JSON Pointers to the properties that are immutable.
-    /// These properties are not read-only, but they cannot be changed after the resource is created.
-    /// They can be set during resource creation, but not updated later.
+    /// JSON Pointers to properties that can be set at creation but cannot be changed on subsequent updates.
     /// </summary>
     public ImmutableArray<JsonPointer>? Immutable { get; init; }
 
     /// <summary>
-    /// Contains the JSON Pointers to the properties that are unknown.
+    /// JSON Pointers to properties whose values cannot be determined at preview time,
+    /// typically because they depend on unevaluated expressions or unavailable external state.
     /// </summary>
     public ImmutableArray<JsonPointer>? Unknown { get; init; }
 
     /// <summary>
-    /// Contains the JSON Pointers to the properties that are calculated by the service.
+    /// JSON Pointers to properties whose values are computed at operation time and would
+    /// differ if the operation were performed later.
     /// </summary>
     public ImmutableArray<JsonPointer>? Calculated { get; init; }
 
     /// <summary>
-    /// Contains the JSON Pointers to the properties that could not be evaluated during the preview.
+    /// JSON Pointers to properties containing ARM template language expressions that the
+    /// deployment engine could not resolve. A path should only appear here when no more
+    /// specific category (readOnly, immutable, calculated, unknown) applies.
     /// </summary>
     public ImmutableArray<JsonPointer>? Unevaluated { get; init; }
 }

@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace Azure.Deployments.Extensibility.Core.Json
 {
+    /// <summary>
+    /// JSON converter that discriminates between <see cref="ExtensibilityOperationSuccessResponse"/>
+    /// and <see cref="ExtensibilityOperationErrorResponse"/> based on the presence of the "errors" property.
+    /// </summary>
     public class ExtensibilityOperationResponseConverter : JsonConverter<ExtensibilityOperationResponse>
     {
         public override bool CanConvert(Type typeToConvert)

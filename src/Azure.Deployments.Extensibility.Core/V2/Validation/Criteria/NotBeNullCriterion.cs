@@ -11,10 +11,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
     /// </summary>
     public class NotBeNullCriterion<TModel, TProperty> : IPropertyRuleCriterion<TModel, TProperty>, IConfigurableErrorCriterion
     {
+        /// <inheritdoc/>
         public string ErrorCode { get; set; } = "ValueMustNotBeNull";
 
+        /// <inheritdoc/>
         public string ErrorMessage { get; set; } = "Value must not be null.";
 
+        /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, TProperty propertyValue, JsonPointer propertyPointer)
         {
             if (propertyValue is null)

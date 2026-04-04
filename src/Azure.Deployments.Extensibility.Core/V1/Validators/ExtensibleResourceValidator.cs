@@ -10,23 +10,42 @@ using System.Text.RegularExpressions;
 
 namespace Azure.Deployments.Extensibility.Core.Validators
 {
+    /// <summary>
+    /// Validates an extensible resource by checking its type against a regex and its properties against a JSON Schema.
+    /// </summary>
     public class ExtensibleResourceValidator
     {
         private readonly JsonSchema typeSchema;
 
         private readonly Func<string, JsonSchema> propertiesSchemaSelector;
 
+        /// <summary>
+        /// Initializes a new instance with a resource type regex and a function that resolves
+        /// the properties schema from the resource type.
+        /// </summary>
+        /// <param name="typeRegex">A regex that the resource type must match.</param>
+        /// <param name="propertiesSchemaSelector">A function that returns the JSON Schema for the resource properties given its type.</param>
         public ExtensibleResourceValidator(Regex typeRegex, Func<string, JsonSchema> propertiesSchemaSelector)
         {
             this.typeSchema = new JsonSchemaBuilder().Pattern(typeRegex);
             this.propertiesSchemaSelector = propertiesSchemaSelector;
         }
 
+        /// <summary>
+        /// Initializes a new instance with a resource type regex and a single JSON Schema for all types.
+        /// </summary>
+        /// <param name="typeRegex">A regex that the resource type must match.</param>
+        /// <param name="propertiesSchema">The JSON Schema for the resource properties.</param>
         public ExtensibleResourceValidator(Regex typeRegex, JsonSchema propertiesSchema)
             : this(typeRegex, _ => propertiesSchema)
         {
         }
 
+        /// <summary>
+        /// Validate the resource type and properties.
+        /// </summary>
+        /// <param name="resource">The resource to validate.</param>
+        /// <returns>An enumerable of <see cref="ExtensibilityError"/> instances for each validation failure.</returns>
         public IEnumerable<ExtensibilityError> Validate(ExtensibleResource<JsonElement> resource)
         {
             // Validate resource type.
