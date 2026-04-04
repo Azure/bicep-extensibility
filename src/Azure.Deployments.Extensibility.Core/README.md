@@ -17,7 +17,7 @@ A Bicep extension is an API abstraction that enables users to deploy Azure data-
 
 ## Usage
 
-This package provides the shared types. To build a complete extension with HTTP hosting, routing, and the handler pipeline, use [`Azure.Deployments.Extensibility.AspNetCore`](../Azure.Deployments.Extensibility.AspNetCore/) on top of this package.
+This package provides the shared types. To build a complete extension with HTTP hosting, routing, and the handler pipeline, use [`Azure.Deployments.Extensibility.AspNetCore`](https://github.com/Azure/bicep-extensibility/tree/main/src/Azure.Deployments.Extensibility.AspNetCore) on top of this package.
 
 ### Defining a model validator
 
