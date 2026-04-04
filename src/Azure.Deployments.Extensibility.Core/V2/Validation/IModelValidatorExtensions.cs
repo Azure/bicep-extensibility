@@ -4,7 +4,7 @@
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Validation;
 
-namespace Azure.Deployments.Extensibility.AspNetCore.Extensions
+namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
     /// <summary>
     /// Extension methods for <see cref="IModelValidator{TModel}"/>.

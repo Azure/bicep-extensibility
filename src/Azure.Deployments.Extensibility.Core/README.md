@@ -8,7 +8,7 @@ A Bicep extension is an API abstraction that enables users to deploy Azure data-
 
 | Namespace | Description |
 |-----------|-------------|
-| `Azure.Deployments.Extensibility.Core.V2.Contracts.Models` | Request/response models defined by the [Bicep Extension API Contract v2](../../docs/v2/contract.md): `Resource`, `ResourceSpecification`, `ResourceReference`, `ResourcePreview`, `LongRunningOperation`, `ErrorResponse`, and related types. |
+| `Azure.Deployments.Extensibility.Core.V2.Contracts.Models` | Request/response models defined by the [Bicep Extension API Contract v2](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md): `Resource`, `ResourceSpecification`, `ResourceReference`, `ResourcePreview`, `LongRunningOperation`, `ErrorResponse`, and related types. |
 | `Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers` | Handler interfaces for each operation: `IResourcePreviewHandler`, `IResourceCreateOrUpdateHandler`, `IResourceGetHandler`, `IResourceDeleteHandler`, `ILongRunningOperationGetHandler`. |
 | `Azure.Deployments.Extensibility.Core.V2.Contracts` | The `OneOf<T0, T1>` and `OneOf<T0, T1, T2>` discriminated union types used as handler return types. |
 | `Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions` | `ErrorResponseException` for propagating structured errors through the handler pipeline. |
@@ -44,10 +44,10 @@ throw new ErrorResponseException("InvalidProperty", "The 'name' property is requ
 
 ## Documentation
 
-- [Bicep Extension API Contract v2](../../docs/v2/contract.md)
-- [Preview Operation](../../docs/v2/preview-operation.md)
-- [Asynchronous Operations](../../docs/v2/async-operations.md)
+- [Bicep Extension API Contract v2](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md)
+- [Preview Operation](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/preview-operation.md)
+- [Asynchronous Operations](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/async-operations.md)
 
 ## License
 
-This project is licensed under the [MIT License](../../LICENSE).
+This project is licensed under the [MIT License](https://github.com/Azure/bicep-extensibility/blob/main/LICENSE).

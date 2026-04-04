@@ -3,8 +3,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.AspNetCore;
-using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
+using Azure.Deployments.Extensibility.Core.V2.Validation;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Api;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Client;
 using Azure.Deployments.Extensibility.Extensions.Kubernetes.Models;

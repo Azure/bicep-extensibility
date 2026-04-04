@@ -1,6 +1,6 @@
 # Azure.Deployments.Extensibility.AspNetCore
 
-ASP.NET Core hosting framework for building [Bicep extensions](https://github.com/Azure/bicep-extensibility). Provides a fluent API for handler registration, middleware pipeline, request routing, and behavior (decorator) chains on top of the [Core SDK](../Azure.Deployments.Extensibility.Core/).
+ASP.NET Core hosting framework for building [Bicep extensions](https://github.com/Azure/bicep-extensibility). Provides a fluent API for handler registration, middleware pipeline, request routing, and behavior (decorator) chains on top of the [Core SDK](https://github.com/Azure/bicep-extensibility/tree/main/src/Azure.Deployments.Extensibility.Core).
 
 ## Quick start
 
@@ -90,11 +90,11 @@ var tenantId = httpContext.GetClientTenantId();
 
 ## Documentation
 
-- [Bicep Extension API Contract v2](../../docs/v2/contract.md)
-- [Preview Operation](../../docs/v2/preview-operation.md)
-- [Asynchronous Operations](../../docs/v2/async-operations.md)
-- [Sample Extension (Magic Eight Ball)](../../sample/MagicEightBallExtension/)
+- [Bicep Extension API Contract v2](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md)
+- [Preview Operation](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/preview-operation.md)
+- [Asynchronous Operations](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/async-operations.md)
+- [Sample Extension (Magic Eight Ball)](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension)
 
 ## License
 
-This project is licensed under the [MIT License](../../LICENSE).
+This project is licensed under the [MIT License](https://github.com/Azure/bicep-extensibility/blob/main/LICENSE).
