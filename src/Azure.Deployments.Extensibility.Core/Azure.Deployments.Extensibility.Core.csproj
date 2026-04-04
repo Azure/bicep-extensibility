@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <EnableNuget>true</EnableNuget>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />
