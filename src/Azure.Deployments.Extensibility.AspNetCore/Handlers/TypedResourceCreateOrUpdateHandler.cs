@@ -12,6 +12,13 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+/// <summary>
+/// Abstract base class for typed resource create-or-update handlers.
+/// Converts between untyped and strongly-typed models before/after invoking the handler.
+/// </summary>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
+/// <typeparam name="TConfig">The type representing the extension configuration.</typeparam>
 public abstract class TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers, TConfig> : TypedResourceOperationHandler<TProperties, TIdentifiers, TConfig>, IResourceCreateOrUpdateHandler
 {
     protected TypedResourceCreateOrUpdateHandler(IOptions<JsonOptions> jsonOptions)
@@ -33,6 +40,9 @@ public abstract class TypedResourceCreateOrUpdateHandler<TProperties, TIdentifie
     protected abstract Task<OneOf<TypedResource, LongRunningOperation, ErrorResponse>> HandleAsync(TypedResourceSpecification request, CancellationToken cancellationToken);
 }
 
+/// <inheritdoc cref="TypedResourceCreateOrUpdateHandler{TProperties, TIdentifiers, TConfig}"/>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers> : TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers, JsonObject?>
 {
     protected TypedResourceCreateOrUpdateHandler(IOptions<JsonOptions> jsonOptions)

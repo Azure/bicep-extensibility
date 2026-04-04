@@ -7,6 +7,9 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+/// <summary>
+/// Delegate representing the next step in the long-running operation get behavior chain.
+/// </summary>
 public delegate Task<OneOf<LongRunningOperation, ErrorResponse>> LongRunningOperationGetHandlerDelegate(JsonObject request);
 
 /// <summary>

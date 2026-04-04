@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Azure.Deployments.Extensibility.AspNetCore
 {
+    /// <summary>
+    /// Defines a V1-style extension that handles resource operations.
+    /// </summary>
     [Obsolete("This interface is deprecated and will be removed in a future release.")]
     public interface IExtension
     {

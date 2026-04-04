@@ -6,6 +6,9 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+/// <summary>
+/// Delegate representing the next step in the resource preview behavior chain.
+/// </summary>
 public delegate Task<OneOf<ResourcePreview, ErrorResponse>> ResourcePreviewHandlerDelegate(ResourcePreviewSpecification request);
 
 /// <summary>
