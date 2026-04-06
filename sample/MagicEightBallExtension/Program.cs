@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
+using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using MagicEightBallExtension;
 using MagicEightBallExtension.Behaviors;
 using MagicEightBallExtension.Data;
@@ -27,7 +28,7 @@ app.ConfigureServices(services =>
 // Global behaviors — run for every handler invocation.
 app.AddGlobalHandlerBehavior<ResponseLoggingBehavior>();
 app.AddGlobalHandlerBehavior<NameValidationBehavior>();
-app.AddGlobalHandlerBehavior<PreviewMetadataProcessingBehavior>();
+app.AddGlobalHandlerBehavior<PreviewUnevaluatedProcessingBehavior>();
 
 // v1 handlers
 app.AddExtensionVersion("1.*.*", version => version
