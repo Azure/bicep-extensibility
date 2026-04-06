@@ -6,8 +6,14 @@ using System.Linq.Expressions;
 
 namespace Azure.Deployments.Extensibility.Core.Extensions
 {
+    /// <summary>
+    /// Extension methods for <see cref="ExtensibleImport{TConfig}"/>.
+    /// </summary>
     public static class ExtensibleImportExtensions
     {
+        /// <summary>
+        /// Build a JSON Pointer rooted at the import object for the specified property.
+        /// </summary>
         public static JsonPointer GetJsonPointer<TConfig>(this ExtensibleImport<TConfig> import, Expression<Func<ExtensibleImport<TConfig>, object>> expression) =>
             JsonPointer.Create(nameof(import)).Combine(expression.ToJsonPointer());
     }

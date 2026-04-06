@@ -3,8 +3,14 @@
 
 namespace Azure.Deployments.Extensibility.Core
 {
+    /// <summary>
+    /// Delegate representing an extensibility operation that processes a request and returns a response.
+    /// </summary>
     public delegate Task<ExtensibilityOperationResponse> ExtensibilityOperation(ExtensibilityOperationRequest request, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Defines the contract for a V1 extensibility provider that handles resource operations.
+    /// </summary>
     public interface IExtensibilityProvider
     {
         /// <summary>

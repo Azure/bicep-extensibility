@@ -12,10 +12,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
     /// </summary>
     public class MatchRegexCriterion<TModel>(Regex regex) : IPropertyRuleCriterion<TModel, string?>, IConfigurableErrorCriterion
     {
+        /// <inheritdoc/>
         public string ErrorCode { get; set; } = "RegularExpressionMismatch";
 
+        /// <inheritdoc/>
         public string ErrorMessage { get; set; } = $"Value does not match the regular expression /{regex}/.";
 
+        /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, string? propertyValue, JsonPointer propertyPointer)
         {
             if (propertyValue is null || !regex.IsMatch(propertyValue))

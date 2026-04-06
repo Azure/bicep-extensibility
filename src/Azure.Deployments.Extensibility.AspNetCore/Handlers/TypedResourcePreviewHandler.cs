@@ -36,6 +36,9 @@ public abstract class TypedResourcePreviewHandler<TProperties, TIdentifiers, TCo
     protected abstract Task<OneOf<TypedResourcePreview, ErrorResponse>> HandleAsync(TypedResourcePreviewSpecification request, CancellationToken cancellationToken);
 }
 
+/// <inheritdoc cref="TypedResourcePreviewHandler{TProperties, TIdentifiers, TConfig}"/>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourcePreviewHandler<TProperties, TIdentifiers> : TypedResourcePreviewHandler<TProperties, TIdentifiers, JsonObject?>
 {
     protected TypedResourcePreviewHandler(IOptions<JsonOptions> jsonOptions)

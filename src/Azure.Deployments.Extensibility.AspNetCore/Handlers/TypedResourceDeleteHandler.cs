@@ -12,6 +12,13 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+/// <summary>
+/// Abstract base class for typed resource delete handlers.
+/// Converts between untyped and strongly-typed models before/after invoking the handler.
+/// </summary>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
+/// <typeparam name="TConfig">The type representing the extension configuration.</typeparam>
 public abstract class TypedResourceDeleteHandler<TProperties, TIdentifiers, TConfig> : TypedResourceOperationHandler<TProperties, TIdentifiers, TConfig>, IResourceDeleteHandler
 {
     protected TypedResourceDeleteHandler(IOptions<JsonOptions> jsonOptions)
@@ -33,6 +40,9 @@ public abstract class TypedResourceDeleteHandler<TProperties, TIdentifiers, TCon
     protected abstract Task<OneOf<TypedResource?, LongRunningOperation, ErrorResponse>> HandleAsync(TypedResourceReference typedRequest, CancellationToken cancellationToken);
 }
 
+/// <inheritdoc cref="TypedResourceDeleteHandler{TProperties, TIdentifiers, TConfig}"/>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceDeleteHandler<TProperties, TIdentifiers> : TypedResourceDeleteHandler<TProperties, TIdentifiers, JsonObject?>
 {
     protected TypedResourceDeleteHandler(IOptions<JsonOptions> jsonOptions)

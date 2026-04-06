@@ -22,10 +22,9 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-    <!-- TODO: -->
     <!-- sourcelink configuration -->
-    <!-- <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Azure/bicep-extensibility</RepositoryUrl> -->
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Azure/bicep-extensibility</RepositoryUrl>
 
     <IsPackable>true</IsPackable>
   </PropertyGroup>

@@ -12,6 +12,13 @@ using Microsoft.Extensions.Options;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+/// <summary>
+/// Abstract base class for typed resource get handlers.
+/// Converts between untyped and strongly-typed models before/after invoking the handler.
+/// </summary>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
+/// <typeparam name="TConfig">The type representing the extension configuration.</typeparam>
 public abstract class TypedResourceGetHandler<TProperties, TIdentifiers, TConfig> : TypedResourceOperationHandler<TProperties, TIdentifiers, TConfig>,  IResourceGetHandler
 {
     public TypedResourceGetHandler(IOptions<JsonOptions> jsonOptions)
@@ -32,6 +39,9 @@ public abstract class TypedResourceGetHandler<TProperties, TIdentifiers, TConfig
     protected abstract Task<OneOf<TypedResource?, ErrorResponse>> HandleAsync(TypedResourceReference request, CancellationToken cancellationToken);
 }
 
+/// <inheritdoc cref="TypedResourceGetHandler{TProperties, TIdentifiers, TConfig}"/>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceGetHandler<TProperties, TIdentifiers> : TypedResourceGetHandler<TProperties, TIdentifiers, JsonObject>
 {
     public TypedResourceGetHandler(IOptions<JsonOptions> jsonOptions)

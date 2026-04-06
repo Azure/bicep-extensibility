@@ -22,10 +22,21 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
     /// </summary>
     public record Error
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Error"/> record.
+        /// </summary>
         public Error()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Error"/> record with the specified details.
+        /// </summary>
+        /// <param name="code">A service-defined error code that classifies the error.</param>
+        /// <param name="message">A human-readable description of the error.</param>
+        /// <param name="target">The JSON Pointer to the location that caused the error.</param>
+        /// <param name="details">Additional error details about specific errors that led to this error.</param>
+        /// <param name="innerError">An object containing more specific information about the error.</param>
         [SetsRequiredMembers]
         public Error(string code, string message, JsonPointerProxy? target = null, IList<ErrorDetail>? details = null, JsonObject? innerError = null)
         {

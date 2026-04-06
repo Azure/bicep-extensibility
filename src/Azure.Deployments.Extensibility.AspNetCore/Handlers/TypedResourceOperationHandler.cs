@@ -11,6 +11,13 @@ using Microsoft.Extensions.Options;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+/// <summary>
+/// Abstract base class for typed resource operation handlers that automatically
+/// deserialize and serialize between untyped JSON models and strongly-typed models.
+/// </summary>
+/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
+/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
+/// <typeparam name="TConfig">The type representing the extension configuration.</typeparam>
 public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, TConfig> : IHandler
 {
     private readonly JsonSerializerOptions jsonSerializerOptions;
@@ -177,22 +184,37 @@ public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, T
             throw new InvalidOperationException($"Failed to serialize {typeof(TConfig).Name} into a JSON object.");
     }
 
+    /// <summary>
+    /// Strongly-typed resource specification scoped to this handler's type parameters.
+    /// </summary>
     protected record TypedResourceSpecification : ResourceSpecification<TProperties, TConfig>
     {
     }
 
+    /// <summary>
+    /// Strongly-typed resource preview specification scoped to this handler's type parameters.
+    /// </summary>
     protected record TypedResourcePreviewSpecification : ResourcePreviewSpecification<TProperties, TConfig>
     {
     }
 
+    /// <summary>
+    /// Strongly-typed resource preview scoped to this handler's type parameters.
+    /// </summary>
     protected record TypedResourcePreview : ResourcePreview<TProperties, TIdentifiers, TConfig>
     {
     }
 
+    /// <summary>
+    /// Strongly-typed resource reference scoped to this handler's type parameters.
+    /// </summary>
     protected record TypedResourceReference : ResourceReference<TIdentifiers, TConfig>
     {
     }
 
+    /// <summary>
+    /// Strongly-typed resource scoped to this handler's type parameters.
+    /// </summary>
     protected record TypedResource : Resource<TProperties, TIdentifiers, TConfig>
     {
     }

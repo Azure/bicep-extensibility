@@ -11,10 +11,17 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 /// </summary>
 public record ErrorResponse
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorResponse"/> record.
+    /// </summary>
     public ErrorResponse()
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ErrorResponse"/> record with the specified error.
+    /// </summary>
+    /// <param name="error">The error object containing detailed error information.</param>
     [SetsRequiredMembers]
     public ErrorResponse(Error error)
     {

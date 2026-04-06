@@ -13,6 +13,10 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
     /// </summary>
     public static class JsonDefaults
     {
+        /// <summary>
+        /// Default <see cref="JsonSerializerOptions"/> used for serializing and deserializing extensibility API models.
+        /// Uses camelCase naming, ignores null values, and uses relaxed JSON escaping.
+        /// </summary>
         public readonly static JsonSerializerOptions SerializerOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -21,6 +25,9 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
 
+        /// <summary>
+        /// A source-generated <see cref="ModelSerializerContext"/> configured with <see cref="SerializerOptions"/>.
+        /// </summary>
         public readonly static ModelSerializerContext SerializerContext = new(new(SerializerOptions));
     }
 }

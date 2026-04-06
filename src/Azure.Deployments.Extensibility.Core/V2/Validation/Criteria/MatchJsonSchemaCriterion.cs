@@ -23,19 +23,28 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
         private readonly JsonSchemaResolver<TModel> schemaResolver;
         private readonly SpecVersion schemaSpecVersion;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchJsonSchemaCriterion{TModel}"/> class.
+        /// </summary>
+        /// <param name="schemaResolver">A delegate that resolves the JSON schema from the model.</param>
+        /// <param name="schemaSpecVersion">The JSON Schema specification version to use during evaluation.</param>
         public MatchJsonSchemaCriterion(JsonSchemaResolver<TModel> schemaResolver, SpecVersion schemaSpecVersion)
         {
             this.schemaResolver = schemaResolver;
             this.schemaSpecVersion = schemaSpecVersion;
         }
 
+        /// <inheritdoc/>
         public string ErrorCode { get; set; } = "JsonSchemaViolation";
 
+        /// <inheritdoc/>
         public string ErrorMessage { get; set; } = "";
 
+        /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, JsonNode? propertyValue, JsonPointer propertyPointer) =>
             this.CreateSchemaEvaluator(model).Evaluate(propertyValue).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
 
+        /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, JsonElement propertyValue, JsonPointer propertyPointer) =>
             this.CreateSchemaEvaluator(model).Evaluate(propertyValue).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
 

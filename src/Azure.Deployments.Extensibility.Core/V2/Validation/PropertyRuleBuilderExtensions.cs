@@ -14,6 +14,12 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     /// </summary>
     public static class PropertyRuleBuilderExtensions
     {
+        /// <summary>
+        /// Add a criterion that fails when the property value is <see langword="null"/>.
+        /// </summary>
+        /// <param name="builder">The property rule builder.</param>
+        /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, TProperty> NotNull<TModel, TProperty>(
             this IPropertyRuleBuilder<TModel, TProperty> builder,
             Action<ErrorBuilder>? configureError = null)
@@ -26,6 +32,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Add a criterion that fails when the string property does not match the specified regular expression.
+        /// </summary>
+        /// <param name="builder">The property rule builder.</param>
+        /// <param name="regex">The regular expression to match against.</param>
+        /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, string?> MatchesRegex<TModel>(
             this IPropertyRuleBuilder<TModel, string?> builder,
             Regex regex,
@@ -39,6 +52,14 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Add a criterion that fails when a JSON property does not conform to the specified JSON schema.
+        /// </summary>
+        /// <param name="builder">The property rule builder.</param>
+        /// <param name="schema">The JSON schema to validate against.</param>
+        /// <param name="schemaSpecVersion">The JSON Schema specification version. Defaults to Draft7.</param>
+        /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, TJsonNode?> MatchesJsonSchema<TModel, TJsonNode>(
             this IPropertyRuleBuilder<TModel, TJsonNode?> builder,
             JsonSchema schema,
@@ -54,6 +75,15 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Add a criterion that fails when a <see cref="JsonElement"/> property does not conform to a JSON schema
+        /// resolved from the model.
+        /// </summary>
+        /// <param name="builder">The property rule builder.</param>
+        /// <param name="schemaResolver">A delegate that resolves the JSON schema from the model.</param>
+        /// <param name="schemaSpecVersion">The JSON Schema specification version. Defaults to Draft7.</param>
+        /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, JsonElement> MatchesJsonSchema<TModel>(
             this IPropertyRuleBuilder<TModel, JsonElement> builder,
             JsonSchemaResolver<TModel> schemaResolver,
@@ -68,6 +98,13 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
             return builder;
         }
 
+        /// <summary>
+        /// Add a criterion that fails when the property value does not satisfy the specified predicate.
+        /// </summary>
+        /// <param name="builder">The property rule builder.</param>
+        /// <param name="predicate">The predicate the property value must satisfy.</param>
+        /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, TProperty> Satisfies<TModel, TProperty>(
             this IPropertyRuleBuilder<TModel, TProperty> builder,
             Func<TProperty, bool> predicate,

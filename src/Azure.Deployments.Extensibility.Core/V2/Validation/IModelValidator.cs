@@ -12,6 +12,11 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
     public interface IModelValidator<TModel>
         where TModel : class
     {
+        /// <summary>
+        /// Validate the specified model.
+        /// </summary>
+        /// <param name="model">The model instance to validate.</param>
+        /// <returns>An <see cref="Error"/> if validation fails; otherwise, <see langword="null"/>.</returns>
         Error? Validate(TModel model);
     }
 }

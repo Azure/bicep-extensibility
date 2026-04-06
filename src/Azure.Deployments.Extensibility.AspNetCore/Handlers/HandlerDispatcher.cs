@@ -74,7 +74,19 @@ internal static class HandlerDispatcher
             cancellationToken);
 
         return response.Match(
-            resource => resource is not null ? Ok(resource) : NotFound(),
+            resource => 
+            {
+                if (resource is null)
+                {
+                    var errorResponse = new ErrorResponse(new(
+                        code: "ResourceNotFound",
+                        message: $"The resource of type {reference.Type} with api version {reference.ApiVersion} and identifiers {reference.Identifiers} was not found."));
+                    
+                    return NotFound(errorResponse);
+                }
+                
+                return Ok(resource);
+            },
             errorResponse => ErrorResponseToHttpResult(errorResponse));
     }
 

@@ -2,7 +2,13 @@
 
   <PropertyGroup>
     <EnableNuget>true</EnableNuget>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>Core models, contracts, and validation utilities for building Bicep extensions that deploy Azure data-plane or non-Azure resources through Bicep files and ARM templates.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Core.Tests.Unit" />

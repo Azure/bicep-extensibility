@@ -68,6 +68,9 @@ namespace Azure.Deployments.Extensibility.Core
     public record ExtensibilityOperationRequest(ExtensibleImport<JsonElement> Import, ExtensibleResource<JsonElement> Resource)
         : ExtensibilityOperationRequest<JsonElement, JsonElement>(Import, Resource);
 
+    /// <summary>
+    /// Represents the base type for extensibility operation responses (V1).
+    /// </summary>
     public abstract record ExtensibilityOperationResponse();
 
     /// <summary>
@@ -83,6 +86,10 @@ namespace Azure.Deployments.Extensibility.Core
     /// </summary>
     public record ExtensibilityOperationErrorResponse : ExtensibilityOperationResponse
     {
+        /// <summary>
+        /// Initializes a new instance from a collection of errors.
+        /// </summary>
+        /// <param name="errors">The errors that caused the operation to fail.</param>
         [JsonConstructor]
         public ExtensibilityOperationErrorResponse(IEnumerable<ExtensibilityError> errors)
         {
@@ -99,6 +106,9 @@ namespace Azure.Deployments.Extensibility.Core
         {
         }
 
+        /// <summary>
+        /// Gets the errors that caused the operation to fail.
+        /// </summary>
         public IEnumerable<ExtensibilityError> Errors { get; }
     }
 }
