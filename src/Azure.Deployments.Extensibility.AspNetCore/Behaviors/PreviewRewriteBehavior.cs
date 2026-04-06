@@ -7,7 +7,7 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
 /// <summary>Adapts a preview request/response rewriter to a resource preview behavior.</summary>
-public class PreviewRewriterBehavior(IResourcePreviewRewriter previewRewriter) : IResourcePreviewBehavior
+public class PreviewRewriteBehavior(IResourcePreviewRewriter previewRewriter) : IResourcePreviewBehavior
 {
     private IResourcePreviewRewriter PreviewRewriter { get; } = previewRewriter;
 
@@ -16,12 +16,11 @@ public class PreviewRewriterBehavior(IResourcePreviewRewriter previewRewriter) :
         ResourcePreviewHandlerDelegate next,
         CancellationToken cancellationToken)
     {
-        var wasRewritten = this.PreviewRewriter.RewritePreviewRequest(request, out var rewrittenRequest, out var context);
+        var processedRequest = this.PreviewRewriter.RewritePreviewRequest(request);
+        var wasRewritten = !ReferenceEquals(request, processedRequest);
 
-        var response = await next(rewrittenRequest ?? request);
+        var response = await next(processedRequest);
 
-        return wasRewritten && response.IsT0
-            ? this.PreviewRewriter.RewritePreviewResponse(response.AsT0!, context!)
-            : response;
+        return wasRewritten && response.IsT0 ? this.PreviewRewriter.RewritePreviewResponse(response.AsT0!, request) : response;
     }
 }

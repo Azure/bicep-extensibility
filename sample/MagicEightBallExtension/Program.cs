@@ -28,7 +28,7 @@ app.ConfigureServices(services =>
 // Global behaviors — run for every handler invocation.
 app.AddGlobalHandlerBehavior<ResponseLoggingBehavior>();
 app.AddGlobalHandlerBehavior<NameValidationBehavior>();
-app.AddGlobalHandlerBehavior(_ => new PreviewRewriterBehavior(new FakeValueSubstitutionPreviewRewriter()));
+app.AddGlobalHandlerBehavior(_ => new PreviewRewriteBehavior(new FakeValueSubstitutionPreviewRewriter()));
 
 // v1 handlers
 app.AddExtensionVersion("1.*.*", version => version
