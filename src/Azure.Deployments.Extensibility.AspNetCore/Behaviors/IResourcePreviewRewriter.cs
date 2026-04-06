@@ -1,64 +1,67 @@
 ﻿// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Text.Json.Nodes;
+using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
-using Json.Pointer;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
-public readonly record struct ResourcePreviewRewriterContext
-{
-    /// <summary>The resource type of the resource being previewed.</summary>
-    public string ResourceType { get; init; }
-
-    /// <summary>The API version of the resource being previewed.</summary>
-    public string? ApiVersion { get; init; }
-
-    /// <summary>The JSON pointer of the top-most node being modified in the resource preview request payload. Any relative pointers are
-    /// relative to this pointer.</summary>
-    /// <example>/properties</example>
-    public JsonPointer RootPointer { get; init; }
-
-    /// <summary>The top-most JSON object of the rewrite operation.</summary>
-    /// <remarks>Do not modify this object.</remarks>
-    public JsonObject RootObject { get; init; }
-}
-
 /// <summary>
-/// An interface for rewriting resource preview requests and responses.
+/// An interface for rewriting resource preview requests and responses to handle scenarios when the Deployments engine sends requests with
+/// unevaluated ARM template language expressions.
 /// </summary>
-/// <remarks>
-/// This interface provides mechanisms to generate or modify property values during resource preview
-/// requests. Implementations can produce synthetic values for unevaluated JSON nodes as well as
-/// merge or override existing values in a domain-specific manner.
-/// </remarks>
 public interface IResourcePreviewRewriter
 {
     /// <summary>
-    /// Produces a fake value for an unevaluated JSON node for an incoming resource preview request.
+    /// Rewrites the resource preview request to handle scenarios where Deployments engine sends requests containing unevaluated ARM
+    /// template language expressions so that the request can be digested by the extension. This method processes the request, applies
+    /// necessary modifications, and outputs a rewritten request and the associated context.
     /// </summary>
-    /// <param name="relativePointer">A JSON pointer indicating the location of the property in the current rewrite context.</param>
-    /// <param name="originalValue">The original, unevaluated value of the property.</param>
-    /// <param name="context">The context of the resource preview request.</param>
-    /// <returns>A fake value to replace the unevaluated property value.</returns>
-    /// <remarks>This should be overridden to provide domain-specific acceptable values. For example, creating a value for a string field
-    /// with a length requirement or an integer field that must be greater than 0.</remarks>
-    JsonNode CreateFakeValueForUnevaluatedNode(JsonPointer relativePointer, JsonNode originalValue, ResourcePreviewRewriterContext context);
+    /// <param name="request">The original resource preview request.</param>
+    /// <param name="outgoingRequest">When the method returns, contains the rewritten resource preview request with necessary adjustments.</param>
+    /// <param name="context">
+    /// When the method returns, contains the context created during the rewriting process.
+    /// This context can store additional information or track specific properties, aiding in later response processing.
+    /// </param>
+    /// <returns><c>True</c> if the request was rewritten; otherwise, <c>False</c>.</returns>
+    bool RewritePreviewRequest(ResourcePreviewSpecification request, [NotNullWhen(true)] out ResourcePreviewSpecification? outgoingRequest, [NotNullWhen(true)] out ResourcePreviewRewriterContext? context);
 
     /// <summary>
-    /// Decides the final value to use for a resource preview response JSON property that was received as unevaluated.
+    /// Rewrites the resource preview response to handle scenarios where Deployments engine sends requests containing unevaluated ARM
+    /// template language expressions so that the response can be digested by the Deployments engine. This method processes the response,
+    /// typically undoing the rewrites made during request rewriting, and outputs the revised resource preview or an error response.
     /// </summary>
-    /// <param name="relativePointer">A JSON pointer indicating the location of the property in the resource properties tree.</param>
-    /// <param name="originalValue">The original, unevaluated value of the property.</param>
-    /// <param name="outgoingValue">The current outgoing value of the property.</param>
-    /// <param name="context">The context of the resource preview request.</param>
-    /// <returns>The final value to use for the property.</returns>
-    /// <remarks>Generally this should return the original value unless it is certain that another value should be used.</remarks> 
-    JsonNode? MergeValueForUnevaluatedNode(JsonPointer relativePointer, JsonNode originalValue, JsonNode? outgoingValue, ResourcePreviewRewriterContext context);
+    /// <param name="response">The outgoing response from the resource preview handler.</param>
+    /// <param name="context">
+    /// The context created during the request rewriting process. This context provides additional information
+    /// or tracks specific properties that may influence the response rewriting.
+    /// </param>
+    /// <example>Restores the original ARM template language expressions in the response, making it digestible to the Deployments engine.</example>
+    /// <returns>
+    /// A <c>OneOf</c> object containing either the modified <c>ResourcePreview</c> with the necessary updates
+    /// or an <c>ErrorResponse</c> indicating the reason why the processing was unsuccessful.
+    /// </returns>
+    OneOf<ResourcePreview, ErrorResponse> RewritePreviewResponse(ResourcePreview response, ResourcePreviewRewriterContext context);
+}
 
-    /// <summary>Finalizes the resource preview response. This is the very last step before the response continues through the response pipeline.</summary>
-    /// <remarks>This can be overriden to perform more complex transformations.</remarks>
-    OneOf<ResourcePreview, ErrorResponse> Finalize(ResourcePreview preview);
+public class ResourcePreviewRewriterContext(ResourcePreviewSpecification originalRequest)
+{
+    /// <summary>The original preview request.</summary>   
+    public ResourcePreviewSpecification OriginalRequest { get; init; } = originalRequest;
+
+    /// <summary>The resource type of the resource being previewed.</summary>
+    public string ResourceType => this.OriginalRequest.Type;
+
+    /// <summary>The API version of the resource being previewed.</summary>
+    public string? ApiVersion => this.OriginalRequest.ApiVersion;
+
+    /// <summary>Additional properties that can be used to store state during the rewrite operation.</summary>
+    public IReadOnlyDictionary<string, object?> Properties => this.additionalProperties;
+
+    private readonly Dictionary<string, object?> additionalProperties = new();
+
+    public T? GetProperty<T>(string name) => this.additionalProperties.TryGetValue(name, out var value) && value is T typed ? typed : default;
+
+    public void SetProperty(string name, object? value) => this.additionalProperties[name] = value;
 }
