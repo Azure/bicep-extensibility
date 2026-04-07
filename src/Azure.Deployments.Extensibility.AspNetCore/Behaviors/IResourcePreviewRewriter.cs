@@ -27,11 +27,10 @@ public interface IResourcePreviewRewriter
     /// typically undoing the rewrites made during request rewriting, and outputs the revised resource preview or an error response.
     /// </summary>
     /// <param name="response">The outgoing response from the resource preview handler.</param>
-    /// <param name="originalRequest">The original request before it was rewritten.</param>
     /// <example>Restores the original ARM template language expressions in the response, making it digestible to the Deployments engine.</example>
     /// <returns>
     /// A <c>OneOf</c> object containing either the modified <c>ResourcePreview</c> with the necessary updates
     /// or an <c>ErrorResponse</c> indicating the reason why the processing was unsuccessful.
     /// </returns>
-    OneOf<ResourcePreview, ErrorResponse> RewritePreviewResponse(ResourcePreview response, ResourcePreviewSpecification originalRequest);
+    OneOf<ResourcePreview, ErrorResponse> RewritePreviewResponse(ResourcePreview response);
 }

@@ -21,6 +21,6 @@ public class PreviewRewriteBehavior(IResourcePreviewRewriter previewRewriter) : 
 
         var response = await next(processedRequest);
 
-        return wasRewritten && response.IsT0 ? this.PreviewRewriter.RewritePreviewResponse(response.AsT0!, request) : response;
+        return wasRewritten && response.IsT0 ? this.PreviewRewriter.RewritePreviewResponse(response.AsT0!) : response;
     }
 }
