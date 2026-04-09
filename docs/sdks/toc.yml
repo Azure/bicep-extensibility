@@ -4,3 +4,5 @@
   href: core.md
 - name: AspNetCore
   href: aspnetcore.md
+- name: API Reference
+  href: ../api/
