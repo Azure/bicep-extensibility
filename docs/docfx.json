@@ -3,14 +3,24 @@
     {
       "src": [
         {
-          "files": [
-            "src/Azure.Deployments.Extensibility.Core/Azure.Deployments.Extensibility.Core.csproj",
-            "src/Azure.Deployments.Extensibility.AspNetCore/Azure.Deployments.Extensibility.AspNetCore.csproj"
-          ],
+          "files": ["src/Azure.Deployments.Extensibility.Core/Azure.Deployments.Extensibility.Core.csproj"],
           "src": ".."
         }
       ],
-      "dest": "api",
+      "dest": "sdks/api-core",
+      "filter": "filterConfig.yml",
+      "properties": {
+        "TargetFramework": "net8.0"
+      }
+    },
+    {
+      "src": [
+        {
+          "files": ["src/Azure.Deployments.Extensibility.AspNetCore/Azure.Deployments.Extensibility.AspNetCore.csproj"],
+          "src": ".."
+        }
+      ],
+      "dest": "sdks/api-aspnetcore",
       "filter": "filterConfig.yml",
       "properties": {
         "TargetFramework": "net8.0"
@@ -20,7 +30,10 @@
   "build": {
     "content": [
       {
-        "files": ["api/**.yml", "api/index.md"]
+        "files": ["sdks/api-core/**/*.yml", "sdks/api-core/index.md"]
+      },
+      {
+        "files": ["sdks/api-aspnetcore/**/*.yml", "sdks/api-aspnetcore/index.md"]
       },
       {
         "files": [
@@ -55,7 +68,8 @@
     "globalMetadata": {
       "_appTitle": "Bicep Extensibility SDK",
       "_appFooter": "&copy; Microsoft Corporation. All rights reserved.",
-      "_enableSearch": true
+      "_enableSearch": true,
+      "_baseUrl": "https://azure.github.io/bicep-extensibility"
     },
     "template": ["default", "modern"]
   }

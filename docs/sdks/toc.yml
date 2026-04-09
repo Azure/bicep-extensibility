@@ -2,7 +2,11 @@
   href: index.md
 - name: Core
   href: core.md
+  items:
+  - name: API Reference
+    href: api-core/
 - name: AspNetCore
   href: aspnetcore.md
-- name: API Reference
-  href: ../api/
+  items:
+  - name: API Reference
+    href: api-aspnetcore/

@@ -26,4 +26,6 @@ A Bicep extension implements a set of resource operations (preview, create/updat
 - [Preview Operation](contract/preview-operation.md) — unevaluated expressions, preview metadata, What-If
 - [Core SDK](sdks/core.md) — models, `OneOf`, validation framework
 - [AspNetCore SDK](sdks/aspnetcore.md) — `ExtensionApplication`, behaviors, typed handlers
+- <xref:Azure.Deployments.Extensibility.Core.V2.Contracts.Models> — Core API Reference
+- <xref:Azure.Deployments.Extensibility.AspNetCore> — AspNetCore API Reference
 - [Sample Extension](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension) — Magic 8-Ball demo covering all 5 endpoints

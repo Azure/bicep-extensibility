@@ -314,4 +314,5 @@ This section documents operational requirements that apply to **Bicep third-part
 
 ### Health Check
 
-> TODO: Document the health check API that 3P and local extensions should implement.
+> [!NOTE]
+> Health check API documentation is coming soon.

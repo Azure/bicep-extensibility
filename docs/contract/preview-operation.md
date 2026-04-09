@@ -516,8 +516,10 @@ The deployment engine calls get to retrieve the resource's current state.
 
 ### Step 3: Process States Using Preview Metadata
 
-> **TODO:** This section needs to be finalized.
+> [!NOTE]
+> This section is under development and will be finalized in a future update.
 
 ### Step 4: Diff and Produce What-If Output
 
-> **TODO:** This section needs to be finalized.
+> [!NOTE]
+> This section is under development and will be finalized in a future update.
