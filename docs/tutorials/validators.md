@@ -32,7 +32,7 @@ public class WidgetSpecificationValidator : ModelValidator<ResourceSpecification
 
 ## Chaining criteria
 
-Criteria chain left to right. If an earlier criterion fails, later criteria on the same rule are still evaluated:
+Criteria chain left to right. If an earlier criterion fails, later criteria on the same rule are not evaluated:
 
 ```csharp
 Ensure(x => x.Type)

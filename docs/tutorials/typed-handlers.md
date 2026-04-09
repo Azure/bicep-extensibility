@@ -194,7 +194,7 @@ public record MyConfig
 public class WidgetCreateOrUpdateHandler
     : TypedResourceCreateOrUpdateHandler<WidgetProperties, WidgetIdentifiers, MyConfig>
 {
-    // request.Config is now MyConfig instead of JsonObject?
+    // request.Config is now MyConfig instead of JsonObject.
 }
 ```
 
