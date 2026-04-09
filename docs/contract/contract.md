@@ -39,7 +39,7 @@ A Bicep extension is an API abstraction that enables users to deploy Azure data-
 
 ## Core Models
 
-The models below are defined in [`core.tsp`](../../spec/core.tsp) and are transport-agnostic. A `?` suffix on a property name indicates the property is optional.
+The models below are defined in [`core.tsp`](https://github.com/Azure/bicep-extensibility/blob/main/spec/core.tsp) and are transport-agnostic. A `?` suffix on a property name indicates the property is optional.
 
 ### Error Models
 
@@ -275,9 +275,9 @@ The core contract above is transport-agnostic. This section describes the HTTP p
 
 ### OpenAPI Specification
 
-For the complete HTTP binding (routes, methods, request/response headers, and status codes), refer to the generated [OpenAPI specification](openapi.yaml). A rendered version is available via [Scalar](https://sandbox.scalar.com/p/yPXpq).
+For the complete HTTP binding (routes, methods, request/response headers, and status codes), refer to the generated [OpenAPI specification](v2/openapi.yaml). A rendered version is available via [Scalar](https://sandbox.scalar.com/p/yPXpq).
 
-The HTTP binding is defined in [`http.tsp`](../../spec/http.tsp).
+The HTTP binding is defined in [`http.tsp`](https://github.com/Azure/bicep-extensibility/blob/main/spec/http.tsp).
 
 ### Authentication
 
