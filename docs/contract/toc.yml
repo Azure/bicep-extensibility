@@ -6,3 +6,5 @@
   href: preview-operation.md
 - name: Async Operations
   href: async-operations.md
+- name: API Explorer
+  href: ../api-explorer/index.html
