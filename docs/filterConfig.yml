@@ -16,3 +16,18 @@ apiRules:
       hasAttribute:
         uid: System.Runtime.CompilerServices.InternalsVisibleToAttribute
       type: Member
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.(IExtensibilityProvider|IExtensibilityProviderRegistry|ModelMapper|Extensib|ExtensibleImport|ExtensibleResource)
+      type: Type
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Exceptions\.
+      type: Type
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Extensions\.
+      type: Type
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Json\.(ExtensibilityJsonSerializer|ExtensibilityOperationResponseConverter|ObjectElement)
+      type: Type
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Validators\.
+      type: Type
