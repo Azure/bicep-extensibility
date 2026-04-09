@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - shenglol/doc-gh-page # temporary — remove before merging
   workflow_dispatch:
 
 permissions:
