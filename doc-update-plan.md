@@ -4,7 +4,7 @@
 
 Set up docfx for SDK reference docs and host everything on a GitHub Pages site.
 
-Phases 1–4 are ✅ **complete**. Phases 5–6 remain.
+All phases are ✅ **complete**.
 
 ---
 
@@ -45,11 +45,11 @@ The **MagicEightBall** sample lives in `sample/MagicEightBallExtension/`. It dem
 
 ---
 
-## Phase 5: SDK Documentation with docfx
+## ~~Phase 5: SDK Documentation with docfx~~ ✅ Done
 
 **Goal:** Generate API reference documentation for the Core and AspNetCore SDK projects using docfx.
 
-**Status:** Not started. XML doc comments are already in good shape across public types.
+**Status:** Complete.
 
 **Steps:**
 
@@ -79,13 +79,13 @@ The **MagicEightBall** sample lives in `sample/MagicEightBallExtension/`. It dem
 
 ---
 
-## Phase 6: GitHub Pages Site
+## ~~Phase 6: GitHub Pages Site~~ ✅ Done
 
 *Depends on Phase 5*
 
 **Goal:** Host combined SDK docs + API explorer on GitHub Pages.
 
-**Status:** Not started.
+**Status:** Complete.
 
 **Steps:**
 
@@ -115,7 +115,5 @@ The **MagicEightBall** sample lives in `sample/MagicEightBallExtension/`. It dem
 
 ## Remaining Work
 
-```
-Phase 5 (docfx)  ──► Phase 6 (GitHub Pages)
-```
+None — all phases are complete.
 
