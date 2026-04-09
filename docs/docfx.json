@@ -1,0 +1,62 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "src/Azure.Deployments.Extensibility.Core/Azure.Deployments.Extensibility.Core.csproj",
+            "src/Azure.Deployments.Extensibility.AspNetCore/Azure.Deployments.Extensibility.AspNetCore.csproj"
+          ],
+          "src": ".."
+        }
+      ],
+      "dest": "api",
+      "filter": "filterConfig.yml",
+      "properties": {
+        "TargetFramework": "net8.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["api/**.yml", "api/index.md"]
+      },
+      {
+        "files": [
+          "contract/**.md",
+          "contract/**/toc.yml",
+          "sdks/**.md",
+          "sdks/**/toc.yml",
+          "tutorials/**.md",
+          "tutorials/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ],
+        "exclude": [
+          "contract/v1/**",
+          "contract/v2/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "contract/v2/openapi.yaml",
+          "api-explorer/**"
+        ],
+        "exclude": [
+          "contract/v1/**"
+        ]
+      }
+    ],
+    "dest": "_site",
+    "globalMetadataFiles": [],
+    "globalMetadata": {
+      "_appTitle": "Bicep Extensibility SDK",
+      "_appFooter": "&copy; Microsoft Corporation. All rights reserved.",
+      "_enableSearch": true
+    },
+    "template": ["default", "modern"]
+  }
+}

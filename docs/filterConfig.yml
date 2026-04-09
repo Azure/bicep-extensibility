@@ -1,0 +1,18 @@
+apiRules:
+  - exclude:
+      uidRegex: ^System\.
+      type: Namespace
+  - exclude:
+      uidRegex: ^Microsoft\.
+      type: Namespace
+  - include:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.
+      type: Namespace
+  - exclude:
+      hasAttribute:
+        uid: System.ObsoleteAttribute
+      type: Member
+  - exclude:
+      hasAttribute:
+        uid: System.Runtime.CompilerServices.InternalsVisibleToAttribute
+      type: Member
