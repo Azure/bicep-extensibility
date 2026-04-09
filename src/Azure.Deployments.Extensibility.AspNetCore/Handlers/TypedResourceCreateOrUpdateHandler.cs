@@ -41,8 +41,6 @@ public abstract class TypedResourceCreateOrUpdateHandler<TProperties, TIdentifie
 }
 
 /// <inheritdoc cref="TypedResourceCreateOrUpdateHandler{TProperties, TIdentifiers, TConfig}"/>
-/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
-/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers> : TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers, JsonObject?>
 {
     protected TypedResourceCreateOrUpdateHandler(IOptions<JsonOptions> jsonOptions)
