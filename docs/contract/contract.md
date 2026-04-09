@@ -275,7 +275,7 @@ The core contract above is transport-agnostic. This section describes the HTTP p
 
 ### OpenAPI Specification
 
-For the complete HTTP binding (routes, methods, request/response headers, and status codes), refer to the generated [OpenAPI specification](v2/openapi.yaml). A rendered version is available via the [API Explorer](../api-explorer/index.html).
+For the complete HTTP binding (routes, methods, request/response headers, and status codes), refer to the generated [OpenAPI specification](v2/openapi.yaml). A rendered version is available via the [OpenAPI Explorer](../api-explorer/index.html).
 
 The HTTP binding is defined in [`http.tsp`](https://github.com/Azure/bicep-extensibility/blob/main/spec/http.tsp).
 
