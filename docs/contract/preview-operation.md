@@ -202,14 +202,16 @@ Properties containing ARM template language expressions that the deployment engi
 
 ## Unprocessable Preview
 
-When the extension cannot produce any meaningful preview — for instance because the identifiers, configuration, or other essential inputs are unevaluated — it should return an `ErrorResponse` with error code `UnprocessablePreview` and an error message explaining the reason.
+When the extension cannot produce any meaningful preview — for instance because the identifiers, configuration, or other
+essential inputs are unevaluated — it should return an `ErrorResponse` with error code `PreviewNotSupported` and an
+error message explaining the reason.
 
 ### Effect on the Deployment Engine
 
-| Context | Behavior |
-|---------|----------|
-| **Preflight validation** | The error is ignored. Preflight does **not** fail. |
-| **What-If** | The resource is reported with change type **Unsupported**, and the `UnprocessablePreview` error message is shown as the unsupported reason. |
+| Context                  | Behavior                                                                                                                                   |
+|--------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| **Preflight validation** | The error is ignored. Preflight does **not** fail.                                                                                         |
+| **What-If**              | The resource is reported with change type **Unsupported**, and the `PreviewNotSupported` error message is shown as the unsupported reason. |
 
 ### Example: Unprocessable Preview
 
@@ -239,7 +241,7 @@ When the extension cannot produce any meaningful preview — for instance becaus
 ```json
 {
   "error": {
-    "code": "UnprocessablePreview",
+    "code": "PreviewNotSupported",
     "message": "Preview cannot be performed because the identifier 'employeeId' is unevaluated."
   }
 }
@@ -247,11 +249,11 @@ When the extension cannot produce any meaningful preview — for instance becaus
 
 ## HTTP Binding
 
-| Scenario | Status Code |
-|----------|-------------|
-| Preview succeeded | `200 OK` |
-| Preview unprocessable (`UnprocessablePreview`) | `422 Unprocessable Content` |
-| Validation error or other client error | `400 Bad Request` |
+| Scenario                                      | Status Code                 |
+|-----------------------------------------------|-----------------------------|
+| Preview succeeded                             | `200 OK`                    |
+| Preview not supported (`PreviewNotSupported`) | `422 Unprocessable Content` |
+| Validation error or other client error        | `400 Bad Request`           |
 
 ## Configuration Handling
 

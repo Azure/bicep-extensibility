@@ -23,7 +23,13 @@ The models map directly to the [API Contract](../contract/contract.md). A few hi
 
 ### ResourceSpecification
 
-The input to **Preview** and **Create or Update** — carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), and optional `Config`/`ConfigId`.
+The input to **Create or Update** — carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), and
+optional `Config`/`ConfigId`.
+
+### ResourcePreviewSpecification
+
+The input to **Preview** -- carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), `Metadata`, and
+optional `Config`/`ConfigId`.
 
 ### Resource
 
