@@ -28,7 +28,7 @@ optional `Config`/`ConfigId`.
 
 ### ResourcePreviewSpecification
 
-The input to **Preview** -- carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), `Metadata`, and
+The input to **Preview** — carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), `Metadata`, and
 optional `Config`/`ConfigId`.
 
 ### Resource
