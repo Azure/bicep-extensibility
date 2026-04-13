@@ -41,8 +41,6 @@ public abstract class TypedResourceDeleteHandler<TProperties, TIdentifiers, TCon
 }
 
 /// <inheritdoc cref="TypedResourceDeleteHandler{TProperties, TIdentifiers, TConfig}"/>
-/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
-/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceDeleteHandler<TProperties, TIdentifiers> : TypedResourceDeleteHandler<TProperties, TIdentifiers, JsonObject?>
 {
     protected TypedResourceDeleteHandler(IOptions<JsonOptions> jsonOptions)

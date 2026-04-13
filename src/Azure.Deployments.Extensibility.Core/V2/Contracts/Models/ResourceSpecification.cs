@@ -85,7 +85,6 @@ namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models
     }
     
     /// <inheritdoc cref="ResourceSpecification{TProperties, TConfig}"/>
-    /// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
     public record ResourceSpecification<TProperties> : ResourceSpecification<TProperties, JsonObject?>
     {
     }

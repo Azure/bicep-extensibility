@@ -149,7 +149,13 @@ public class ExtensionApplication
     /// </summary>
     public Task RunAsync() => this.Build().RunAsync();
 
-    private WebApplication Build()
+    /// <summary>
+    /// Builds the application and returns the configured <see cref="WebApplication"/>.
+    /// Use this when you need to control the application lifecycle yourself,
+    /// for example when hosting inside Service Fabric with
+    /// <c>KestrelCommunicationListener</c>.
+    /// </summary>
+    public WebApplication Build()
     {
         if (this.webApp is not null)
         {

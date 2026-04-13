@@ -349,6 +349,12 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+# docfx output
+docs/_site/
+docs/api/
+docs/sdks/api-core/
+docs/sdks/api-aspnetcore/
+
 # osx turds
 .DS_Store
 

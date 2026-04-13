@@ -104,8 +104,6 @@ public record Resource<TProperties, TIdentifiers, TConfig>
 }
 
 /// <inheritdoc cref="Resource{TProperties, TIdentifiers, TConfig}"/>
-/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
-/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public record Resource<TProperties, TIdentifiers> : Resource<TProperties, TIdentifiers, JsonObject>
 {
 }

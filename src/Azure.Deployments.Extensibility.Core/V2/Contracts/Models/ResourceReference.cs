@@ -86,7 +86,6 @@ public record ResourceReference<TIdentifiers, TConfig>
 }
 
 /// <inheritdoc cref="ResourceReference{TIdentifiers, TConfig}"/>
-/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public record ResourceReference<TIdentifiers> : ResourceReference<TIdentifiers, JsonObject>
 {
 }

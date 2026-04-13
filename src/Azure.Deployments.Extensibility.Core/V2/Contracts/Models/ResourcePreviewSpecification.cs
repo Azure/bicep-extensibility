@@ -24,7 +24,6 @@ public record ResourcePreviewSpecification<TProperties, TConfig> : ResourceSpeci
 }
 
 /// <inheritdoc cref="ResourcePreviewSpecification{TProperties, TConfig}"/>
-/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
 public record ResourcePreviewSpecification<TProperties> : ResourcePreviewSpecification<TProperties, JsonObject>
 {
 }

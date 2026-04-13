@@ -1,0 +1,46 @@
+apiRules:
+  # Exclude BCL and framework namespaces — only Extensibility types should appear
+  - exclude:
+      uidRegex: ^System\.
+      type: Namespace
+  - exclude:
+      uidRegex: ^Microsoft\.
+      type: Namespace
+  - include:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.
+      type: Namespace
+
+  # Hide obsolete members and InternalsVisibleTo attributes
+  - exclude:
+      hasAttribute:
+        uid: System.ObsoleteAttribute
+      type: Member
+  - exclude:
+      hasAttribute:
+        uid: System.Runtime.CompilerServices.InternalsVisibleToAttribute
+      type: Member
+
+  # Legacy V1 provider types — superseded by V2 contract
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.(IExtensibilityProvider|IExtensibilityProviderRegistry|ModelMapper|Extensib|ExtensibleImport|ExtensibleResource)
+      type: Type
+
+  # Internal exception types — not part of the public SDK surface
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Exceptions\.
+      type: Type
+
+  # Internal extension methods — implementation details
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Extensions\.
+      type: Type
+
+  # Internal JSON serialization helpers — not intended for consumers
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Json\.(ExtensibilityJsonSerializer|ExtensibilityOperationResponseConverter|ObjectElement)
+      type: Type
+
+  # Internal V1 validators — replaced by the V2 fluent validation framework
+  - exclude:
+      uidRegex: ^Azure\.Deployments\.Extensibility\.Core\.Validators\.
+      type: Type

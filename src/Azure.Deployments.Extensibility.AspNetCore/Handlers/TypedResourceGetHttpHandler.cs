@@ -40,8 +40,6 @@ public abstract class TypedResourceGetHandler<TProperties, TIdentifiers, TConfig
 }
 
 /// <inheritdoc cref="TypedResourceGetHandler{TProperties, TIdentifiers, TConfig}"/>
-/// <typeparam name="TProperties">The type representing the resource properties.</typeparam>
-/// <typeparam name="TIdentifiers">The type representing the resource identifiers.</typeparam>
 public abstract class TypedResourceGetHandler<TProperties, TIdentifiers> : TypedResourceGetHandler<TProperties, TIdentifiers, JsonObject>
 {
     public TypedResourceGetHandler(IOptions<JsonOptions> jsonOptions)
