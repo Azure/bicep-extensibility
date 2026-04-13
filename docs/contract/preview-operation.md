@@ -6,7 +6,10 @@ This document provides detailed guidance and examples for implementing the previ
 
 The preview operation simulates a resource creation or update without persisting any changes. It enables the deployment engine to show users what a deployment *would* produce (read-only properties, default values, validation errors, etc.) before any real changes are made.
 
-Preview is a **best-effort operation**. Extensions should implement it as completely as possible, but are not required to handle every scenario. When a preview cannot be meaningfully produced — for example, because the identifiers, configuration, or other key properties are unevaluated — the extension may return a `UnprocessablePreview` error instead of a partial or misleading response. See [Unprocessable Preview](#unprocessable-preview) for details.
+Preview is a **best-effort operation**. Extensions should implement it as completely as possible, but are not required
+to handle every scenario. When a preview cannot be meaningfully produced — for example, because the identifiers,
+configuration, or other key properties are unevaluated — the extension may return a `PreviewNotSupported` error instead
+of a partial or misleading response. See [Unprocessable Preview](#unprocessable-preview) for details.
 
 | | Type |
 |---|---|
