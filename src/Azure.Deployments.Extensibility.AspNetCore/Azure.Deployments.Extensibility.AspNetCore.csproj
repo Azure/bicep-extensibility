@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.28" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.13.22" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.14.1" />
     <PackageReference Include="Semver" Version="3.0.0" />
   </ItemGroup>
 
