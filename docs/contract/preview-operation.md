@@ -38,10 +38,13 @@ model ResourcePreviewSpecification extends ResourceSpecification {
 
 model ResourcePreviewSpecificationMetadata {
   unevaluated: JsonPointer[];
+  unevaluatedPropertyNames: JsonPointer[];
 }
 ```
 
-The `ResourcePreviewSpecification` extends the standard `ResourceSpecification` with an optional `metadata` object. When present, `metadata.unevaluated` lists the JSON Pointer paths to properties whose values are unresolved ARM template language expressions.
+The `ResourcePreviewSpecification` extends the standard `ResourceSpecification` with an optional `metadata` object. 
+When present, `metadata.unevaluated` lists the JSON Pointer paths to properties whose values are unresolved ARM template language expressions.
+When present, `metadata.unevaluatedPropertyNames` lists the JSON Pointer paths to properties whose names are unresolved ARM template language expressions.
 
 ## Unevaluated Expressions
 
@@ -191,15 +194,36 @@ Properties whose values cannot be determined at preview time. This typically app
 }
 ```
 
+**Example:** The `identifiers` and `configId` of the resource cannot be determined at preview time.
+
+```json
+{
+  "metadata": {
+    "unknown": ["/identifiers", "/configId"]
+  }
+}
+```
+
 ### `unevaluated`
 
 Properties containing ARM template language expressions that the deployment engine could not resolve. The extension must account for every path received in the request's `metadata.unevaluated`, but should **reclassify** a path into a more specific category whenever possible. For example, if the unevaluated path points to a property the extension knows is always read-only, it should appear under `readOnly`, not `unevaluated`. Only list a path under `unevaluated` when the extension cannot determine a more specific category.
+
+**Example:** The department property is an expression that cannot be resolved.
 
 ```json
 {
   "metadata": {
     "unevaluated": ["/properties/department"]
   }
+}
+```
+
+**Example:** The `identifiers` is partially evaluated.
+```json
+{
+  "metadata": {
+    "unevaluated": ["/identifiers/name"]
+  }  
 }
 ```
 
