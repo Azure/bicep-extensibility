@@ -190,6 +190,12 @@ model ResourcePreviewSpecificationMetadata {
    * (e.g., [reference(...)]).
    */
   unevaluated: JsonPointer[];
+  
+  /**
+   * JSON Pointers to object property names that contain unevaluated ARM template language
+   * expressions. The extension must echo these back from the request.
+   */
+  unevaluatedPropertyNames?: JsonPointer[];
 }
 
 // ===========================================================================
@@ -314,7 +320,9 @@ model ResourcePreviewMetadata {
   /**
    * JSON Pointers to properties whose values cannot be determined at preview
    * time (e.g., because they depend on unevaluated expressions or external
-   * state).
+   * state). In addition to resource properties that are unknown, if the identifiers
+   * or configId cannot be determined, the extension must include the corresponding
+   * JSON Pointers here as well.
    */
   `unknown`?: JsonPointer[];
 
@@ -329,9 +337,17 @@ model ResourcePreviewMetadata {
    * expressions. The extension must echo these back from the request.
    * A property in `unevaluated` in the request may be reclassified in the
    * response (e.g., as `readOnly` or `immutable`) if the extension can
-   * determine the property's nature despite the unevaluated expression.
+   * determine the property's nature despite the unevaluated expression. If the
+   * extension chooses to return a property value as a language expression, such
+   * as partially evaluated identifiers, the property pointer must be added here.
    */
   unevaluated?: JsonPointer[];
+
+  /**
+   * JSON Pointers to object property names that contain unevaluated ARM template language
+   * expressions. The extension must echo these back from the request.
+   */
+  unevaluatedPropertyNames?: JsonPointer[];
 }
 
 // ===========================================================================
