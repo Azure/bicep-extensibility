@@ -828,13 +828,6 @@ components:
             determine the property's nature despite the unevaluated expression. If the
             extension chooses to return a property value as a language expression, such
             as partially evaluated identifiers, the property pointer must be added here.
-        unevaluatedPropertyNames:
-          type: array
-          items:
-            $ref: '#/components/schemas/JsonPointer'
-          description: |-
-            JSON Pointers to object property names that contain unevaluated ARM template language
-            expressions. The extension must echo these back from the request.
       description: |-
         Contains metadata about a resource preview, indicating which properties
         are read-only, immutable, unknown, calculated, or unevaluated.
@@ -856,7 +849,6 @@ components:
       type: object
       required:
         - unevaluated
-        - unevaluatedPropertyNames
       properties:
         unevaluated:
           type: array
@@ -866,13 +858,6 @@ components:
             JSON Pointers to the properties that could not be evaluated during the
             preview. The values of these properties are ARM template expressions
             (e.g., [reference(...)]).
-        unevaluatedPropertyNames:
-          type: array
-          items:
-            $ref: '#/components/schemas/JsonPointer'
-          description: |-
-            JSON Pointers to object property names that contain unevaluated ARM template language
-            expressions. The extension must echo these back from the request.
       description: |-
         Contains metadata for a resource preview specification, indicating which
         properties could not be evaluated at the time of the preview request.

@@ -38,13 +38,11 @@ model ResourcePreviewSpecification extends ResourceSpecification {
 
 model ResourcePreviewSpecificationMetadata {
   unevaluated: JsonPointer[];
-  unevaluatedPropertyNames: JsonPointer[];
 }
 ```
 
 The `ResourcePreviewSpecification` extends the standard `ResourceSpecification` with an optional `metadata` object. 
 When present, `metadata.unevaluated` lists the JSON Pointer paths to properties whose values are unresolved ARM template language expressions.
-When present, `metadata.unevaluatedPropertyNames` lists the JSON Pointer paths to properties whose names are unresolved ARM template language expressions.
 
 ## Unevaluated Expressions
 
@@ -119,7 +117,6 @@ model ResourcePreviewMetadata {
   unknown?: JsonPointer[];
   calculated?: JsonPointer[];
   unevaluated?: JsonPointer[];
-  unevaluatedPropertyNames?: JsonPointer[];
 }
 ```
 
