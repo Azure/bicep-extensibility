@@ -502,7 +502,8 @@ The deployment engine calls preview with the desired state from the template.
     "onboardingState": "Succeeded",
     "startDate": "2024-02-01",
     "badgeNumber": "B-5678",
-    "email": "john.smith@contoso.com"
+    "email": "john.smith@contoso.com",
+    "lastModified": "2026-05-27T00:00:00Z"
   },
   "config": {
     "endpoint": "https://hr-api.contoso.com"
@@ -511,7 +512,7 @@ The deployment engine calls preview with the desired state from the template.
   "metadata": {
     "readOnly": ["/properties/employeeId", "/properties/onboardingState", "/properties/email"],
     "immutable": ["/properties/startDate"],
-    "calculated": ["/properties/badgeNumber"]
+    "calculated": ["/properties/badgeNumber", "/properties/lastModified"]
   }
 }
 ```
@@ -538,7 +539,8 @@ The deployment engine calls get to retrieve the resource's current state.
     "onboardingState": "Succeeded",
     "startDate": "2024-02-01",
     "badgeNumber": "B-1234",
-    "email": "john.smith@contoso.com"
+    "email": "john.smith@contoso.com",
+    "lastUpdated": "2025-03-12T00:00:00Z"
   },
   "config": {
     "endpoint": "https://hr-api.contoso.com"
@@ -551,6 +553,12 @@ The deployment engine calls get to retrieve the resource's current state.
 
 In this scenario, there are no partially unevaluated or unknown resource identifiers or extension configuration, so
 What-If will take the preview results and the current state to produce a "Definite Modify" change for this resource.
+
+In the preview result, it can see that the `lastModified` and `badgeNumber` properies are calculated properties. This 
+means that their values are calculated on demand and may change between the preview time and submission time. Properties
+that are calculated on demand are typically considered as noise in What-If output, meaning it's generally not useful 
+to see them. If a deployments user wishes to collect badge numbers, they should do so after submitting the
+update and not depend on What-if for those values. In the what-if output below, those properties are omitted.
 
 **What-If response:**
 
@@ -583,7 +591,6 @@ What-If will take the preview results and the current state to produce a "Defini
             "employeeId": "emp-00042",
             "onboardingState": "Succeeded",
             "startDate": "2024-02-01",
-            "badgeNumber": "B-1234",
             "email": "john.smith@contoso.com"
           }
         },
@@ -598,7 +605,6 @@ What-If will take the preview results and the current state to produce a "Defini
             "employeeId": "emp-00042",
             "onboardingState": "Succeeded",
             "startDate": "2024-02-01",
-            "badgeNumber": "B-5678",
             "email": "john.smith@contoso.com"
           }
         },
@@ -614,12 +620,6 @@ What-If will take the preview results and the current state to produce a "Defini
             "propertyChangeType": "Modify",
             "before": "Engineer",
             "after": "Manager"
-          },
-          {
-            "path": "properties.badgeNumber",
-            "propertyChangeType": "Modify",
-            "before": "B-1234",
-            "after": "B-5678"
           }
         ]
       }
