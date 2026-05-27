@@ -126,13 +126,13 @@ The response must represent the resource state as if the create or update operat
 
 ### Response Requirements
 
-| Requirement | Details |
-|-------------|---------|
-| Read-only properties | Include properties managed by the service (e.g., `provisioningState`, `id`). |
-| Default values | Fill in properties that the service would assign defaults to. |
-| Write-only properties | Exclude secrets such as passwords and connection strings. |
-| Unevaluated expressions | Echo back the raw expression string as-is. |
-| Identifiers | Include the `identifiers` object with the best available values. |
+| Requirement             | Details                                                                      |
+|-------------------------|------------------------------------------------------------------------------|
+| Read-only properties    | Include properties managed by the service (e.g., `provisioningState`, `id`). |
+| Default values          | Fill in properties that the service would assign defaults to.                |
+| Write-only properties   | Exclude secrets such as passwords and connection strings.                    |
+| Unevaluated expressions | Echo back the raw expression string as-is.                                   |
+| Identifiers             | Include the `identifiers` object with the best available values.             |
 
 ## Preview Metadata
 
@@ -183,6 +183,8 @@ Properties whose values are computed at operation time and would change if the o
 ### `unknown`
 
 Properties whose values cannot be determined at preview time. This typically applies when a value depends on an unevaluated expression or external state that is unavailable during preview.
+**It is essential that if the extension cannot compute the resource `identifiers` and/or `configId`, these property
+paths must be present in the response's `metadata.unknown` as it affects how what-if computes a change for the resource.**
 
 **Example:** An `email` that depends on a domain configuration resource that has not been deployed yet.
 
@@ -288,6 +290,7 @@ If the request includes a `config` object, the extension must:
 
 1. **Echo back the configuration** in the response, excluding any secret properties. Any property not echoed back is treated as a secret by the deployment engine.
 2. **Return a `configId`**, a value that uniquely identifies the deployment control plane. The format is determined by the extension (e.g., a hash of the endpoint URL).
+    - **If `configId` cannot be calculated, the extension must return a null configId include its JSON pointer in `metadata.unknown` in its response.**
 3. **Validate the `configId`** if one is provided in the request.
 
 ## End-to-End Examples
