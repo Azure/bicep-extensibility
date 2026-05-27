@@ -543,12 +543,83 @@ The deployment engine calls get to retrieve the resource's current state.
 }
 ```
 
-### Step 3: Process States Using Preview Metadata
+### Step 3: Diff and Produce What-If Output
 
-> [!NOTE]
-> This section is under development and will be finalized in a future update.
+In this scenario, there are no partially unevaluated or unknown resource identifiers or extension configuration, so
+What-If will take the preview results and the current state to produce a "Definite Modify" change for this resource.
 
-### Step 4: Diff and Produce What-If Output
+**What-If response:**
 
-> [!NOTE]
-> This section is under development and will be finalized in a future update.
+```json
+{
+  "properties": {
+    "changes": [
+      {
+        "changeType": "Modify",
+        "extension": {
+          "name": "Contoso",
+          "version": "2.0.0",
+          "configId": "sha256:a1b2c3d4",
+          "config": {
+            "endpoint": "https://hr-api.contoso.com"
+          }
+        },
+        "type": "Contoso.HR/employees",
+        "identifiers": {
+          "employeeId": "emp-00042"
+        },
+        "before": {
+          "Type": "Contoso.HR/employees",
+          "ApiVersion": "2024-04-01",
+          "Properties": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "department": "Engineering",
+            "role": "Engineer",
+            "employeeId": "emp-00042",
+            "onboardingState": "Succeeded",
+            "startDate": "2024-02-01",
+            "badgeNumber": "B-1234",
+            "email": "john.smith@contoso.com"
+          }
+        },
+        "after": {
+          "Type": "Contoso.HR/employees",
+          "ApiVersion": "2024-04-01",
+          "Properties": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "department": "Marketing",
+            "role": "Manager",
+            "employeeId": "emp-00042",
+            "onboardingState": "Succeeded",
+            "startDate": "2024-02-01",
+            "badgeNumber": "B-5678",
+            "email": "john.smith@contoso.com"
+          }
+        },
+        "delta": [
+          {
+            "path": "properties.department",
+            "propertyChangeType": "Modify",
+            "before": "Engineering",
+            "after": "Marketing"
+          },
+          {
+            "path": "properties.role",
+            "propertyChangeType": "Modify",
+            "before": "Engineer",
+            "after": "Manager"
+          },
+          {
+            "path": "properties.badgeNumber",
+            "propertyChangeType": "Modify",
+            "before": "B-1234",
+            "after": "B-5678"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
