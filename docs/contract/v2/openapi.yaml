@@ -856,6 +856,7 @@ components:
       type: object
       required:
         - unevaluated
+        - unevaluatedPropertyNames
       properties:
         unevaluated:
           type: array

@@ -190,12 +190,12 @@ model ResourcePreviewSpecificationMetadata {
    * (e.g., [reference(...)]).
    */
   unevaluated: JsonPointer[];
-  
+
   /**
    * JSON Pointers to object property names that contain unevaluated ARM template language
    * expressions. The extension must echo these back from the request.
    */
-  unevaluatedPropertyNames?: JsonPointer[];
+  unevaluatedPropertyNames: JsonPointer[];
 }
 
 // ===========================================================================
