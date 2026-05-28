@@ -105,7 +105,7 @@ model ResourcePreviewSpecification extends ResourceSpecification {
 }
 
 model ResourcePreviewSpecificationMetadata {
-  unevaluated: JsonPointer[];  // paths to properties with unevaluated ARM expressions
+  unevaluated: JsonPointer[];  // paths to property values with unevaluated ARM expressions
 }
 ```
 

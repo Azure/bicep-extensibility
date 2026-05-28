@@ -41,7 +41,8 @@ model ResourcePreviewSpecificationMetadata {
 }
 ```
 
-The `ResourcePreviewSpecification` extends the standard `ResourceSpecification` with an optional `metadata` object. When present, `metadata.unevaluated` lists the JSON Pointer paths to properties whose values are unresolved ARM template language expressions.
+The `ResourcePreviewSpecification` extends the standard `ResourceSpecification` with an optional `metadata` object. 
+When present, `metadata.unevaluated` lists the JSON Pointer paths to properties whose values are unresolved ARM template language expressions.
 
 ## Unevaluated Expressions
 
@@ -123,13 +124,13 @@ The response must represent the resource state as if the create or update operat
 
 ### Response Requirements
 
-| Requirement | Details |
-|-------------|---------|
-| Read-only properties | Include properties managed by the service (e.g., `provisioningState`, `id`). |
-| Default values | Fill in properties that the service would assign defaults to. |
-| Write-only properties | Exclude secrets such as passwords and connection strings. |
-| Unevaluated expressions | Echo back the raw expression string as-is. |
-| Identifiers | Include the `identifiers` object with the best available values. |
+| Requirement             | Details                                                                      |
+|-------------------------|------------------------------------------------------------------------------|
+| Read-only properties    | Include properties managed by the service (e.g., `provisioningState`, `id`). |
+| Default values          | Fill in properties that the service would assign defaults to.                |
+| Write-only properties   | Exclude secrets such as passwords and connection strings.                    |
+| Unevaluated expressions | Echo back the raw expression string as-is.                                   |
+| Identifiers             | Include the `identifiers` object with the best available values.             |
 
 ## Preview Metadata
 
@@ -180,6 +181,8 @@ Properties whose values are computed at operation time and would change if the o
 ### `unknown`
 
 Properties whose values cannot be determined at preview time. This typically applies when a value depends on an unevaluated expression or external state that is unavailable during preview.
+**It is essential that if the extension cannot compute the resource `identifiers` and/or `configId`, these property
+paths must be present in the response's `metadata.unknown` as it affects how what-if computes a change for the resource.**
 
 **Example:** An `email` that depends on a domain configuration resource that has not been deployed yet.
 
@@ -191,15 +194,36 @@ Properties whose values cannot be determined at preview time. This typically app
 }
 ```
 
+**Example:** The `identifiers` and `configId` of the resource cannot be determined at preview time.
+
+```json
+{
+  "metadata": {
+    "unknown": ["/identifiers", "/configId"]
+  }
+}
+```
+
 ### `unevaluated`
 
 Properties containing ARM template language expressions that the deployment engine could not resolve. The extension must account for every path received in the request's `metadata.unevaluated`, but should **reclassify** a path into a more specific category whenever possible. For example, if the unevaluated path points to a property the extension knows is always read-only, it should appear under `readOnly`, not `unevaluated`. Only list a path under `unevaluated` when the extension cannot determine a more specific category.
+
+**Example:** The department property is an expression that cannot be resolved.
 
 ```json
 {
   "metadata": {
     "unevaluated": ["/properties/department"]
   }
+}
+```
+
+**Example:** The `identifiers` is partially evaluated.
+```json
+{
+  "metadata": {
+    "unevaluated": ["/identifiers/name"]
+  }  
 }
 ```
 
@@ -264,6 +288,7 @@ If the request includes a `config` object, the extension must:
 
 1. **Echo back the configuration** in the response, excluding any secret properties. Any property not echoed back is treated as a secret by the deployment engine.
 2. **Return a `configId`**, a value that uniquely identifies the deployment control plane. The format is determined by the extension (e.g., a hash of the endpoint URL).
+    - **If `configId` cannot be calculated, the extension should omit `configId` or set it to null and include its JSON pointer in `metadata.unknown` in its response.**
 3. **Validate the `configId`** if one is provided in the request.
 
 ## End-to-End Examples
@@ -474,7 +499,8 @@ The deployment engine calls preview with the desired state from the template.
     "onboardingState": "Succeeded",
     "startDate": "2024-02-01",
     "badgeNumber": "B-5678",
-    "email": "john.smith@contoso.com"
+    "email": "john.smith@contoso.com",
+    "lastModified": "2026-05-27T00:00:00Z"
   },
   "config": {
     "endpoint": "https://hr-api.contoso.com"
@@ -483,7 +509,7 @@ The deployment engine calls preview with the desired state from the template.
   "metadata": {
     "readOnly": ["/properties/employeeId", "/properties/onboardingState", "/properties/email"],
     "immutable": ["/properties/startDate"],
-    "calculated": ["/properties/badgeNumber"]
+    "calculated": ["/properties/badgeNumber", "/properties/lastModified"]
   }
 }
 ```
@@ -510,7 +536,8 @@ The deployment engine calls get to retrieve the resource's current state.
     "onboardingState": "Succeeded",
     "startDate": "2024-02-01",
     "badgeNumber": "B-1234",
-    "email": "john.smith@contoso.com"
+    "email": "john.smith@contoso.com",
+    "lastUpdated": "2025-03-12T00:00:00Z"
   },
   "config": {
     "endpoint": "https://hr-api.contoso.com"
@@ -519,12 +546,81 @@ The deployment engine calls get to retrieve the resource's current state.
 }
 ```
 
-### Step 3: Process States Using Preview Metadata
+### Step 3: Diff and Produce What-If Output
 
-> [!NOTE]
-> This section is under development and will be finalized in a future update.
+In this scenario, there are no partially unevaluated or unknown resource identifiers or extension configuration, so
+What-If will take the preview results and the current state to produce a "Definite Modify" change for this resource.
 
-### Step 4: Diff and Produce What-If Output
+In the preview result, it can see that the `lastModified` and `badgeNumber` properies are calculated properties. This 
+means that their values are calculated on demand and may change between the preview time and submission time. Properties
+that are calculated on demand are typically considered as noise in What-If output, meaning it's generally not useful 
+to see them. If a deployments user wishes to collect badge numbers, they should do so after submitting the
+update and not depend on What-if for those values. In the what-if output below, those properties are omitted.
 
-> [!NOTE]
-> This section is under development and will be finalized in a future update.
+**What-If response:**
+
+```json
+{
+  "properties": {
+    "changes": [
+      {
+        "changeType": "Modify",
+        "extension": {
+          "name": "Contoso",
+          "version": "2.0.0",
+          "configId": "sha256:a1b2c3d4",
+          "config": {
+            "endpoint": "https://hr-api.contoso.com"
+          }
+        },
+        "type": "Contoso.HR/employees",
+        "identifiers": {
+          "employeeId": "emp-00042"
+        },
+        "before": {
+          "Type": "Contoso.HR/employees",
+          "ApiVersion": "2024-04-01",
+          "Properties": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "department": "Engineering",
+            "role": "Engineer",
+            "employeeId": "emp-00042",
+            "onboardingState": "Succeeded",
+            "startDate": "2024-02-01",
+            "email": "john.smith@contoso.com"
+          }
+        },
+        "after": {
+          "Type": "Contoso.HR/employees",
+          "ApiVersion": "2024-04-01",
+          "Properties": {
+            "firstName": "John",
+            "lastName": "Smith",
+            "department": "Marketing",
+            "role": "Manager",
+            "employeeId": "emp-00042",
+            "onboardingState": "Succeeded",
+            "startDate": "2024-02-01",
+            "email": "john.smith@contoso.com"
+          }
+        },
+        "delta": [
+          {
+            "path": "properties.department",
+            "propertyChangeType": "Modify",
+            "before": "Engineering",
+            "after": "Marketing"
+          },
+          {
+            "path": "properties.role",
+            "propertyChangeType": "Modify",
+            "before": "Engineer",
+            "after": "Manager"
+          }
+        ]
+      }
+    ]
+  }
+}
+```

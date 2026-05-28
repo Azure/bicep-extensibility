@@ -20,9 +20,13 @@ using OpenAPI;
 
 @service(#{ title: "Bicep Extensibility Provider API" })
 @info(#{ version: "2.0.0" })
-@server("{endpoint}", "Extension endpoint", {
-  endpoint: string = "http://localhost:8080",
-})
+@server(
+  "{endpoint}",
+  "Extension endpoint",
+  {
+    endpoint: string = "http://localhost:8080",
+  }
+)
 namespace BicepExtensibility;
 
 // ---------------------------------------------------------------------------
