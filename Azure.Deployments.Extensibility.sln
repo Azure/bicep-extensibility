@@ -58,7 +58,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicEightBallExtension", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{01C4597C-FD7B-46C6-9649-FF3462728B00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.AspNetCore.Tests.Unit", "src\Azure.Deployments.Extensibility.AspNetCore.Tests.Unit\Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.csproj", "{513971AB-B2F3-4735-8EF8-A81813FA59B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibility.AspNetCore.Tests.Unit", "src\Azure.Deployments.Extensibility.AspNetCore.Tests.Unit\Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.csproj", "{513971AB-B2F3-4735-8EF8-A81813FA59B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
