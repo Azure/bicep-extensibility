@@ -73,6 +73,7 @@ public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, T
         Properties = this.DeserializeProperties(preview.Properties),
         Config = this.DeserializeConfig(preview.Config),
         ConfigId = preview.ConfigId,
+        Status = preview.Status,
         Metadata = preview.Metadata,
     };
 
@@ -84,6 +85,7 @@ public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, T
         Properties = this.SerializeProperties(preview.Properties),
         Config = this.SerializeConfig(preview.Config),
         ConfigId = preview.ConfigId,
+        Status = preview.Status,
         Metadata = preview.Metadata,
     };
 
@@ -113,6 +115,8 @@ public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, T
         Properties = this.DeserializeProperties(resource.Properties),
         Config = this.DeserializeConfig(resource.Config),
         ConfigId = resource.ConfigId,
+        Status = resource.Status,
+        Error = resource.Error,
     };
 
     protected Resource? ToNullableResource(TypedResource? resource) => resource is null ? null : this.ToResource(resource);
@@ -125,6 +129,8 @@ public abstract class TypedResourceOperationHandler<TProperties, TIdentifiers, T
         Properties = this.SerializeProperties(resource.Properties),
         Config = this.SerializeConfig(resource.Config),
         ConfigId = resource.ConfigId,
+        Status = resource.Status,
+        Error = resource.Error,
     };
     
     private TProperties DeserializeProperties(JsonObject propertiesObject)
