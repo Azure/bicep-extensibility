@@ -10,38 +10,35 @@ using Microsoft.Extensions.Options;
 
 namespace BlobPocExtension.Handlers;
 
-public sealed class BlobPreviewHandler : TypedResourcePreviewHandler<BlobProperties, BlobIdentifiers>
+public sealed class ContainerPreviewHandler : TypedResourcePreviewHandler<ContainerProperties, ContainerIdentifiers>
 {
-    public BlobPreviewHandler(IOptions<JsonOptions> jsonOptions) : base(jsonOptions) { }
+    public ContainerPreviewHandler(IOptions<JsonOptions> jsonOptions) : base(jsonOptions) { }
 
     protected override Task<OneOf<TypedResourcePreview, ErrorResponse>> HandleAsync(
         TypedResourcePreviewSpecification request, CancellationToken cancellationToken)
     {
+        // Account-name validation runs in the pipeline (AccountNameValidationBehavior).
+        // Side-effect-free: echo, and default publicAccess to "none".
         var properties = request.Properties;
-
-        // TODO: replace with a real BlobClient existence/content lookup.
-        // Default the content type when not supplied so the preview reflects the persisted shape.
-        if (properties.ContentType is null)
+        if (properties.PublicAccess is null)
         {
-            properties = properties with { ContentType = "application/octet-stream" };
+            properties = properties with { PublicAccess = "none" };
         }
 
         var preview = new TypedResourcePreview
         {
             Type = request.Type,
             ApiVersion = request.ApiVersion,
-            Identifiers = new BlobIdentifiers
+            Identifiers = new ContainerIdentifiers
             {
                 AccountName = properties.AccountName,
                 ContainerName = properties.ContainerName,
-                BlobName = properties.BlobName,
             },
             Properties = properties,
             Metadata = new ResourcePreviewMetadata
             {
-                // "contentType" is defaulted server-side when not provided.
-                Calculated = [JsonPointer.Parse("/properties/contentType")],
-                // Echo back any unevaluated paths from the request.
+                // "publicAccess" is defaulted server-side when not provided.
+                Calculated = [JsonPointer.Parse("/properties/publicAccess")],
                 Unevaluated = request.Metadata?.Unevaluated,
             },
         };

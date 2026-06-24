@@ -1,19 +1,35 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Azure.Core;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Hosting.Managed;
+using Azure.Identity;
+using BlobPocExtension.Behaviors;
 using BlobPocExtension.Handlers;
+using BlobPocExtension.Storage;
 using System.Text.Json.Nodes;
 
 BicepExtension.CreateBuilder(args)            // opinionated defaults applied here
+    .ConfigureServices(services =>
+    {
+        // DefaultAzureCredential resolves the developer's `az login` credential locally and a
+        // managed identity in the cloud — same auth path everywhere, no secrets in code/config.
+        services.AddSingleton<TokenCredential>(_ => new DefaultAzureCredential());
+        services.AddOptions<BlobPocOptions>().BindConfiguration("Storage");
+        services.AddSingleton<IStorageClientFactory, StorageClientFactory>();
+    })
     .AddExtensionVersion("1.0.0", v => v      // exact version only (no range/wildcard)
-        .AddHandler<BlobLongRunningOperationGetHandler>()   // generic (not resource-type scoped)
-        .ForResourceType("Blob", t => t
-            .AddHandler<BlobPreviewHandler>()
-            .AddHandler<BlobCreateOrUpdateHandler>()
-            .AddHandler<BlobGetHandler>()
-            .AddHandler<BlobDeleteHandler>()))
+        .AddHandlerBehavior<StorageExceptionHandlingBehavior>()             // maps RequestFailedException -> ErrorResponse
+        .AddHandlerBehavior(_ => new ApiVersionValidationBehavior("2024-01-01")) // rejects unsupported apiVersion
+        .AddHandlerBehavior<AccountNameValidationBehavior>()                // validates accountName before handlers run
+        .AddHandler<BlobLongRunningOperationGetHandler>()   // generic stub; container ops are synchronous
+        .ForResourceType("Container", t => t
+            .AddHandler<ContainerPreviewHandler>()
+            .AddHandler<ContainerCreateOrUpdateHandler>()
+            .AddHandler<ContainerGetHandler>()
+            .AddHandler<ContainerDeleteHandler>()))
+    .AddHealthCheck<StorageHealthCheck>("storage")
     .ConfigureApiExplorerExamples(examples =>
     {
         const string apiVersion = "2024-01-01";
@@ -22,21 +38,18 @@ BicepExtension.CreateBuilder(args)            // opinionated defaults applied he
         {
             ["accountName"] = "acct",
             ["containerName"] = "c1",
-            ["blobName"] = "b1",
         };
 
         var resource = new Resource
         {
-            Type = "Blob",
+            Type = "Container",
             ApiVersion = apiVersion,
             Identifiers = identifiers.DeepClone().AsObject(),
             Properties = new JsonObject
             {
                 ["accountName"] = "acct",
                 ["containerName"] = "c1",
-                ["blobName"] = "b1",
-                ["content"] = "hello from the POC",
-                ["contentType"] = "text/plain",
+                ["publicAccess"] = "none",
             },
         };
 
@@ -44,22 +57,20 @@ BicepExtension.CreateBuilder(args)            // opinionated defaults applied he
             .ForCreateOrUpdate(
                 request: new ResourceSpecification
                 {
-                    Type = "Blob",
+                    Type = "Container",
                     ApiVersion = apiVersion,
                     Properties = new JsonObject
                     {
                         ["accountName"] = "acct",
                         ["containerName"] = "c1",
-                        ["blobName"] = "b1",
-                        ["content"] = "hello from the POC",
-                        ["contentType"] = "text/plain",
+                        ["publicAccess"] = "none",
                     },
                 },
                 response: resource)
             .ForGet(
                 request: new ResourceReference
                 {
-                    Type = "Blob",
+                    Type = "Container",
                     ApiVersion = apiVersion,
                     Identifiers = identifiers.DeepClone().AsObject(),
                 },
@@ -67,22 +78,19 @@ BicepExtension.CreateBuilder(args)            // opinionated defaults applied he
             .ForDelete(
                 request: new ResourceReference
                 {
-                    Type = "Blob",
+                    Type = "Container",
                     ApiVersion = apiVersion,
                     Identifiers = identifiers.DeepClone().AsObject(),
                 })
             .ForPreview(
                 request: new ResourcePreviewSpecification
                 {
-                    Type = "Blob",
+                    Type = "Container",
                     ApiVersion = apiVersion,
                     Properties = new JsonObject
                     {
                         ["accountName"] = "acct",
                         ["containerName"] = "c1",
-                        ["blobName"] = "b1",
-                        ["content"] = "hello from the POC",
-                        ["contentType"] = "text/plain",
                     },
                     Metadata = new ResourcePreviewSpecificationMetadata
                     {
@@ -91,16 +99,14 @@ BicepExtension.CreateBuilder(args)            // opinionated defaults applied he
                 },
                 response: new ResourcePreview
                 {
-                    Type = "Blob",
+                    Type = "Container",
                     ApiVersion = apiVersion,
                     Identifiers = identifiers.DeepClone().AsObject(),
                     Properties = new JsonObject
                     {
                         ["accountName"] = "acct",
                         ["containerName"] = "c1",
-                        ["blobName"] = "b1",
-                        ["content"] = "hello from the POC",
-                        ["contentType"] = "text/plain",
+                        ["publicAccess"] = "none",
                     },
                     Metadata = new ResourcePreviewMetadata
                     {

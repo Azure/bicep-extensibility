@@ -10,13 +10,10 @@
     <ProjectReference Include="..\..\src\Azure.Deployments.Extensibility.Hosting.Managed\Azure.Deployments.Extensibility.Hosting.Managed.csproj" />
   </ItemGroup>
 
-  <!-- Optional: pull in the real Azure SDK once the wiring works. For the very first run,
-       the handlers below can return canned data so you can validate the host path first. -->
-  <!--
+  <!-- Real Azure Storage data-plane I/O, authenticated via DefaultAzureCredential. -->
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.*" />
     <PackageReference Include="Azure.Identity" Version="1.*" />
   </ItemGroup>
-  -->
 
 </Project>
