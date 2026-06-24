@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Azure.Deployments.Extensibi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Deployments.Extensibility.Hosting.Managed", "src\Azure.Deployments.Extensibility.Hosting.Managed\Azure.Deployments.Extensibility.Hosting.Managed.csproj", "{7AF8E086-B9B7-4AF6-8F92-75E2FCB52D79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobPocExtension", "sample\BlobPocExtension\BlobPocExtension.csproj", "{0997C284-1B21-4FD0-BB2F-2351725FB438}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -128,6 +130,10 @@ Global
 		{7AF8E086-B9B7-4AF6-8F92-75E2FCB52D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AF8E086-B9B7-4AF6-8F92-75E2FCB52D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AF8E086-B9B7-4AF6-8F92-75E2FCB52D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0997C284-1B21-4FD0-BB2F-2351725FB438}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0997C284-1B21-4FD0-BB2F-2351725FB438}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0997C284-1B21-4FD0-BB2F-2351725FB438}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0997C284-1B21-4FD0-BB2F-2351725FB438}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,6 +156,7 @@ Global
 		{6B89B5D6-DA9D-41C9-97CC-931CADE6E96F} = {2E78DB9E-BB2A-4C65-8A0B-121894614981}
 		{513971AB-B2F3-4735-8EF8-A81813FA59B0} = {01C4597C-FD7B-46C6-9649-FF3462728B00}
 		{7AF8E086-B9B7-4AF6-8F92-75E2FCB52D79} = {01C4597C-FD7B-46C6-9649-FF3462728B00}
+		{0997C284-1B21-4FD0-BB2F-2351725FB438} = {2E78DB9E-BB2A-4C65-8A0B-121894614981}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E3073660-079C-482C-ABB4-E970087314E7}
