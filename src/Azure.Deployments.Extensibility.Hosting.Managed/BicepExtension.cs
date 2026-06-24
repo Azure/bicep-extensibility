@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using Azure.Deployments.Extensibility.AspNetCore;
+using Azure.Deployments.Extensibility.AspNetCore.Builders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ public sealed class BicepExtension
 
     private readonly ExtensionApplication inner;
     private SemVersion? registeredVersion;
+    private Action<OpenApiExamplesBuilder>? configureExamples;
 
     private BicepExtension(string[] args)
     {
@@ -89,6 +91,16 @@ public sealed class BicepExtension
         return this;
     }
 
+    /// <summary>
+    /// Registers request/response examples that are injected into the OpenAPI document and
+    /// shown (and prepopulated) in the Development Scalar API explorer. May be called multiple times.
+    /// </summary>
+    public BicepExtension ConfigureApiExplorerExamples(Action<OpenApiExamplesBuilder> configure)
+    {
+        this.configureExamples += configure;
+        return this;
+    }
+
     /// <summary>Builds and runs the extension. Does not return until shutdown.</summary>
     public void Run() => this.Build().Run();
 
@@ -105,7 +117,14 @@ public sealed class BicepExtension
         if (this.registeredVersion is { } version)
         {
             this.inner.EnableDevelopmentScalarApiExplorer(explorer =>
-                explorer.WithExtensionVersions(version.ToString()));
+            {
+                explorer.WithExtensionVersions(version.ToString());
+
+                if (this.configureExamples is { } examples)
+                {
+                    explorer.ConfigureExamples(examples);
+                }
+            });
         }
 
         var app = this.inner.Build();
