@@ -7,6 +7,7 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using FluentAssertions;
+using Json.Pointer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using Xunit;
@@ -91,13 +92,18 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Handlers
             {
                 Type = "Test",
                 Properties = new JsonObject { ["name"] = "widget" },
-                Metadata = new ResourcePreviewSpecificationMetadata()
+                Metadata = new ResourcePreviewSpecificationMetadata
+                {
+                    Unevaluated = [JsonPointer.Parse("/properties/unevaluated")]
+                }
             };
 
             var result = await ((IResourcePreviewHandler)sut).HandleAsync(request, CancellationToken.None);
 
             result.IsT0.Should().BeTrue();
             result.AsT0!.Status.Should().Be("Running");
+            result.AsT0.Metadata.Should().NotBeNull();
+            result.AsT0.Metadata.Unevaluated.Should().BeEquivalentTo(request.Metadata.Unevaluated);
         }
 
         [Fact]
@@ -128,6 +134,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Handlers
                 Type = "Test",
                 Identifiers = new JsonObject { ["name"] = "widget" },
                 Properties = new JsonObject { ["name"] = "widget" },
+                Metadata = new ResourcePreviewMetadata(),
                 Status = "Running",
             };
 
@@ -225,6 +232,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Handlers
                     Type = request.Type,
                     Identifiers = new TestIdentifiers { Name = "widget" },
                     Properties = request.Properties,
+                    Metadata = ResourcePreviewMetadata.NewBuilder().WithMetadataFromSpec(request.Metadata).Build(),
                     Status = this.status,
                 });
         }
