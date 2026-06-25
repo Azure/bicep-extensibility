@@ -91,6 +91,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Handlers
             {
                 Type = "Test",
                 Properties = new JsonObject { ["name"] = "widget" },
+                Metadata = new ResourcePreviewSpecificationMetadata()
             };
 
             var result = await ((IResourcePreviewHandler)sut).HandleAsync(request, CancellationToken.None);

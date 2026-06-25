@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Json.Pointer;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using Json.Pointer;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
@@ -16,8 +16,10 @@ public record ResourcePreviewSpecificationMetadata
     /// <summary>
     /// Initializes a new instance of the <see cref="ResourcePreviewSpecificationMetadata"/> record.
     /// </summary>
+    [SetsRequiredMembers]
     public ResourcePreviewSpecificationMetadata()
     {
+        this.Unevaluated = [];
     }
 
     /// <summary>
