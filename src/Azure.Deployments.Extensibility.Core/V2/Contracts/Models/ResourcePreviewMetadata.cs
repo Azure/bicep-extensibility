@@ -181,11 +181,11 @@ public record ResourcePreviewMetadata
         public ResourcePreviewMetadata Build() =>
             new()
             {
-                Calculated = [..this.Calculated.Distinct()],
-                Immutable = [..this.Immutable.Distinct()],
-                ReadOnly = [..this.ReadOnly.Distinct()],
-                Unevaluated = [..this.Unevaluated.Distinct()],
-                Unknown = [..this.Unknown.Distinct()]
+                Calculated = this.Calculated.Distinct().ToImmutableArray() is { Length: > 0 } calculated ? calculated : null,
+                Immutable = this.Immutable.Distinct().ToImmutableArray() is { Length: > 0 } immutable ? immutable : null,
+                ReadOnly = this.ReadOnly.Distinct().ToImmutableArray() is { Length: > 0 } readOnly ? readOnly : null,
+                Unevaluated = this.Unevaluated.Distinct().ToImmutableArray() is { Length: > 0 } unevaluated ? unevaluated : null,
+                Unknown = this.Unknown.Distinct().ToImmutableArray() is { Length: > 0 } unknown ? unknown : null
             };
     }
 }
