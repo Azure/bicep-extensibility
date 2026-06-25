@@ -33,30 +33,30 @@ public record ResourcePreview<TProperties, TIdentifiers, TConfig>
     /// <param name="type">The type of the resource.</param>
     /// <param name="identifiers">The identifiers that uniquely identify the resource.</param>
     /// <param name="properties">The properties of the resource.</param>
+    /// <param name="metadata">The metadata describing property classifications in the preview.</param>
     /// <param name="apiVersion">The API version of the resource.</param>
     /// <param name="status">The status of the resource.</param>
     /// <param name="config">The configuration of the resource, with secret properties removed.</param>
     /// <param name="configId">A value that uniquely identifies the deployment control plane.</param>
-    /// <param name="metadata">The metadata describing property classifications in the preview.</param>
     [SetsRequiredMembers]
     public ResourcePreview(
         string type,
         TIdentifiers identifiers,
         TProperties properties,
+        ResourcePreviewMetadata metadata,
         string? apiVersion = null,
         string? status = null,
         TConfig? config = default,
-        string? configId = null,
-        ResourcePreviewMetadata? metadata = null)
+        string? configId = null)
     {
         this.Type = type;
         this.Identifiers = identifiers;
         this.Properties = properties;
+        this.Metadata = metadata;
         this.ApiVersion = apiVersion;
         this.Status = status;
         this.Config = config;
         this.ConfigId = configId;
-        this.Metadata = metadata;
     }
 
     /// <summary>
@@ -97,9 +97,10 @@ public record ResourcePreview<TProperties, TIdentifiers, TConfig>
     public string? ConfigId { get; init; }
 
     /// <summary>
-    /// The metadata describing which properties in the preview are read-only, immutable, calculated, or unevaluated.
+    /// The metadata describing which properties in the preview are read-only, immutable, calculated, or unevaluated. Minimally, the extension
+    /// should echo back what it received from the deployment engine.
     /// </summary>
-    public ResourcePreviewMetadata? Metadata { get; init; }
+    public required ResourcePreviewMetadata Metadata { get; init; }
 }
 
 /// <inheritdoc cref="ResourcePreview{TProperties, TIdentifiers, TConfig}"/>
