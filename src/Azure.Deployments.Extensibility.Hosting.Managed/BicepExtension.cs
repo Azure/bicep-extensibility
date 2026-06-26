@@ -43,9 +43,10 @@ public sealed class BicepExtension
         // (2) Always register the health-check service so GET /health can be mapped at build time.
         this.inner.ConfigureServices(services => services.AddHealthChecks());
 
-        // (3) Local-dev header relaxation (see DevelopmentHeaderBackfillStartupFilter).
+        // (3) Correlation-header handling (see CorrelationHeaderStartupFilter): backfill in dev,
+        //     return a structured 400 in other environments when a required header is missing.
         this.inner.ConfigureServices(services =>
-            services.AddTransient<IStartupFilter, DevelopmentHeaderBackfillStartupFilter>());
+            services.AddTransient<IStartupFilter, CorrelationHeaderStartupFilter>());
 
         // (4) Structured logging on by default.
         this.inner.Builder.Logging.AddJsonConsole();

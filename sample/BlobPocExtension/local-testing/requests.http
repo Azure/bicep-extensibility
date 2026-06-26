@@ -1,4 +1,5 @@
-@host = http://localhost:8080
+# @host = http://localhost:8080
+@host = https://blobpoc-app.bluebay-a7cfc1d8.eastus.azurecontainerapps.io
 @version = 1.0.0
 @apiVersion = 2024-01-01
 
@@ -12,6 +13,8 @@ GET {{host}}/health
 ### Preview (side-effect-free)
 POST {{host}}/{{version}}/resource/preview
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -28,6 +31,8 @@ Content-Type: application/json
 ### Create or update the container (real I/O)
 POST {{host}}/{{version}}/resource/createOrUpdate
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -42,6 +47,8 @@ Content-Type: application/json
 ### Get the container
 POST {{host}}/{{version}}/resource/get
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -55,6 +62,8 @@ Content-Type: application/json
 ### Delete the container (204 / empty)
 POST {{host}}/{{version}}/resource/delete
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -68,6 +77,8 @@ Content-Type: application/json
 ### Long-running operation get (generic stub)
 POST {{host}}/{{version}}/longRunningOperation/get
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "operationId": "op-abc123"
@@ -80,6 +91,8 @@ Content-Type: application/json
 ### Bad API version -> UnsupportedApiVersion (ApiVersionValidationBehavior)
 POST {{host}}/{{version}}/resource/createOrUpdate
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -93,6 +106,8 @@ Content-Type: application/json
 ### Invalid account name -> InvalidAccountName (AccountNameValidationBehavior)
 POST {{host}}/{{version}}/resource/createOrUpdate
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -106,6 +121,8 @@ Content-Type: application/json
 ### Missing account name -> MissingAccountName (AccountNameValidationBehavior)
 POST {{host}}/{{version}}/resource/createOrUpdate
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
@@ -118,6 +135,8 @@ Content-Type: application/json
 ### Storage error mapping -> ContainerNotFound/AuthorizationFailed/AccountNotFound (StorageExceptionHandlingBehavior)
 POST {{host}}/{{version}}/resource/get
 Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
 
 {
   "type": "Container",
