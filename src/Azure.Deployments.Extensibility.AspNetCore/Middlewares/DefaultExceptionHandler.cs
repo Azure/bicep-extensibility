@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -20,13 +19,6 @@ internal partial class DefaultExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        await this.HandleUnexpectedException(httpContext, exception);
-
-        return true;
-    }
-
-    private async Task HandleUnexpectedException(HttpContext httpContext, Exception exception)
-    {
         this.LogUnexpectedException(exception);
 
         var internalServerErrorResult = new ErrorResponse
@@ -40,6 +32,8 @@ internal partial class DefaultExceptionHandler : IExceptionHandler
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(internalServerErrorResult);
+
+        return true;
     }
 
     [LoggerMessage(EventId = 0xFFFF, Level = LogLevel.Error, Message = "An unexpected error occurred.")]

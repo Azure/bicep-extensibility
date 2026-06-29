@@ -39,7 +39,8 @@ public static class HttpContextExtensions
         httpContext.TryGetHeaderValue(RequestHeaderNames.HomeTenantId);
 
     private static string GetRequiredHeaderValue(this HttpContext httpContext, string headerName) =>
-        httpContext.TryGetHeaderValue(headerName) ?? throw new InvalidOperationException($"Required header '{headerName}' is missing from the request.");
+        httpContext.TryGetHeaderValue(headerName) ?? throw new InvalidOperationException(
+            $"Required header '{headerName}' is missing from the request.");
 
     private static string? TryGetHeaderValue(this HttpContext httpContext, string headerName) =>
         httpContext.Request.Headers.TryGetValue(headerName, out var headerValue)
