@@ -246,7 +246,7 @@ Deletes a resource given its type, identifiers, configuration, and configuration
 | **Input**  | `ResourceReference`                             |
 | **Output** | `void \| LongRunningOperation \| ErrorResponse` |
 
-The operation may complete synchronously and return empty content or initiate a long-running operation.
+The operation may complete synchronously with empty content or initiate a long-running operation.
 
 ---
 

@@ -422,8 +422,7 @@ interface ResourceActions {
   getResource(reference: ResourceReference): ResourceResult;
 
   /**
-   * Delete a resource. May complete synchronously, indicate the resource was
-   * already deleted, or initiate a long-running operation.
+   * Delete a resource. May complete synchronously or initiate a long-running operation.
    */
   deleteResource(reference: ResourceReference): EmptyOrLroResult;
 }

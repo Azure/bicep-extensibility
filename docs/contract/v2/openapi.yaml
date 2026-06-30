@@ -193,9 +193,7 @@ paths:
       description: |-
         Delete a resource given its type, identifiers, configuration, and configuration ID.
 
-        Returns 200 OK with a Resource if the operation completes synchronously or if the
-        extension uses the RELO pattern (the resource will have a non-terminal status),
-        204 No Content if the resource is deleted synchronously or does not exist, or
+        Returns 204 No Content if the resource is deleted synchronously or does not exist, or
         202 Accepted with a LongRunningOperation if the deletion uses the LRO pattern.
 
         See the [contract documentation](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md#delete-resource)
