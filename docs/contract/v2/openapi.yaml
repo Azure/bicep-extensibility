@@ -211,23 +211,6 @@ paths:
         - $ref: '#/components/parameters/RequestHeaders.traceparent'
         - $ref: '#/components/parameters/RequestHeaders.tracestate'
       responses:
-        '200':
-          description: Standard 200 OK response.
-          headers:
-            x-ms-request-id:
-              required: true
-              description: Server-generated request ID.
-              schema:
-                type: string
-            Date:
-              required: true
-              description: The date the request was processed, in RFC 7231 format.
-              schema:
-                type: string
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Resource'
         '202':
           description: Standard 202 Accepted response for long-running operations.
           headers:

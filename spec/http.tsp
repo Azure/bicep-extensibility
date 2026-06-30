@@ -230,11 +230,10 @@ interface HttpResourceActions {
     "https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md#delete-resource",
     "Delete Resource Contract"
   )
-  deleteResource(...RequestParams, @body body: ResourceReference):
-    | Ok<Resource>
-    | NoContent
-    | Accepted<LongRunningOperation>
-    | Failure;
+  deleteResource(
+    ...RequestParams,
+    @body body: ResourceReference,
+  ): NoContent | Accepted<LongRunningOperation> | Failure;
 }
 
 // ---------------------------------------------------------------------------
