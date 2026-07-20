@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Leave EnableNuget OFF for the POC stab. We are not packing/publishing yet. -->
+    <Description>Opinionated hosting facade for Bicep extensions (managed/platform-hosted model). Wraps Azure.Deployments.Extensibility.AspNetCore with platform-contract defaults: EXTENSION_PORT binding, GET /health, and local-dev relaxations.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure.Deployments.Extensibility.AspNetCore\Azure.Deployments.Extensibility.AspNetCore.csproj" />
+  </ItemGroup>
+
+</Project>
