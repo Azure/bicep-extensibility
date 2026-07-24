@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Extensions.Kubernetes" />
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.AspNetCore.Tests.Unit" />
   </ItemGroup>
 
   <ItemGroup>
