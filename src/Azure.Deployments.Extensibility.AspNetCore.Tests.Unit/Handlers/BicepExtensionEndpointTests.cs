@@ -131,6 +131,115 @@ public class BicepExtensionEndpointTests
         error!.Error.Code.Should().Be("Conflict");
     }
 
+    [Fact]
+    public async Task MapEndpoints_WithCreateOrUpdateLro_ReturnsAccepted()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddBicepExtensionServices();
+        var registration = BicepExtensionRegistration.Create(builder.Services, extension => extension
+            .AddHandler<CreateOrUpdateLroHandler>());
+        builder.Services.AddSingleton<IBicepExtensionResolver>(new StubResolver(registration));
+        await using var app = builder.Build();
+        app.MapBicepExtensionEndpoints();
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.PostAsJsonAsync(
+            "/1.0.0/resource/createOrUpdate",
+            new ResourceSpecification
+            {
+                Type = "Widget",
+                Properties = new JsonObject { ["name"] = "example" },
+            });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+        var operation = await response.Content.ReadFromJsonAsync<LongRunningOperation>();
+        operation.Should().NotBeNull();
+        operation!.Status.Should().Be("Running");
+    }
+
+    [Fact]
+    public async Task MapEndpoints_WithDeleteLro_ReturnsAccepted()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddBicepExtensionServices();
+        var registration = BicepExtensionRegistration.Create(builder.Services, extension => extension
+            .AddHandler<DeleteLroHandler>());
+        builder.Services.AddSingleton<IBicepExtensionResolver>(new StubResolver(registration));
+        await using var app = builder.Build();
+        app.MapBicepExtensionEndpoints();
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.PostAsJsonAsync(
+            "/1.0.0/resource/delete",
+            new ResourceReference
+            {
+                Type = "Widget",
+                Identifiers = new JsonObject { ["name"] = "example" },
+            });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+        var operation = await response.Content.ReadFromJsonAsync<LongRunningOperation>();
+        operation.Should().NotBeNull();
+        operation!.Status.Should().Be("Running");
+    }
+
+    [Fact]
+    public async Task MapEndpoints_WithNullDeleteResult_ReturnsNoContent()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddBicepExtensionServices();
+        var registration = BicepExtensionRegistration.Create(builder.Services, extension => extension
+            .AddHandler<NullDeleteHandler>());
+        builder.Services.AddSingleton<IBicepExtensionResolver>(new StubResolver(registration));
+        await using var app = builder.Build();
+        app.MapBicepExtensionEndpoints();
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.PostAsJsonAsync(
+            "/1.0.0/resource/delete",
+            new ResourceReference
+            {
+                Type = "Widget",
+                Identifiers = new JsonObject { ["name"] = "example" },
+            });
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task MapEndpoints_WithNullGetResult_ReturnsNotFound()
+    {
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddBicepExtensionServices();
+        var registration = BicepExtensionRegistration.Create(builder.Services, extension => extension
+            .AddHandler<NullGetHandler>());
+        builder.Services.AddSingleton<IBicepExtensionResolver>(new StubResolver(registration));
+        await using var app = builder.Build();
+        app.MapBicepExtensionEndpoints();
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var response = await client.PostAsJsonAsync(
+            "/1.0.0/resource/get",
+            new ResourceReference
+            {
+                Type = "Widget",
+                Identifiers = new JsonObject { ["name"] = "example" },
+            });
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        error.Should().NotBeNull();
+        error!.Error.Code.Should().Be("ResourceNotFound");
+    }
+
     private sealed class StubResolver : IBicepExtensionResolver
     {
         private readonly BicepExtensionRegistration registration;
@@ -162,5 +271,39 @@ public class BicepExtensionEndpointTests
             ResourceReference request,
             CancellationToken cancellationToken) =>
             throw new HttpErrorResponseException((int)HttpStatusCode.Conflict, "Conflict", "Expected conflict.");
+    }
+
+    private sealed class CreateOrUpdateLroHandler : IResourceCreateOrUpdateHandler
+    {
+        public Task<OneOf<Resource, LongRunningOperation, ErrorResponse>> HandleAsync(
+            ResourceSpecification request,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<OneOf<Resource, LongRunningOperation, ErrorResponse>>(
+                new LongRunningOperation("Running", operationHandle: new JsonObject { ["id"] = "example" }));
+    }
+
+    private sealed class DeleteLroHandler : IResourceDeleteHandler
+    {
+        public Task<OneOf<Resource?, LongRunningOperation, ErrorResponse>> HandleAsync(
+            ResourceReference request,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<OneOf<Resource?, LongRunningOperation, ErrorResponse>>(
+                new LongRunningOperation("Running", operationHandle: new JsonObject { ["id"] = "example" }));
+    }
+
+    private sealed class NullDeleteHandler : IResourceDeleteHandler
+    {
+        public Task<OneOf<Resource?, LongRunningOperation, ErrorResponse>> HandleAsync(
+            ResourceReference request,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<OneOf<Resource?, LongRunningOperation, ErrorResponse>>((Resource?)null);
+    }
+
+    private sealed class NullGetHandler : IResourceGetHandler
+    {
+        public Task<OneOf<Resource?, ErrorResponse>> HandleAsync(
+            ResourceReference request,
+            CancellationToken cancellationToken) =>
+            Task.FromResult<OneOf<Resource?, ErrorResponse>>((Resource?)null);
     }
 }
