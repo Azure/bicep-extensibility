@@ -241,12 +241,12 @@ If the resource does not exist, the extension must return an error indicating th
 
 Deletes a resource given its type, identifiers, configuration, and configuration ID.
 
-| | Type |
-|---|---|
-| **Input** | `ResourceReference` |
-| **Output** | `Resource \| LongRunningOperation \| ErrorResponse` |
+|            | Type                                            |
+|------------|-------------------------------------------------|
+| **Input**  | `ResourceReference`                             |
+| **Output** | `void \| LongRunningOperation \| ErrorResponse` |
 
-The operation may complete synchronously and return the deleted resource, indicate that the resource was already deleted, or initiate a long-running operation.
+The operation may complete synchronously with empty content or initiate a long-running operation.
 
 ---
 
