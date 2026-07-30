@@ -601,16 +601,16 @@ If the operation is canceled (e.g., the deployment is canceled by the user), the
 | Scenario | Status Code |
 |----------|-------------|
 | CreateOrUpdate / delete accepted (operation in progress) | `200 OK` |
-| Get polling — operation in progress or succeeded | `200 OK` |
-| Get polling — delete succeeded (resource not found) | `404 Not Found` |
+| Get polling (operation in progress or succeeded) | `200 OK` |
+| Get polling (delete succeeded, resource not found) | `404 Not Found` |
 
 ### LRO
 
 | Scenario | Status Code |
 |----------|-------------|
 | CreateOrUpdate / delete accepted (operation in progress) | `202 Accepted` |
-| Get Long-Running Operation — in progress or terminal | `200 OK` |
-| Get Long-Running Operation — polling failure (not an operation failure) | `4xx / 5xx` |
+| Get Long-Running Operation (in progress or terminal) | `200 OK` |
+| Get Long-Running Operation (polling failure, not an operation failure) | `4xx / 5xx` |
 | Final get after successful createOrUpdate | `200 OK` |
 
 ---

@@ -5,8 +5,8 @@
   items:
   - name: API Reference
     href: api-core/
-- name: AspNetCore
-  href: aspnetcore.md
+- name: Managed
+  href: managed.md
   items:
   - name: API Reference
-    href: api-aspnetcore/
+    href: api-managed/

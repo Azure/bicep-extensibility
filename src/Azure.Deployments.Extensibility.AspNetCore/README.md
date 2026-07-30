@@ -1,34 +1,43 @@
 # Azure.Deployments.Extensibility.AspNetCore
 
-ASP.NET Core hosting framework for building [Bicep extensions](https://github.com/Azure/bicep-extensibility). Provides a fluent API for handler registration, middleware pipeline, request routing, and behavior (decorator) chains on top of the [Core SDK](https://github.com/Azure/bicep-extensibility/tree/main/src/Azure.Deployments.Extensibility.Core).
+Version-free ASP.NET Core runtime for [Bicep extension](https://github.com/Azure/bicep-extensibility) hosting packages. It provides immutable handler registration, middleware, request routing, typed handlers, and behavior dispatch on top of the Core SDK.
 
-## Quick start
+Third-party and local extension authors should use `Azure.Deployments.Extensibility.Hosting.Managed`, which configures this package with project identity, exact-version dispatch, startup validation, and health checks.
+
+## Hosting package composition
 
 ```csharp
-using Azure.Deployments.Extensibility.AspNetCore;
+builder.Services.AddBicepExtensionServices();
 
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("Fortune", type => type
+var registration = BicepExtensionRegistration.Create(
+    builder.Services,
+    extension => extension
+        .ForResourceType("Fortune", resourceType => resourceType
             .AddHandler<FortunePreviewHandler>()
             .AddHandler<FortuneCreateOrUpdateHandler>()
             .AddHandler<FortuneGetHandler>()
-            .AddHandler<FortuneDeleteHandler>()))
-    .Run();
+            .AddHandler<FortuneDeleteHandler>()));
+
+builder.Services.AddSingleton<IBicepExtensionResolver>(
+    new HostingPolicyResolver(registration));
+
+var app = builder.Build();
+app.UseBicepExtensionMiddlewares();
+app.MapBicepExtensionEndpoints();
 ```
 
-`ExtensionApplication` handles JSON serialization, error handling, correlation headers, culture propagation, and endpoint routing automatically.
+The host owns version policy through `IBicepExtensionResolver`. The base runtime treats the route version as an opaque string.
 
 ## Key concepts
 
 ### Handler registration
 
-Register handlers by extension version range and optional resource type. The framework auto-detects which handler interfaces each class implements (`IResourcePreviewHandler`, `IResourceCreateOrUpdateHandler`, `IResourceGetHandler`, `IResourceDeleteHandler`, `ILongRunningOperationGetHandler`).
+Register handlers in one immutable, version-independent registration. The runtime detects which handler interfaces each class implements (`IResourcePreviewHandler`, `IResourceCreateOrUpdateHandler`, `IResourceGetHandler`, `IResourceDeleteHandler`, `ILongRunningOperationGetHandler`).
 
 ```csharp
-app.AddExtensionVersion(">=1.0.0 <2.0.0", version => version
-    .AddHandler<FallbackHandler>()                    // default handler for this version range
-    .ForResourceType("Employee", type => type         // resource-type-specific handlers
+var registration = BicepExtensionRegistration.Create(services, extension => extension
+    .AddHandler<FallbackHandler>()
+    .ForResourceType("Employee", type => type
         .AddHandler<EmployeePreviewHandler>()
         .AddHandler<EmployeeCreateOrUpdateHandler>()));
 ```
@@ -48,17 +57,14 @@ Each base class automatically deserializes the request and serializes the respon
 
 ### Behaviors (decorators)
 
-Behaviors wrap handler invocations for cross-cutting concerns such as validation, logging, or authorization. They execute in order: **global → version-scoped → resource-type-scoped**.
+Behaviors wrap handler invocations for cross-cutting concerns such as validation, logging, or authorization. They execute in order: **global → registration-scoped → resource-type-scoped**.
 
 ```csharp
-// Global — runs on every handler invocation.
-app.AddGlobalHandlerBehavior<LoggingBehavior>();
+services.AddBicepExtensionGlobalHandlerBehavior<LoggingBehavior>();
 
-app.AddExtensionVersion("1.*.*", version => version
-    // Version-scoped — runs on all handlers in this version range.
+var registration = BicepExtensionRegistration.Create(services, extension => extension
     .AddHandlerBehavior<ApiVersionValidationBehavior>()
     .ForResourceType("Fortune", type => type
-        // Resource-type-scoped — runs only on Fortune handlers.
         .AddHandlerBehavior<FortuneAuthorizationBehavior>()
         .AddHandler<FortuneCreateOrUpdateHandler>()));
 ```
@@ -67,16 +73,16 @@ Implement `IResourcePreviewBehavior`, `IResourceCreateOrUpdateBehavior`, `IResou
 
 ### Scalar API explorer
 
-Enable a development-time API explorer powered by [Scalar](https://scalar.com/) with request/response examples:
+Hosting packages can reuse the shared development-time Scalar UI and OpenAPI document:
 
 ```csharp
-app.EnableDevelopmentScalarApiExplorer(explorer => explorer
+BicepExtensionApiExplorer.MapDevelopment(app, explorer => explorer
     .WithTitle("My Extension API")
     .WithExtensionVersions("1.0.0", "2.0.0")
-    .ConfigureExamples(examples => examples
-        .ForPreview(requestExample, responseExample)
-        .ForCreateOrUpdate(requestExample, responseExample)));
+    .ConfigureExamples(MyExtensionExamples.Configure));
 ```
+
+The host supplies the version examples according to its routing policy. Managed hosting supplies its exact assembly version automatically; FirstParty hosting can supply all supported version examples.
 
 ### Request headers
 
@@ -90,9 +96,9 @@ var tenantId = httpContext.GetClientTenantId();
 
 ## Documentation
 
-- [Bicep Extension API Contract v2](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/contract.md)
-- [Preview Operation](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/preview-operation.md)
-- [Asynchronous Operations](https://github.com/Azure/bicep-extensibility/blob/main/docs/v2/async-operations.md)
+- [Bicep Extension API Contract](https://github.com/Azure/bicep-extensibility/blob/main/docs/contract/contract.md)
+- [Preview Operation](https://github.com/Azure/bicep-extensibility/blob/main/docs/contract/preview-operation.md)
+- [Asynchronous Operations](https://github.com/Azure/bicep-extensibility/blob/main/docs/contract/async-operations.md)
 - [Sample Extension (Magic Eight Ball)](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension)
 
 ## License
