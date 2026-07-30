@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Azure.Deployments.Extensibility.Hosting.Managed\Azure.Deployments.Extensibility.Hosting.Managed.csproj" />
+  </ItemGroup>
+
+  <!-- Real Azure Storage data-plane I/O, authenticated via DefaultAzureCredential. -->
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.*" />
+    <PackageReference Include="Azure.Identity" Version="1.*" />
+  </ItemGroup>
+
+</Project>
