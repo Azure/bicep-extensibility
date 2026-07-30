@@ -23,7 +23,6 @@
     <PackageReference Include="JsonPointer.Net" Version="5.3.1" />
     <PackageReference Include="JsonSchema.Net" Version="7.3.4" />
     <!-- DO NOT BUMP THE VERSIONS OF THE ABOVE PACKAGES -->
-    <PackageReference Include="Semver" Version="3.0.0" />
   </ItemGroup>
 
 

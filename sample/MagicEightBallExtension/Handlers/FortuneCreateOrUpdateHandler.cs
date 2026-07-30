@@ -12,12 +12,10 @@ using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace MagicEightBallExtension.Handlers.V2;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Creates or updates a fortune resource (v2). Adds "confidence" and "mood" to the fortune response.
-/// Demonstrates version-based handler routing — requests with extensionVersion >= 2.0.0
-/// are routed here instead of the v1 handler.
+/// Creates or updates a fortune resource with confidence and mood in the response.
 /// </summary>
 public class FortuneCreateOrUpdateHandler
     : TypedResourceCreateOrUpdateHandler<FortunePropertiesV2, FortuneIdentifiers>

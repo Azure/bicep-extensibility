@@ -170,14 +170,21 @@ public class WidgetPreviewHandler
 ## 3. Register the handlers
 
 ```csharp
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("Widget", type => type
+using Azure.Deployments.Extensibility.Hosting.Managed.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddBicepExtension(extension => extension
+    .ForResourceType("Widget", type => type
             .AddHandler<WidgetPreviewHandler>()
             .AddHandler<WidgetCreateOrUpdateHandler>()
             .AddHandler<WidgetGetHandler>()
-            .AddHandler<WidgetDeleteHandler>()))
-    .Run();
+            .AddHandler<WidgetDeleteHandler>()));
+
+var app = builder.Build();
+app.UseBicepExtension();
+
+await app.RunAsync();
 ```
 
 ## Typed configuration
@@ -204,12 +211,12 @@ The base class exposes conversion methods for when you need to cross between typ
 
 | Method | Direction |
 |--------|-----------|
-| `ToResource(TypedResource)` | Typed → Untyped |
-| `ToTypedResource(Resource)` | Untyped → Typed |
-| `ToNullableResource(TypedResource?)` | Typed → Untyped (nullable) |
-| `ToResourceSpecification(TypedResourceSpecification)` | Typed → Untyped |
+| `ToResource(TypedResource)` | Typed to untyped |
+| `ToTypedResource(Resource)` | Untyped to typed |
+| `ToNullableResource(TypedResource?)` | Typed to untyped (nullable) |
+| `ToResourceSpecification(TypedResourceSpecification)` | Typed to untyped |
 
 ## Next steps
 
-- [Behaviors](behaviors.md) — add cross-cutting validation or logging around your handlers.
-- [Validators](validators.md) — validate request models with a fluent DSL.
+- [Behaviors](behaviors.md): add cross-cutting validation or logging around your handlers.
+- [Validators](validators.md): validate request models with a fluent DSL.

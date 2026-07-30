@@ -8,16 +8,15 @@ using MagicEightBallExtension.Data;
 using MagicEightBallExtension.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 
-namespace MagicEightBallExtension.Handlers.V1;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Retrieves a fortune resource by its identifiers.
+/// Retrieves a fortune resource by its identifiers, including the "confidence" and "mood" fields.
 /// Returns null (maps to 404) if the fortune does not exist.
 /// </summary>
 public class FortuneGetHandler
-    : TypedResourceGetHandler<FortuneProperties, FortuneIdentifiers>
+    : TypedResourceGetHandler<FortunePropertiesV2, FortuneIdentifiers>
 {
     private readonly FortuneStore store;
 

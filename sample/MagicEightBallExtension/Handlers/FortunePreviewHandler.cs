@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace MagicEightBallExtension.Handlers.V2;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Previews what a v2 fortune resource would look like without persisting it.
-/// Extends the v1 preview with placeholder "confidence" and "mood" values,
+/// Previews what a fortune resource would look like without persisting it.
+/// Includes placeholder "confidence" and "mood" values,
 /// and marks all four server-computed fields in the preview metadata.
 /// </summary>
 public class FortunePreviewHandler

@@ -1,8 +1,8 @@
 # Magic 8-Ball Extension — Sample Bicep Extension
 
-A fun sample extension that demonstrates how to build a Bicep extension using the AspNetCore SDK. It implements a **Magic 8-Ball** resource provider: you ask a question, shake the 8-ball, and get a fortune!
+A fun sample extension that demonstrates how to build a third-party or local Bicep extension using the Managed SDK. It implements a **Magic 8-Ball** resource provider: you ask a question, shake the 8-ball, and get a fortune!
 
-This sample exercises **all 5 API endpoints** defined by the [V2 contract](../../docs/v2/contract.md), with two extension versions:
+This process hosts the exact extension version `2.0.0` and exercises **all 5 API endpoints** defined by the [contract](../../docs/contract/contract.md):
 
 | Endpoint | What it does in this sample |
 |---|---|
@@ -10,7 +10,7 @@ This sample exercises **all 5 API endpoints** defined by the [V2 contract](../..
 | **Create or Update** | Shakes the 8-ball, generates a random fortune, and stores it. One special fortune ("The cosmos need more time to decide...") triggers a **long-running operation** (202 Accepted). The v2 handler adds `confidence` and `mood` fields. |
 | **Get** | Retrieves a stored fortune by name. Returns 404 if it doesn't exist. |
 | **Delete** | Removes a fortune. Returns 204 if it was already gone. |
-| **Get LRO** | Polls the status of a "cosmic contemplation" operation. Completes after 5 seconds. Shared across both extension versions. |
+| **Get LRO** | Polls the status of a "cosmic contemplation" operation. Completes after 5 seconds. |
 
 ## Prerequisites
 
@@ -23,7 +23,7 @@ cd sample/MagicEightBallExtension
 dotnet run
 ```
 
-The server starts at `http://localhost:5000` by default. Open the **Scalar API explorer** at:
+The server starts at `http://localhost:5000` by default. Open the Scalar API explorer at:
 
 ```
 http://localhost:5000/scalar/v2
@@ -36,7 +36,7 @@ All endpoints require `x-ms-client-request-id` and `x-ms-correlation-request-id`
 ### 1. Preview a Fortune
 
 ```bash
-curl -X POST http://localhost:5000/1.0.0/resource/preview \
+curl -X POST http://localhost:5000/2.0.0/resource/preview \
   -H "Content-Type: application/json" \
   -H "x-ms-client-request-id: test-001" \
   -H "x-ms-correlation-request-id: corr-001" \
@@ -45,7 +45,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
   -H "tracestate: congo=t61rcWkgMzE" \
   -d '{
     "type": "Fortune",
-    "apiVersion": "2024-01-01",
+    "apiVersion": "2025-01-01",
     "properties": {
       "name": "my-fortune",
       "question": "Will this sample work?"
@@ -57,7 +57,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
 ```json
 {
   "type": "Fortune",
-  "apiVersion": "2024-01-01",
+  "apiVersion": "2025-01-01",
   "identifiers": { "name": "my-fortune" },
   "properties": {
     "name": "my-fortune",
@@ -75,7 +75,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
 ### 2. Create a Fortune
 
 ```bash
-curl -X POST http://localhost:5000/1.0.0/resource/createOrUpdate \
+curl -X POST http://localhost:5000/2.0.0/resource/createOrUpdate \
   -H "Content-Type: application/json" \
   -H "x-ms-client-request-id: test-002" \
   -H "x-ms-correlation-request-id: corr-002" \
@@ -84,7 +84,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/createOrUpdate \
   -H "tracestate: congo=t61rcWkgMzE" \
   -d '{
     "type": "Fortune",
-    "apiVersion": "2024-01-01",
+    "apiVersion": "2025-01-01",
     "properties": {
       "name": "my-fortune",
       "question": "Should I use Bicep?"
@@ -96,7 +96,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/createOrUpdate \
 ```json
 {
   "type": "Fortune",
-  "apiVersion": "2024-01-01",
+  "apiVersion": "2025-01-01",
   "identifiers": { "name": "my-fortune" },
   "properties": {
     "name": "my-fortune",
@@ -121,7 +121,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/createOrUpdate \
 If you got a 202, poll the LRO endpoint:
 
 ```bash
-curl -X POST http://localhost:5000/1.0.0/longRunningOperation/get \
+curl -X POST http://localhost:5000/2.0.0/longRunningOperation/get \
   -H "Content-Type: application/json" \
   -H "x-ms-client-request-id: test-003" \
   -H "x-ms-correlation-request-id: corr-003" \
@@ -150,7 +150,7 @@ curl -X POST http://localhost:5000/1.0.0/longRunningOperation/get \
 ### 4. Get a Fortune
 
 ```bash
-curl -X POST http://localhost:5000/1.0.0/resource/get \
+curl -X POST http://localhost:5000/2.0.0/resource/get \
   -H "Content-Type: application/json" \
   -H "x-ms-client-request-id: test-004" \
   -H "x-ms-correlation-request-id: corr-004" \
@@ -159,7 +159,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/get \
   -H "tracestate: congo=t61rcWkgMzE" \
   -d '{
     "type": "Fortune",
-    "apiVersion": "2024-01-01",
+    "apiVersion": "2025-01-01",
     "identifiers": { "name": "my-fortune" }
   }'
 ```
@@ -169,7 +169,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/get \
 ### 5. Delete a Fortune
 
 ```bash
-curl -X POST http://localhost:5000/1.0.0/resource/delete \
+curl -X POST http://localhost:5000/2.0.0/resource/delete \
   -H "Content-Type: application/json" \
   -H "x-ms-client-request-id: test-005" \
   -H "x-ms-correlation-request-id: corr-005" \
@@ -178,7 +178,7 @@ curl -X POST http://localhost:5000/1.0.0/resource/delete \
   -H "tracestate: congo=t61rcWkgMzE" \
   -d '{
     "type": "Fortune",
-    "apiVersion": "2024-01-01",
+    "apiVersion": "2025-01-01",
     "identifiers": { "name": "my-fortune" }
   }'
 ```
@@ -187,49 +187,34 @@ curl -X POST http://localhost:5000/1.0.0/resource/delete \
 
 ## How It Works
 
-The extension is wired up in `Program.cs` using the `ExtensionApplication` builder API:
+The extension is wired up in `Program.cs` using standard ASP.NET Core APIs and the Managed SDK:
 
 ```csharp
-var app = ExtensionApplication.Create(args);
+var builder = WebApplication.CreateBuilder(args);
 
-// Register application services.
-app.ConfigureServices(services =>
+builder.Services.AddSingleton<FortuneStore>();
+builder.Services.Configure<JsonOptions>(options =>
 {
-    services.AddSingleton<FortuneStore>();
-    services.Configure<JsonOptions>(options =>
-    {
-        options.SerializerOptions.TypeInfoResolverChain.Insert(0, FortuneModelSerializerContext.Default);
-    });
+  options.SerializerOptions.TypeInfoResolverChain.Insert(0, FortuneModelSerializerContext.Default);
 });
 
-// Global behaviors — run for every handler invocation.
-app.AddGlobalHandlerBehavior<ResponseLoggingBehavior>();
-app.AddGlobalHandlerBehavior<NameValidationBehavior>();
-app.AddGlobalHandlerBehavior<PreviewMetadataProcessingBehavior>();
-
-// v1 handlers
-app.AddExtensionVersion("1.*.*", version => version
-    .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01", "2024-01-01-preview"))
+builder.Services.AddBicepExtension(extension => extension
+    .AddGlobalHandlerBehavior<ResponseLoggingBehavior>()
+    .AddGlobalHandlerBehavior<NameValidationBehavior>()
+    .AddGlobalHandlerBehavior(_ => new PreviewRewriteBehavior(new FakeValueSubstitutionPreviewRewriter()))
+    .AddHandlerBehavior(_ => new ApiVersionValidationBehavior("2025-01-01", "2025-01-01-preview"))
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     .ForResourceType("Fortune", type => type
-        .AddHandler<V1.FortunePreviewHandler>()
-        .AddHandler<V1.FortuneCreateOrUpdateHandler>()
-        .AddHandler<V1.FortuneGetHandler>()
-        .AddHandler<V1.FortuneDeleteHandler>()));
+      .AddHandler<FortunePreviewHandler>()
+      .AddHandler<FortuneCreateOrUpdateHandler>()
+      .AddHandler<FortuneGetHandler>()
+      .AddHandler<FortuneDeleteHandler>()));
 
-// v2 handlers
-app.AddExtensionVersion("2.*.*", version => version
-    .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2025-01-01", "2025-01-01-preview"))
-    .AddHandler<FortuneLongRunningOperationGetHandler>()
-    .ForResourceType("Fortune", type => type
-        .AddHandler<V2.FortunePreviewHandler>()
-        .AddHandler<V2.FortuneCreateOrUpdateHandler>()
-        .AddHandler<V2.FortuneGetHandler>()
-        .AddHandler<V2.FortuneDeleteHandler>()));
+var app = builder.Build();
 
-app.EnableDevelopmentScalarApiExplorer(explorer => explorer
+app.UseBicepExtension();
+app.MapDevelopmentApiExplorer(explorer => explorer
     .WithTitle("Magic Eight Ball Extension API")
-    .WithExtensionVersions("1.0.0", "2.0.0")
     .ConfigureExamples(FortuneExamples.Configure));
 
 await app.RunAsync();
@@ -239,37 +224,31 @@ Each handler extends one of the SDK's typed base classes (`TypedResourceCreateOr
 - JSON serialization/deserialization (with support for custom `JsonSerializerContext` via `JsonOptions`)
 - Request header extraction and correlation
 - Error handling and `ErrorResponse` mapping
-- Extension version routing via `AddExtensionVersion` — e.g., `V1.*` handlers use `FortuneProperties` while `V2.*` handlers use `FortunePropertiesV2` (which adds `confidence` and `mood`)
-- **Behaviors** (decorators) that run cross-cutting logic before/after handlers — both global (e.g., `ResponseLoggingBehavior`) and version-scoped (e.g., `ApiVersionValidationBehavior`)
+- Exact extension version routing from the project identity (`2.0.0`)
+- **Behaviors** (decorators) that run cross-cutting logic before/after handlers — both global (e.g., `ResponseLoggingBehavior`) and registration-scoped (e.g., `ApiVersionValidationBehavior`)
 - Resource-type routing via `ForResourceType` — handlers are scoped to specific resource types like `"Fortune"`
 
 ## Project Structure
 
 ```
 sample/MagicEightBallExtension/
-├── Program.cs                                          # Entry point — wires up versions, handlers, and behaviors
-├── FortuneExamples.cs                                  # OpenAPI examples for Scalar explorer
+├── Program.cs                                          # Entry point — wires up handlers and behaviors
+├── FortuneExamples.cs                                  # OpenAPI examples for the Scalar explorer
 ├── MagicEightBallExtension.csproj                      # Project file
 ├── README.md                                           # This file
 ├── Behaviors/
-│   ├── ApiVersionValidationBehavior.cs                 # Version-scoped: validates resource API version
+│   ├── ApiVersionValidationBehavior.cs                 # Registration-scoped: validates resource API version
 │   ├── NameValidationBehavior.cs                       # Global: validates required "name" property/identifier
 │   ├── PreviewMetadataProcessingBehavior.cs            # Global: handles unevaluated ARM expressions in preview
 │   └── ResponseLoggingBehavior.cs                      # Global: logs handler results
 ├── Data/
 │   └── FortuneStore.cs                                 # Thread-safe in-memory store for resources and LROs
 ├── Handlers/
-│   ├── FortuneLongRunningOperationGetHandler.cs        # LRO polling (shared across versions)
-│   ├── V1/
-│   │   ├── FortunePreviewHandler.cs                    # Preview (v1)
-│   │   ├── FortuneCreateOrUpdateHandler.cs             # Create/Update (v1)
-│   │   ├── FortuneGetHandler.cs                        # Get (v1)
-│   │   └── FortuneDeleteHandler.cs                     # Delete (v1)
-│   └── V2/
-│       ├── FortunePreviewHandler.cs                    # Preview (v2) — adds confidence & mood placeholders
-│       ├── FortuneCreateOrUpdateHandler.cs             # Create/Update (v2) — adds confidence & mood
-│       ├── FortuneGetHandler.cs                        # Get (v2) — deserializes v2 properties
-│       └── FortuneDeleteHandler.cs                     # Delete (v2) — deserializes v2 properties
+│   ├── FortuneLongRunningOperationGetHandler.cs        # LRO polling
+│   ├── FortunePreviewHandler.cs                        # Preview — adds confidence & mood placeholders
+│   ├── FortuneCreateOrUpdateHandler.cs                 # Create/Update — adds confidence & mood
+│   ├── FortuneGetHandler.cs                            # Get — deserializes fortune properties
+│   └── FortuneDeleteHandler.cs                         # Delete — deserializes fortune properties
 └── Models/
     ├── FortuneModels.cs                                # FortuneProperties, FortunePropertiesV2, FortuneIdentifiers
     └── FortuneModelSerializerContext.cs                 # Source-generated JSON serializer context
