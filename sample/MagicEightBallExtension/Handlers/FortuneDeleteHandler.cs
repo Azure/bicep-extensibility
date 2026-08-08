@@ -9,10 +9,10 @@ using MagicEightBallExtension.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 
-namespace MagicEightBallExtension.Handlers.V2;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Deletes a fortune resource (v2). Returns the deleted resource (including "confidence" and "mood") on success,
+/// Deletes a fortune resource. Returns the deleted resource (including "confidence" and "mood") on success,
 /// or null (204) if it didn't exist.
 /// </summary>
 public class FortuneDeleteHandler

@@ -1,8 +1,12 @@
 - name: Home
   href: index.md
+- name: Getting Started
+  href: tutorials/getting-started.md
+- name: Concepts
+  href: concepts.md
+- name: Guides
+  href: tutorials/
 - name: Contract
   href: contract/
-- name: SDKs
+- name: SDK Reference
   href: sdks/
-- name: Tutorials
-  href: tutorials/

@@ -29,6 +29,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 ///     .Run();
 /// ]]></code>
 /// </example>
+// TODO: Remove this legacy hosting surface after existing consumers migrate to Hosting.FirstParty.
 public class ExtensionApplication
 {
     private readonly HandlerRegistry handlerRegistry = new();
@@ -198,10 +199,7 @@ public class ExtensionApplication
     {
         if (this.apiExplorerBuilder is { } explorer)
         {
-            app.MapDevelopmentScalarApiExplorer(
-                explorer.ExamplesConfigurator,
-                explorer.Title,
-                explorer.ExtensionVersions);
+            BicepExtensionApiExplorer.MapDevelopment(app, explorer);
         }
 
         app.MapResourceActions();

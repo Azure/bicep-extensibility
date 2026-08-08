@@ -18,37 +18,33 @@ using System.Text.Json.Nodes;
 namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
 
 /// <summary>
-/// Extension methods for adding the Scalar API explorer to an extensibility application.
+/// Maps the shared, development-time API explorer UI and OpenAPI document.
 /// </summary>
-internal static class ScalarExtensions
+public static class BicepExtensionApiExplorer
 {
     private const string OpenApiDocumentName = "v2";
     private const string DefaultServerUrl = "http://localhost:8080";
     internal const string DefaultTitle = "Bicep Extensibility Provider API";
 
     /// <summary>
-    /// Maps the Scalar API explorer UI and the OpenAPI specification endpoint.
+    /// Maps the API explorer UI and the OpenAPI specification endpoint.
     /// Only registers routes when the application is running in the Development environment.
     /// </summary>
-    /// <example>
-    /// <code>
-    /// var app = builder.Build();
-    /// app.UseDevelopmentApiExplorer(examples =>
-    /// {
-    ///     examples.ForCreateOrUpdate(
-    ///         request: new { type = "MyResource", properties = new { name = "example" } },
-    ///         response: new { type = "MyResource", identifiers = new { name = "example" }, properties = new { name = "example" } });
-    /// });
-    /// app.MapResourceActions();
-    /// app.MapLongRunningOperationActions();
-    /// app.Run();
-    /// </code>
-    /// </example>
-    public static WebApplication MapDevelopmentScalarApiExplorer(
-        this WebApplication app,
-        Action<OpenApiExamplesBuilder>? configureExamples = null,
-        string title = DefaultTitle,
-        string[]? extensionVersions = null)
+    public static WebApplication MapDevelopment(
+        WebApplication app,
+        Action<ScalarApiExplorerBuilder>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+
+        var builder = new ScalarApiExplorerBuilder();
+        configure?.Invoke(builder);
+
+        return MapDevelopment(app, builder);
+    }
+
+    internal static WebApplication MapDevelopment(
+        WebApplication app,
+        ScalarApiExplorerBuilder builder)
     {
         if (!app.Environment.IsDevelopment())
         {
@@ -56,7 +52,11 @@ internal static class ScalarExtensions
         }
 
         var serializerOptions = app.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
-        var openApiJson = BuildOpenApiDocument(configureExamples, extensionVersions, title, serializerOptions);
+        var openApiJson = BuildOpenApiDocument(
+            builder.ExamplesConfigurator,
+            builder.ExtensionVersions,
+            builder.Title,
+            serializerOptions);
 
         app.MapGet($"/openapi/{OpenApiDocumentName}.json", (HttpRequest request) =>
         {
@@ -69,7 +69,7 @@ internal static class ScalarExtensions
         app.MapScalarApiReference(options =>
         {
             options
-                .WithTitle(title)
+                .WithTitle(builder.Title)
                 .WithOpenApiRoutePattern($"/openapi/{OpenApiDocumentName}.json");
         });
 
@@ -78,7 +78,7 @@ internal static class ScalarExtensions
 
     private static string BuildOpenApiDocument(Action<OpenApiExamplesBuilder>? configureExamples, string[]? extensionVersions, string title, JsonSerializerOptions serializerOptions)
     {
-        var assembly = typeof(ScalarExtensions).Assembly;
+        var assembly = typeof(BicepExtensionApiExplorer).Assembly;
         using var stream = assembly.GetManifestResourceStream("openapi.yaml")
             ?? throw new InvalidOperationException("Embedded OpenAPI specification not found.");
 

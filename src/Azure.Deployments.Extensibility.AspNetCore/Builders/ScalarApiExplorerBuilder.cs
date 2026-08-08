@@ -11,7 +11,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Builders;
 /// </summary>
 public class ScalarApiExplorerBuilder
 {
-    internal string Title { get; private set; } = ScalarExtensions.DefaultTitle;
+    internal string Title { get; private set; } = BicepExtensionApiExplorer.DefaultTitle;
 
     internal string[]? ExtensionVersions { get; private set; }
 
