@@ -1,0 +1,148 @@
+# @host = http://localhost:8080
+@host = https://blobpoc-app.bluebay-a7cfc1d8.eastus.azurecontainerapps.io
+@version = 1.0.0
+@apiVersion = 2024-01-01
+
+# Replace with the storageAccountName output by storage-account.bicep.
+@accountName = mystgacct28518
+@containerName = container1
+
+### Health check (no storage call unless Storage__ProbeAccountName is set)
+GET {{host}}/health
+
+### Preview (side-effect-free)
+POST {{host}}/{{version}}/resource/preview
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "properties": {
+    "accountName": "{{accountName}}",
+    "containerName": "{{containerName}}"
+  },
+  "metadata": {
+    "unevaluated": []
+  }
+}
+
+### Create or update the container (real I/O)
+POST {{host}}/{{version}}/resource/createOrUpdate
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "properties": {
+    "accountName": "{{accountName}}",
+    "containerName": "{{containerName}}",
+    "publicAccess": "none"
+  }
+}
+
+### Get the container
+POST {{host}}/{{version}}/resource/get
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "identifiers": {
+    "accountName": "{{accountName}}",
+    "containerName": "{{containerName}}"
+  }
+}
+
+### Delete the container (204 / empty)
+POST {{host}}/{{version}}/resource/delete
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "identifiers": {
+    "accountName": "{{accountName}}",
+    "containerName": "{{containerName}}"
+  }
+}
+
+### Long-running operation get (generic stub)
+POST {{host}}/{{version}}/longRunningOperation/get
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "operationId": "op-abc123"
+}
+
+###############################################################################
+# Behavior validation cases
+###############################################################################
+
+### Bad API version -> UnsupportedApiVersion (ApiVersionValidationBehavior)
+POST {{host}}/{{version}}/resource/createOrUpdate
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "1999-01-01",
+  "properties": {
+    "accountName": "{{accountName}}",
+    "containerName": "{{containerName}}"
+  }
+}
+
+### Invalid account name -> InvalidAccountName (AccountNameValidationBehavior)
+POST {{host}}/{{version}}/resource/createOrUpdate
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "properties": {
+    "accountName": "THIS_IS_NOT_VALID",
+    "containerName": "{{containerName}}"
+  }
+}
+
+### Missing account name -> MissingAccountName (AccountNameValidationBehavior)
+POST {{host}}/{{version}}/resource/createOrUpdate
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "properties": {
+    "containerName": "{{containerName}}"
+  }
+}
+
+### Storage error mapping -> ContainerNotFound/AuthorizationFailed/AccountNotFound (StorageExceptionHandlingBehavior)
+POST {{host}}/{{version}}/resource/get
+Content-Type: application/json
+x-ms-client-request-id: {{$guid}}
+x-ms-correlation-request-id: {{$guid}}
+
+{
+  "type": "Container",
+  "apiVersion": "{{apiVersion}}",
+  "identifiers": {
+    "accountName": "{{accountName}}",
+    "containerName": "does-not-exist"
+  }
+}
