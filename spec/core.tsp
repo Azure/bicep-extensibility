@@ -386,8 +386,11 @@ alias PreviewResult = ResourcePreview | ErrorResponse;
 /** Result of a get operation: resource data or an error. */
 alias ResourceResult = Resource | ErrorResponse;
 
-/** Result of a create/update or delete: resource, LRO, or an error. */
+/** Result of a create/update operation: resource, LRO, or an error. */
 alias ResourceOrLroResult = Resource | LongRunningOperation | ErrorResponse;
+
+/** Result of a delete operation: no content, LRO, or an error. */
+alias EmptyOrLroResult = void | LongRunningOperation | ErrorResponse;
 
 // ===========================================================================
 // Operations
@@ -419,10 +422,9 @@ interface ResourceActions {
   getResource(reference: ResourceReference): ResourceResult;
 
   /**
-   * Delete a resource. May complete synchronously, indicate the resource was
-   * already deleted, or initiate a long-running operation.
+   * Delete a resource. May complete synchronously or initiate a long-running operation.
    */
-  deleteResource(reference: ResourceReference): ResourceOrLroResult;
+  deleteResource(reference: ResourceReference): EmptyOrLroResult;
 }
 
 /**
