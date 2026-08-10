@@ -70,7 +70,7 @@ namespace Azure.Deployments.Extensibility.Providers.Kubernetes.Tests.Integration
             this.diagnosticMessageSink.OnMessage(errorMessage);
 
             var outputMessage = new DiagnosticMessage(standardOutput);
-            this.diagnosticMessageSink.OnMessage(errorMessage);
+            this.diagnosticMessageSink.OnMessage(outputMessage);
 
             if (process.ExitCode != 0)
             {
