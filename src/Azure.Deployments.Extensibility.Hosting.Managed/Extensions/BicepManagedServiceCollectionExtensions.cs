@@ -4,8 +4,8 @@
 using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Hosting.Managed;
-using Azure.Deployments.Extensibility.Hosting.Managed.Identity;
 using Azure.Deployments.Extensibility.Hosting.Managed.Resolution;
+using Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 using Azure.Deployments.Extensibility.Hosting.Managed.Validation;
 using Microsoft.Extensions.Hosting;
 
@@ -29,13 +29,13 @@ public static class BicepManagedServiceCollectionExtensions
         return AddBicepExtension(
             services,
             configure,
-            BicepExtensionIdentityReader.ReadEntryAssembly());
+            BicepExtensionDescriptorReader.ReadEntryAssembly());
     }
 
     internal static IServiceCollection AddBicepExtension(
         this IServiceCollection services,
         Action<IBicepManagedExtensionBuilder> configure,
-        BicepExtensionIdentity identity)
+        BicepExtensionDescriptor descriptor)
     {
         if (services.Any(descriptor => descriptor.ServiceType == typeof(ManagedExtensionState)))
         {
@@ -50,11 +50,11 @@ public static class BicepManagedServiceCollectionExtensions
             services,
             extensionBuilder => configure(
                 new BicepManagedExtensionBuilder(services, extensionBuilder)));
-        var state = new ManagedExtensionState(identity.Version);
+        var state = new ManagedExtensionState(descriptor.Version);
 
         services.AddSingleton(state);
         services.AddSingleton<IBicepExtensionResolver>(
-            new ExactVersionExtensionResolver(identity.Version, registration));
+            new ExactVersionExtensionResolver(descriptor.Version, registration));
         services.AddSingleton<IHostedService, ManagedExtensionStartupValidator>();
 
         return services;

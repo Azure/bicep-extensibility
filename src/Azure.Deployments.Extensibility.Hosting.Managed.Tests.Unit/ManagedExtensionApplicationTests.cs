@@ -7,7 +7,7 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Azure.Deployments.Extensibility.Hosting.Managed.Extensions;
-using Azure.Deployments.Extensibility.Hosting.Managed.Identity;
+using Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,7 +24,7 @@ namespace Azure.Deployments.Extensibility.Hosting.Managed.Tests.Unit;
 
 public class ManagedExtensionApplicationTests
 {
-    private static readonly BicepExtensionIdentity Identity = new("Widget", "1.0.0");
+    private static readonly BicepExtensionDescriptor Descriptor = new("Widget", "1.0.0");
 
     [Fact]
     public void UseBicepExtension_WithoutServiceRegistration_Throws()
@@ -41,7 +41,7 @@ public class ManagedExtensionApplicationTests
     public void UseBicepExtension_CalledTwice_Throws()
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Identity);
+        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         using var app = builder.Build();
         app.UseBicepExtension();
 
@@ -56,7 +56,7 @@ public class ManagedExtensionApplicationTests
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
-        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Identity);
+        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         await using var app = builder.Build();
 
         var action = () => app.StartAsync();
@@ -69,7 +69,7 @@ public class ManagedExtensionApplicationTests
     public void UseBicepExtension_ValidRegistration_MapsBareContractRoutes()
     {
         var builder = WebApplication.CreateBuilder();
-        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Identity);
+        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         using var app = builder.Build();
 
         app.UseBicepExtension();
@@ -107,7 +107,7 @@ public class ManagedExtensionApplicationTests
         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = Environments.Development;
         builder.WebHost.UseTestServer();
-        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Identity);
+        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         await using var app = builder.Build();
         app.UseBicepExtension();
         app.MapDevelopmentApiExplorer(explorer => explorer
@@ -124,7 +124,7 @@ public class ManagedExtensionApplicationTests
         var document = JsonNode.Parse(await documentResponse.Content.ReadAsStringAsync());
         document!["info"]!["title"]!.GetValue<string>().Should().Be("Widget Extension API");
         document["components"]!["parameters"]!["RequestParams.extensionVersion"]!["example"]!
-            .GetValue<string>().Should().Be(Identity.Version);
+            .GetValue<string>().Should().Be(Descriptor.Version);
     }
 
     [Fact]
@@ -198,7 +198,7 @@ public class ManagedExtensionApplicationTests
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton(new UserService("available"));
-        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Identity);
+        builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         await using var app = builder.Build();
         app.Use(async (context, next) =>
         {
@@ -221,7 +221,7 @@ public class ManagedExtensionApplicationTests
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
-        builder.Services.AddBicepExtension(configure, Identity);
+        builder.Services.AddBicepExtension(configure, Descriptor);
         var app = builder.Build();
         app.UseBicepExtension();
         await app.StartAsync();

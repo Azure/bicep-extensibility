@@ -2,7 +2,7 @@
 
 ASP.NET Core hosting SDK for third-party and local Bicep extensions.
 
-Declare one extension identity in the application project:
+Declare the extension name and version in the application project:
 
 ```xml
 <PropertyGroup>

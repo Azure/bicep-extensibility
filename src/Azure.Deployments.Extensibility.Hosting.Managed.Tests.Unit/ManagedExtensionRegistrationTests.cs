@@ -5,7 +5,7 @@ using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
-using Azure.Deployments.Extensibility.Hosting.Managed.Identity;
+using Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 using Azure.Deployments.Extensibility.Hosting.Managed.Resolution;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,38 +18,38 @@ namespace Azure.Deployments.Extensibility.Hosting.Managed.Tests.Unit;
 public class ManagedExtensionRegistrationTests
 {
     [Fact]
-    public void BicepExtensionIdentityReader_MissingMetadata_Throws()
+    public void BicepExtensionDescriptorReader_MissingMetadata_Throws()
     {
         var assembly = CreateAssembly();
 
-        var action = () => BicepExtensionIdentityReader.Read(assembly);
+        var action = () => BicepExtensionDescriptorReader.Read(assembly);
 
         action.Should().Throw<InvalidOperationException>()
             .WithMessage("*Bicep.Extension.Name*");
     }
 
     [Fact]
-    public void BicepExtensionIdentityReader_BlankMetadata_Throws()
+    public void BicepExtensionDescriptorReader_BlankMetadata_Throws()
     {
         var assembly = CreateAssembly(
             ("Bicep.Extension.Name", " "),
             ("Bicep.Extension.Version", "1.0.0"));
 
-        var action = () => BicepExtensionIdentityReader.Read(assembly);
+        var action = () => BicepExtensionDescriptorReader.Read(assembly);
 
         action.Should().Throw<InvalidOperationException>()
             .WithMessage("*Bicep.Extension.Name*");
     }
 
     [Fact]
-    public void BicepExtensionIdentityReader_DuplicateMetadata_Throws()
+    public void BicepExtensionDescriptorReader_DuplicateMetadata_Throws()
     {
         var assembly = CreateAssembly(
             ("Bicep.Extension.Name", "Widget"),
             ("Bicep.Extension.Version", "1.0.0"),
             ("Bicep.Extension.Version", "2.0.0"));
 
-        var action = () => BicepExtensionIdentityReader.Read(assembly);
+        var action = () => BicepExtensionDescriptorReader.Read(assembly);
 
         action.Should().Throw<InvalidOperationException>()
             .WithMessage("*Bicep.Extension.Version*");
@@ -59,12 +59,12 @@ public class ManagedExtensionRegistrationTests
     public void AddBicepExtension_CalledTwice_Throws()
     {
         var services = new ServiceCollection();
-        var identity = new BicepExtensionIdentity("Widget", "1.0.0");
-        services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), identity);
+        var descriptor = new BicepExtensionDescriptor("Widget", "1.0.0");
+        services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), descriptor);
 
         var action = () => services.AddBicepExtension(
             extension => extension.AddHandler<GetHandler>(),
-            identity);
+            descriptor);
 
         action.Should().Throw<InvalidOperationException>()
             .WithMessage("AddBicepExtension can only be called once.");

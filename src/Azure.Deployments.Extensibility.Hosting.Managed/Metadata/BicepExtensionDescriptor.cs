@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-namespace Azure.Deployments.Extensibility.Hosting.Managed.Identity;
+namespace Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 
-internal sealed class BicepExtensionIdentity
+internal sealed class BicepExtensionDescriptor
 {
-    internal BicepExtensionIdentity(string name, string version)
+    internal BicepExtensionDescriptor(string name, string version)
     {
         this.Name = name;
         this.Version = version;

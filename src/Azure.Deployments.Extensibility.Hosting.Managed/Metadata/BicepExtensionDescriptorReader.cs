@@ -3,26 +3,26 @@
 
 using System.Reflection;
 
-namespace Azure.Deployments.Extensibility.Hosting.Managed.Identity;
+namespace Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 
-internal static class BicepExtensionIdentityReader
+internal static class BicepExtensionDescriptorReader
 {
     private const string NameKey = "Bicep.Extension.Name";
     private const string VersionKey = "Bicep.Extension.Version";
 
-    internal static BicepExtensionIdentity ReadEntryAssembly()
+    internal static BicepExtensionDescriptor ReadEntryAssembly()
     {
         var entryAssembly = Assembly.GetEntryAssembly() ?? throw new InvalidOperationException(
-            "The Bicep extension identity cannot be read because the entry assembly is unavailable.");
+            "The Bicep extension descriptor cannot be read because the entry assembly is unavailable.");
 
         return Read(entryAssembly);
     }
 
-    internal static BicepExtensionIdentity Read(Assembly assembly)
+    internal static BicepExtensionDescriptor Read(Assembly assembly)
     {
         ArgumentNullException.ThrowIfNull(assembly);
 
-        return new BicepExtensionIdentity(
+        return new BicepExtensionDescriptor(
             ReadValue(assembly, NameKey),
             ReadValue(assembly, VersionKey));
     }
