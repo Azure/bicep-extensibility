@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/sample/MagicEightBallExtension/bin/Debug/net8.0/MagicEightBallExtension.dll",
+            "program": "${workspaceFolder}/sample/MagicEightBallExtension/bin/Debug/net10.0/MagicEightBallExtension.dll",
             "args": [],
             "cwd": "${workspaceFolder}/sample/MagicEightBallExtension",
             "stopAtEntry": false,
