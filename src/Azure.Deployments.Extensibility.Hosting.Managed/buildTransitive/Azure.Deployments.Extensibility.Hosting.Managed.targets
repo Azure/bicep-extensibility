@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup>
+    <AssemblyMetadata Include="Bicep.Extension.Name" Value="$(BicepExtensionName)" />
+    <AssemblyMetadata Include="Bicep.Extension.Version" Value="$(BicepExtensionVersion)" />
+  </ItemGroup>
+</Project>

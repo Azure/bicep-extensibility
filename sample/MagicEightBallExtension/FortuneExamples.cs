@@ -15,7 +15,6 @@ internal static class FortuneExamples
 {
     public static void Configure(OpenApiExamplesBuilder examples)
     {
-        ConfigureV1Examples(examples);
         ConfigureV2Examples(examples);
     }
 

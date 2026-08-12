@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Semver;
-
 namespace Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 
 /// <summary>

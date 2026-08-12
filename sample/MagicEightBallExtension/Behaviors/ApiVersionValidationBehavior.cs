@@ -11,7 +11,7 @@ namespace MagicEightBallExtension.Behaviors;
 /// Validates that the resource API version is one of the accepted versions supplied at construction time.
 /// Use the factory overload of <c>AddHandlerBehavior</c> to pass the accepted versions:
 /// <code>
-/// .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01", "2024-01-01-preview"))
+/// .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2025-01-01", "2025-01-01-preview"))
 /// </code>
 /// </summary>
 public sealed class ApiVersionValidationBehavior :

@@ -181,5 +181,5 @@ When a single rule fails, the error is returned directly without wrapping.
 
 ## Next steps
 
-- [Typed Handlers](typed-handlers.md) — use strongly-typed models in your handlers.
-- [Behaviors](behaviors.md) — add cross-cutting concerns around your handlers.
+- [Typed Handlers](typed-handlers.md): use strongly-typed models in your handlers.
+- [Behaviors](behaviors.md): add cross-cutting concerns around your handlers.

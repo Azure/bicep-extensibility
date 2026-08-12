@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace MagicEightBallExtension.Models;
 
 /// <summary>
-/// The properties of a Fortune resource (v1).
+/// The base properties of a Fortune resource.
 /// </summary>
 public record FortuneProperties
 {
@@ -20,8 +20,8 @@ public record FortuneProperties
 }
 
 /// <summary>
-/// The properties of a Fortune resource (v2).
-/// Adds confidence and mood on top of the v1 properties.
+/// The properties of the hosted Fortune resource.
+/// Adds confidence and mood on top of the base properties.
 /// </summary>
 public record FortunePropertiesV2 : FortuneProperties
 {
