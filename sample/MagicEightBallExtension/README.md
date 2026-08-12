@@ -14,7 +14,7 @@ This process hosts the exact extension version `2.0.0` and exercises **all 5 API
 
 ## Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 
 ## Build & Run
 
