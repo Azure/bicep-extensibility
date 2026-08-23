@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.30" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.31" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.16.18" />
     <!-- TODO: Remove Semver with the legacy hosting surface in the next cleanup PR. -->
     <PackageReference Include="Semver" Version="3.0.0" />
