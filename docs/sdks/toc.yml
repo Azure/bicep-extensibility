@@ -1,12 +1,17 @@
-- name: Overview
+- name: Hosting SDK overview
   href: index.md
-- name: Core
-  href: core.md
+- name: Managed hosting
+  href: managed.md
   items:
-  - name: API Reference
-    href: api-core/
-- name: AspNetCore
+  - name: API reference
+    href: api-managed/
+- name: AspNetCore base SDK
   href: aspnetcore.md
   items:
-  - name: API Reference
+  - name: API reference
     href: api-aspnetcore/
+- name: Core SDK
+  href: core.md
+  items:
+  - name: API reference
+    href: api-core/

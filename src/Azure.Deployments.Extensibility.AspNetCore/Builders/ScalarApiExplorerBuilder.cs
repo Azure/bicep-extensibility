@@ -5,6 +5,7 @@ using Azure.Deployments.Extensibility.AspNetCore.Extensions;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Builders;
 
+// TODO: Remove this legacy wrapper builder in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// A builder for configuring the Scalar API explorer, including its title,
 /// version examples, and request/response examples injected into the OpenAPI document.

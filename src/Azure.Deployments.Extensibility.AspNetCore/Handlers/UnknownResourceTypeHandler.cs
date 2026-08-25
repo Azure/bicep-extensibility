@@ -7,6 +7,7 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Remove this legacy fallback in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// A fallback handler returned by <see cref="HandlerRegistry"/> when the requested
 /// resource type does not match any registered resource-type-specific or generic handler.

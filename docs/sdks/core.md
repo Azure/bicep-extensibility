@@ -10,7 +10,7 @@ The Core SDK provides the transport-agnostic building blocks shared by all Bicep
 |-----------|-------------|
 | `Contracts.Models` | Request/response models defined by the V2 contract: `Resource`, `ResourceSpecification`, `ResourceReference`, `ResourcePreview`, `ResourcePreviewSpecification`, `LongRunningOperation`, `ErrorResponse`, and related types. |
 | `Contracts.Handlers` | Handler interfaces for each operation: `IResourcePreviewHandler`, `IResourceCreateOrUpdateHandler`, `IResourceGetHandler`, `IResourceDeleteHandler`, `ILongRunningOperationGetHandler`. |
-| `Contracts` | `OneOf<T0, T1>` and `OneOf<T0, T1, T2>` — lightweight discriminated union structs used as handler return types. |
+| `Contracts` | `OneOf<T0, T1>` and `OneOf<T0, T1, T2>`, lightweight discriminated union structs used as handler return types. |
 | `Contracts.Exceptions` | `ErrorResponseException` for propagating structured errors through the handler pipeline. |
 | `Validation` | Fluent model validation: `ModelValidator<T>`, `IPropertyRuleBuilder`, and built-in criteria. |
 | `Json` | JSON utilities: `JsonDefaults`, `JsonPointerProxy`, and `JsonNodeExtensions`. |
@@ -23,17 +23,17 @@ The models map directly to the [API Contract](../contract/contract.md). A few hi
 
 ### ResourceSpecification
 
-The input to **Create or Update** — carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), and
+The input to **Create or Update**. It carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), and
 optional `Config`/`ConfigId`.
 
 ### ResourcePreviewSpecification
 
-The input to **Preview** — carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), `Metadata`, and
+The input to **Preview**. It carries the resource `Type`, `ApiVersion`, `Properties` (as `JsonObject`), `Metadata`, and
 optional `Config`/`ConfigId`.
 
 ### Resource
 
-The output of successful **Create or Update** and **Get** operations — adds `Identifiers` to the specification fields.
+The output of successful **Create or Update** and **Get** operations. It adds `Identifiers` to the specification fields.
 
 ### OneOf
 

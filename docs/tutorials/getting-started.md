@@ -1,9 +1,20 @@
-# Getting Started
+# Build a managed extension
+
+> [!WARNING]
+> The managed extensibility platform and Managed SDK are under active development and
+> are not ready for extension authors to adopt. This quickstart demonstrates the
+> intended experience for early evaluation only.
+
+This quickstart is for teams that want the platform to run their extension. This
+includes external extension authors and Microsoft teams that do not need to operate a
+self-hosted extension service. You will build a single-version extension with the
+Managed hosting SDK.
 
 > [!NOTE]
-> These tutorials use the **AspNetCore SDK**, which is currently intended for **first-party (Microsoft-internal) extension authors**. A wrapper SDK for third-party and local extension development will be published separately.
-
-This guide walks you through building your first Bicep extension using the AspNetCore SDK.
+> Microsoft teams should use the [FirstParty SDK handoff](../get-started/first-party.md)
+> only when they need a self-hosted service that integrates closely with ARM
+> deployments. If you are unsure, see
+> [Choose a hosting SDK](../get-started/choose-hosting.md).
 
 ## Prerequisites
 
@@ -14,7 +25,7 @@ This guide walks you through building your first Bicep extension using the AspNe
 ```bash
 dotnet new web -n MyExtension
 cd MyExtension
-dotnet add package Azure.Deployments.Extensibility.AspNetCore
+dotnet add package Azure.Deployments.Extensibility.Hosting.Managed
 ```
 
 ## 2. Define a handler
@@ -49,30 +60,42 @@ public class MyResourceCreateOrUpdateHandler : IResourceCreateOrUpdateHandler
 }
 ```
 
+Add the extension identity to `MyExtension.csproj`:
+
+```xml
+<PropertyGroup>
+  <BicepExtensionName>MyExtension</BicepExtensionName>
+  <BicepExtensionVersion>1.0.0</BicepExtensionVersion>
+</PropertyGroup>
+```
+
 ## 3. Wire up the application
 
 Replace the contents of `Program.cs`:
 
 ```csharp
-using Azure.Deployments.Extensibility.AspNetCore;
+var builder = WebApplication.CreateBuilder(args);
 
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("MyResource", type => type
-            .AddHandler<MyResourceCreateOrUpdateHandler>()
-            .AddHandler<MyResourceGetHandler>()
-            .AddHandler<MyResourceDeleteHandler>()
-            .AddHandler<MyResourcePreviewHandler>()))
-    .Run();
+builder.AddBicepExtension(extension => extension
+    .ForResourceType("MyResource", type => type
+        .AddHandler<MyResourceCreateOrUpdateHandler>()
+        .AddHandler<MyResourceGetHandler>()
+        .AddHandler<MyResourceDeleteHandler>()
+        .AddHandler<MyResourcePreviewHandler>()));
+
+var app = builder.Build();
+app.UseBicepExtension();
+app.Run();
 ```
 
 Key concepts:
 
-- **`AddExtensionVersion`** — registers handlers for a semantic version range. The extension host routes requests to the matching version.
-- **`ForResourceType`** — scopes handlers to a specific resource type name.
-- **`AddHandler<T>`** — registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
+- **`BicepExtensionVersion`** declares the one exact version served by the managed process.
+- **`AddBicepExtension`** registers the extension's handlers and shared hosting services.
+- **`ForResourceType`** scopes handlers to a specific resource type name.
+- **`AddHandler<T>`** registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
 
-Handlers registered directly on the version builder (outside `ForResourceType`) act as **generic handlers** that match any resource type without a type-specific handler. This is useful for resource-type-agnostic operations like LRO polling.
+Handlers registered directly on the extension builder (outside `ForResourceType`) act as **generic handlers** that match any resource type without a type-specific handler. This is useful for resource-type-agnostic operations like LRO polling.
 
 ## 4. Run and test
 
@@ -104,21 +127,22 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
 Behaviors are pipeline decorators that run before and after handlers. Use them for cross-cutting concerns like validation, logging, or retry logic.
 
 ```csharp
-app.AddExtensionVersion("1.*.*", version => version
+builder.AddBicepExtension(extension => extension
     .AddHandlerBehavior<MyValidationBehavior>()
     .ForResourceType("MyResource", type => type
         .AddHandler<MyResourceCreateOrUpdateHandler>()));
 ```
 
 Behaviors can be registered at three levels:
-- **Global** — `app.AddGlobalHandlerBehavior<T>()` runs for every handler across all versions.
-- **Version-scoped** — `version.AddHandlerBehavior<T>()` runs for handlers in that version range.
-- **Resource-type-scoped** — `type.AddHandlerBehavior<T>()` runs only for handlers of that resource type.
+- **Global:** `builder.Services.AddBicepExtensionGlobalHandlerBehavior<T>()` also wraps unsupported-version responses.
+- **Extension-scoped:** `extension.AddHandlerBehavior<T>()` runs for handlers in this managed extension.
+- **Resource-type-scoped:** `type.AddHandlerBehavior<T>()` runs only for handlers of that resource type.
 
 ## Next Steps
 
-- [Typed Handlers](typed-handlers.md) — use strongly-typed models instead of raw `JsonObject`.
-- [Behaviors](behaviors.md) — add cross-cutting concerns like validation and logging.
-- [Validators](validators.md) — validate requests with a fluent DSL.
+- [Typed Handlers](typed-handlers.md): use strongly typed models instead of raw `JsonObject`.
+- [Behaviors](behaviors.md): add cross-cutting concerns like validation and logging.
+- [Validators](validators.md): validate requests with a fluent DSL.
 - Read the [API Contract](../contract/contract.md) for the complete protocol specification.
 - Explore the [Magic 8-Ball sample](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension) for a full working example covering all 5 endpoints.
+- Review [Managed hosting](../sdks/managed.md) for identity, routes, and application integration.

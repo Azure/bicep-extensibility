@@ -13,6 +13,7 @@ using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Remove this legacy dispatcher in the follow-up breaking-change PR after current consumers migrate.
 internal static class HandlerDispatcher
 {
     public static async Task<IResult> DispatchResourcePreviewHandlerAsync(

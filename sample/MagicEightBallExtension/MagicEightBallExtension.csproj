@@ -5,10 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <BicepExtensionName>MagicEightBall</BicepExtensionName>
+    <BicepExtensionVersion>1.0.0</BicepExtensionVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Azure.Deployments.Extensibility.AspNetCore\Azure.Deployments.Extensibility.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Azure.Deployments.Extensibility.Hosting.Managed\Azure.Deployments.Extensibility.Hosting.Managed.csproj" />
   </ItemGroup>
 
 </Project>

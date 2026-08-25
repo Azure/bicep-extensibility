@@ -1,8 +1,16 @@
-- name: Getting Started
+- name: Overview
+  href: index.md
+- name: Build a managed extension
   href: getting-started.md
-- name: Typed Handlers
+- name: Typed handlers
   href: typed-handlers.md
 - name: Behaviors
   href: behaviors.md
-- name: Validators
+- name: Validation
   href: validators.md
+- name: Preview
+  href: ../contract/preview-operation.md
+- name: Long-running operations
+  href: ../contract/async-operations.md
+- name: API Explorer
+  href: api-explorer.md

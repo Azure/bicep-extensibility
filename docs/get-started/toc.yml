@@ -1,0 +1,8 @@
+- name: Overview
+  href: index.md
+- name: Choose a hosting SDK
+  href: choose-hosting.md
+- name: Build a managed extension
+  href: ../tutorials/getting-started.md
+- name: Build a self-hosted FirstParty extension
+  href: first-party.md

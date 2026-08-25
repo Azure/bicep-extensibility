@@ -2,132 +2,110 @@
 
 **Package:** `Azure.Deployments.Extensibility.AspNetCore`
 
-> [!NOTE]
-> This SDK is currently intended for **first-party (Microsoft-internal) extension authors**. A wrapper SDK for third-party and local extension development will be published separately.
+> [!WARNING]
+> This base SDK is under active development and is not ready for hosting SDK or
+> extension authors to adopt. Its public surface may change before release.
 
-The AspNetCore SDK provides the hosting layer for Bicep extensions. It handles JSON serialization, correlation headers, culture propagation, endpoint routing, and the behavior pipeline automatically.
+The AspNetCore SDK is the shared base for Bicep extension hosting. It provides
+version-independent handler registrations, dispatch, contract endpoints, middleware,
+typed handler base classes, behaviors, and development tooling.
 
-## ExtensionApplication
+> [!IMPORTANT]
+> This package is for hosting SDK and custom-host authors. Extension teams should use
+> [Hosting.Managed](managed.md) when the platform runs the extension. Microsoft teams
+> should use Hosting.FirstParty only for a
+> [self-hosted FirstParty service](../get-started/first-party.md).
 
-The entry point for every extension. A thin wrapper around `WebApplicationBuilder` that adds Bicep-specific middleware and routing.
+Hosting.Managed wraps these APIs with exact-version selection and standard hosting
+defaults. The closed-source FirstParty SDK also builds on this package and owns its
+first-party version-range and identity policies.
 
-```csharp
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("MyResource", type => type
-            .AddHandler<MyPreviewHandler>()
-            .AddHandler<MyCreateOrUpdateHandler>()
-            .AddHandler<MyGetHandler>()
-            .AddHandler<MyDeleteHandler>()))
-    .Run();
-```
+## Host composition
 
-### Key methods
-
-| Method | Description |
-|--------|-------------|
-| `AddExtensionVersion(range, configure)` | Registers handlers for a semantic version range (e.g., `">=1.0.0 <2.0.0"` or `"1.*.*"`). |
-| `ForResourceType(name, configure)` | Scopes handlers to a specific resource type. |
-| `AddHandler<T>()` | Registers a handler. The SDK detects the operation from the interface the handler implements. |
-| `ConfigureServices(configure)` | Access the underlying `IServiceCollection` for DI registration. |
-| `AddGlobalHandlerBehavior<T>()` | Registers a behavior that runs for every handler across all versions. |
-| `EnableDevelopmentScalarApiExplorer(configure)` | Enables the Scalar API explorer UI in development mode. |
-| `Build()` | Builds and returns the `WebApplication` without starting it. Use this when hosting inside Service Fabric or other custom hosts. |
-| `Run()` / `RunAsync()` | Builds and runs the application. Does not return until shutdown. |
-
-### Handler resolution
-
-When a request arrives, the SDK:
-
-1. Extracts the extension version from the URL path (`/{version}/resource/{operation}`).
-2. Matches the version against registered `SemVersionRange` patterns.
-3. Looks up a handler for the request's resource type and operation.
-4. Falls back to version-scoped (non-resource-type-specific) handlers if no resource-type handler is found.
-
-### Generic (fallback) handlers
-
-Handlers registered with `AddHandler<T>()` on the `ExtensionVersionBuilder` (outside `ForResourceType`) act as **generic handlers** — they match any resource type that doesn't have a type-specific handler:
+Custom hosts compose the base APIs explicitly:
 
 ```csharp
-app.AddExtensionVersion("1.*.*", version => version
-    // Generic handler — handles all resource types without a specific handler.
-    .AddHandler<FallbackHandler>()
+builder.Services.AddBicepExtensionServices();
+builder.Services.AddBicepExtensionGlobalHandlerBehavior<LoggingBehavior>();
 
-    // Resource-type-specific — takes priority for "Widget" resources.
-    .ForResourceType("Widget", type => type
-        .AddHandler<WidgetCreateOrUpdateHandler>()));
+var registration = BicepExtensionRegistration.Create(
+    builder.Services,
+    extension => extension
+        .AddHandler<LongRunningOperationGetHandler>()
+        .ForResourceType("Widget", resource => resource
+            .AddHandler<WidgetGetHandler>()));
+
+builder.Services.AddSingleton(registration);
+builder.Services.AddSingleton<IBicepExtensionResolver, CustomExtensionResolver>();
+
+var app = builder.Build();
+app.UseBicepExtensionMiddlewares();
+app.MapBicepExtensionEndpoints();
 ```
 
-This is useful for operations that are resource-type-agnostic, such as LRO polling handlers.
+An `IBicepExtensionResolver` supplies the immutable registration for a requested
+route version. Version-selection policy belongs to the wrapping host; AspNetCore
+does not require a semantic-version range strategy.
 
-## Typed handler base classes
+The granular helpers (`AddBicepExtensionJsonOptions`,
+`AddBicepExtensionHandlerRuntime`, `UseBicepExtensionRequestCorrelation`,
+`MapResourceActions`, and others) support hosts that need precise ordering or route
+groups.
 
-For extensions with strongly-typed resource models, the SDK provides abstract base classes that handle JSON serialization automatically:
+## Handler registration
 
-| Base class | Operation | Input | Output |
-|-----------|-----------|-------|--------|
-| `TypedResourcePreviewHandler<TProperties, TIdentifiers>` | Preview | `TypedResourcePreviewSpecification` | `TypedResourcePreview` |
-| `TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers>` | Create/Update | `TypedResourceSpecification` | `TypedResource` |
-| `TypedResourceGetHandler<TProperties, TIdentifiers>` | Get | `TypedResourceReference` | `TypedResource?` |
-| `TypedResourceDeleteHandler<TProperties, TIdentifiers>` | Delete | `TypedResourceReference` | `TypedResource?` |
+`BicepExtensionRegistration.Create` accepts an `IBicepExtensionBuilder`.
 
-All four also have a 3-type-parameter variant (`<TProperties, TIdentifiers, TConfig>`) when you need typed configuration.
+```csharp
+var registration = BicepExtensionRegistration.Create(services, extension => extension
+    .AddHandler<FallbackGetHandler>()
+    .AddHandlerBehavior<ValidationBehavior>()
+    .ForResourceType("Widget", resource => resource
+        .AddHandler<WidgetCreateOrUpdateHandler>()
+        .AddHandlerBehavior<WidgetAuthorizationBehavior>()));
+```
 
-See the [Typed Handlers tutorial](../tutorials/typed-handlers.md) for a step-by-step guide.
+Handlers directly on the extension builder are fallbacks. Resource-type handlers
+take precedence and resource type matching is case-insensitive. Long-running-operation
+handlers are always extension-scoped.
 
-## Behavior pipeline
+## Typed handlers
 
-Behaviors are decorators that wrap handler invocations. They execute in registration order: **global → version-scoped → resource-type-scoped**.
-
-Each operation has a dedicated behavior interface:
-
-| Interface | Operation |
+| Base class | Operation |
 |-----------|-----------|
-| `IResourcePreviewBehavior` | Preview |
-| `IResourceCreateOrUpdateBehavior` | Create/Update |
-| `IResourceGetBehavior` | Get |
-| `IResourceDeleteBehavior` | Delete |
-| `ILongRunningOperationGetBehavior` | LRO polling |
+| `TypedResourcePreviewHandler<TProperties, TIdentifiers>` | Preview |
+| `TypedResourceCreateOrUpdateHandler<TProperties, TIdentifiers>` | Create or update |
+| `TypedResourceGetHandler<TProperties, TIdentifiers>` | Get |
+| `TypedResourceDeleteHandler<TProperties, TIdentifiers>` | Delete |
 
-A single class can implement multiple interfaces to apply the same logic across operations.
+Each also has a three-type-parameter form for typed configuration. See
+[Typed Handlers](../tutorials/typed-handlers.md).
 
-### Registration scopes
+## Behaviors
 
-```csharp
-// Global — runs for every handler, every version.
-app.AddGlobalHandlerBehavior<LoggingBehavior>();
+Behaviors decorate operation handlers. Global behaviors are registered on
+`IServiceCollection` and also wrap unsupported-version results. Registration-level
+and resource-type behaviors are configured through `IBicepExtensionBuilder`.
+They execute in this order:
 
-// Version-scoped — runs for handlers in this version range.
-app.AddExtensionVersion("1.*.*", version => version
-    .AddHandlerBehavior<ApiVersionValidationBehavior>()
-    ...);
+1. Global behaviors
+2. Extension registration behaviors
+3. Resource type behaviors
+4. Handler
 
-// Resource-type-scoped — runs only for handlers of this resource type.
-    .ForResourceType("MyResource", type => type
-        .AddHandlerBehavior<MyResourceSpecificBehavior>()
-        ...);
-```
-
-See the [Behaviors tutorial](../tutorials/behaviors.md) for a full walkthrough.
-
-## Built-in behaviors
-
-| Behavior | Scope | Description |
-|----------|-------|-------------|
-| `ErrorResponseExceptionHandlingBehavior` | Global (auto-registered) | Catches `ErrorResponseException` and converts it to `ErrorResponse`. |
-| `FakeValueSubstitutionPreviewRewriter` | — | Preview rewriter that substitutes unevaluated expressions with fake placeholders. |
-| `PreviewRewriteBehavior` | — | Adapter that wraps an `IResourcePreviewRewriter` as an `IResourcePreviewBehavior`. |
-| `UnevaluatedPreviewNotSupportedBehavior` | — | Rejects preview requests containing unevaluated expressions. |
+See [Behaviors](../tutorials/behaviors.md).
 
 ## Scalar API explorer
 
-Enable an interactive API explorer in development mode:
+Custom and managed hosts can map the shared development explorer:
 
 ```csharp
-app.EnableDevelopmentScalarApiExplorer(explorer => explorer
-    .WithTitle("My Extension API")
-    .WithExtensionVersions("1.0.0", "2.0.0")
-    .ConfigureExamples(examples => { ... }));
+app.MapBicepExtensionApiExplorer(
+    configureExamples: WidgetExamples.Configure,
+    title: "Widget Extension API",
+    extensionVersions: ["1.0.0"]);
 ```
 
-The explorer serves the embedded OpenAPI spec and renders it with [Scalar](https://scalar.com/).
+It maps the embedded contract and Scalar UI only in the Development environment.
+Both `Hosting.Managed` and `Hosting.FirstParty` should expose this shared AspNetCore
+extension directly so their explorer behavior and OpenAPI document remain consistent.

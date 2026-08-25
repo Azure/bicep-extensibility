@@ -14,6 +14,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore;
 
+// TODO: Remove this legacy compatibility host in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// The entry point for building a Bicep extensibility provider application.
 /// Provides a fluent API that handles JSON serialization, middleware, routing,
@@ -198,7 +199,7 @@ public class ExtensionApplication
     {
         if (this.apiExplorerBuilder is { } explorer)
         {
-            app.MapDevelopmentScalarApiExplorer(
+            app.MapBicepExtensionApiExplorer(
                 explorer.ExamplesConfigurator,
                 explorer.Title,
                 explorer.ExtensionVersions);

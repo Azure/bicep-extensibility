@@ -8,6 +8,7 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+// TODO: Remove this legacy pipeline behavior in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// A global decorator that catches <see cref="ErrorResponseException"/>
 /// (including <see cref="Exceptions.HttpErrorResponseException"/>) and converts it

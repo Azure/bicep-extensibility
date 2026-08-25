@@ -20,7 +20,7 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
 /// <summary>
 /// Extension methods for adding the Scalar API explorer to an extensibility application.
 /// </summary>
-internal static class ScalarExtensions
+public static class ScalarExtensions
 {
     private const string OpenApiDocumentName = "v2";
     private const string DefaultServerUrl = "http://localhost:8080";
@@ -33,18 +33,16 @@ internal static class ScalarExtensions
     /// <example>
     /// <code>
     /// var app = builder.Build();
-    /// app.UseDevelopmentApiExplorer(examples =>
-    /// {
-    ///     examples.ForCreateOrUpdate(
+    /// app.MapBicepExtensionApiExplorer(
+    ///     examples => examples.ForCreateOrUpdate(
     ///         request: new { type = "MyResource", properties = new { name = "example" } },
-    ///         response: new { type = "MyResource", identifiers = new { name = "example" }, properties = new { name = "example" } });
-    /// });
-    /// app.MapResourceActions();
-    /// app.MapLongRunningOperationActions();
+    ///         response: new { type = "MyResource", identifiers = new { name = "example" }, properties = new { name = "example" } }),
+    ///     title: "My Extension API",
+    ///     extensionVersions: ["1.0.0"]);
     /// app.Run();
     /// </code>
     /// </example>
-    public static WebApplication MapDevelopmentScalarApiExplorer(
+    public static WebApplication MapBicepExtensionApiExplorer(
         this WebApplication app,
         Action<OpenApiExamplesBuilder>? configureExamples = null,
         string title = DefaultTitle,

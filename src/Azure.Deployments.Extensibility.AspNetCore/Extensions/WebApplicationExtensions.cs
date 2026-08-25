@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
 
+// TODO: Remove this legacy host helper in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// Internal extension methods for configuring extensibility middleware and routing on <see cref="WebApplication"/>.
 /// </summary>

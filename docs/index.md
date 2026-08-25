@@ -1,31 +1,44 @@
 # Bicep Extensibility
 
-[![codecov](https://codecov.io/gh/Azure/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/Azure/bicep-extensibility)
+> [!WARNING]
+> The Bicep extensibility platform and its SDKs are still in development. They are
+> available for design review and early evaluation, but are not ready for extension
+> authors to adopt. APIs, packages, and hosting requirements may change.
 
-The Bicep Extensibility platform lets you build **Bicep extensions** — API services that enable users to deploy Azure data-plane or non-Azure resources through Bicep files and ARM templates.
+Bicep extensions enable Bicep files and ARM templates to deploy Azure data-plane and
+non-Azure resources. Each extension implements resource operations behind an HTTP API,
+and the Bicep Extensibility Host sends deployment requests to that API.
 
-## How it works
+## Choose how the extension will run
 
-A Bicep extension implements a set of resource operations (preview, create/update, get, delete) behind an HTTP API that conforms to the [Extension API Contract](contract/contract.md). The Bicep Extensibility Host, a component of `Microsoft.Resources/deployments`, routes deployment requests to your extension and manages the lifecycle.
+### Use the managed extension runtime
 
-## SDKs
+Choose this path when the platform should run your extension. This is the standard
+model for external authors and is also available to Microsoft teams.
 
-| Package | Audience | Description |
-|---------|----------|-------------|
-| **Azure.Deployments.Extensibility.Core** | All extensions | Transport-agnostic models, handler interfaces, discriminated unions, structured errors, and a fluent validation framework. |
-| **Azure.Deployments.Extensibility.AspNetCore** | 1P (Microsoft-internal) | ASP.NET Core hosting layer with fluent handler registration, typed handler base classes, behavior pipeline, and version routing. |
+[Build a managed extension](tutorials/getting-started.md)
 
-> [!NOTE]
-> The AspNetCore SDK is currently for first-party extension authors. A wrapper SDK for third-party and local extensions will be published separately.
+### Host your own extension service
 
-## Quick links
+Choose this path only for a Microsoft extension that must run as a team-owned service
+and integrate closely with the ARM deployment service, such as the Microsoft Graph
+extension.
 
-- [Getting Started](tutorials/getting-started.md) — build your first extension in minutes
-- [API Contract](contract/contract.md) — full specification of the extension protocol
-- [Async Operations](contract/async-operations.md) — long-running operation patterns (RELO & LRO)
-- [Preview Operation](contract/preview-operation.md) — unevaluated expressions, preview metadata, What-If
-- [Core SDK](sdks/core.md) — models, `OneOf`, validation framework
-- [AspNetCore SDK](sdks/aspnetcore.md) — `ExtensionApplication`, behaviors, typed handlers
-- <xref:Azure.Deployments.Extensibility.Core.V2.Contracts.Models> — Core API Reference
-- <xref:Azure.Deployments.Extensibility.AspNetCore> — AspNetCore API Reference
-- [Sample Extension](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension) — Magic 8-Ball demo covering all 5 endpoints
+[Build a self-hosted FirstParty extension](get-started/first-party.md)
+
+## Not sure where to begin?
+
+[Choose a hosting SDK](get-started/choose-hosting.md) explains the difference between
+Managed hosting, FirstParty hosting, and the advanced AspNetCore base SDK.
+
+After choosing a host, use the [authoring guides](tutorials/index.md) to implement
+typed handlers, behaviors, validation, preview, long-running operations, and local API
+exploration.
+
+## Reference
+
+Use the [API contract](contract/contract.md) for protocol requirements. Package details
+and generated API references are available under [Hosting SDKs](sdks/index.md).
+
+The [Magic 8-Ball sample](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension)
+shows the planned managed extension authoring model.

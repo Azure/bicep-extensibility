@@ -1,0 +1,6 @@
+<Project>
+  <ItemGroup>
+    <AssemblyMetadata Include="BicepExtensionName" Value="$(BicepExtensionName)" Condition="'$(BicepExtensionName)' != ''" />
+    <AssemblyMetadata Include="BicepExtensionVersion" Value="$(BicepExtensionVersion)" Condition="'$(BicepExtensionVersion)' != ''" />
+  </ItemGroup>
+</Project>

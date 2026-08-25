@@ -1,20 +1,36 @@
-# SDKs
+# Hosting SDKs
 
-The Bicep Extensibility platform ships two NuGet packages. Together they provide everything needed to build, host, and validate a Bicep extension.
+> [!WARNING]
+> The hosting SDKs are a work in progress and are not ready for extension-author
+> consumption. Their APIs and package behavior may change before release.
 
-| Package | Description |
-|---------|-------------|
-| **Azure.Deployments.Extensibility.Core** | Transport-agnostic models, handler interfaces, discriminated unions (`OneOf`), structured errors, and a fluent validation framework. |
-| **Azure.Deployments.Extensibility.AspNetCore** | ASP.NET Core hosting layer — `ExtensionApplication` fluent API, version-based routing, typed handler base classes, and the behavior pipeline. |
+Choose a complete hosting SDK based on who operates the extension service. The
+AspNetCore package is a shared base, not the default starting point for extension
+applications.
 
-## Audience
+| Package | Choose it when | Documentation |
+|---|---|---|
+| `Azure.Deployments.Extensibility.Hosting.Managed` | The platform will run the extension. External authors and Microsoft teams can use this model. | [Managed hosting](managed.md) |
+| `Azure.Deployments.Extensibility.Hosting.FirstParty` | A Microsoft team will host and operate a service that integrates closely with ARM deployments. | [FirstParty handoff](../get-started/first-party.md); internal SDK link pending |
+| `Azure.Deployments.Extensibility.AspNetCore` | You are implementing a hosting SDK or custom host and need to own hosting policy. | [AspNetCore base SDK](aspnetcore.md) |
+| `Azure.Deployments.Extensibility.Core` | You need the shared models, handler contracts, errors, or validation APIs. | [Core SDK](core.md) |
 
-> [!NOTE]
-> The **AspNetCore** SDK is currently intended for **first-party (Microsoft-internal) extension authors**. A wrapper SDK for third-party and local extension development will be published separately.
+## Recommended reading
 
-The **Core** package is used by both 1P and 3P extensions.
+### Managed extension runtime
 
-## Next steps
+1. [Build a managed extension](../tutorials/getting-started.md)
+2. [Managed hosting](managed.md)
+3. [Authoring guides](../tutorials/index.md)
 
-- [Core SDK](core.md) — models, `OneOf`, validation
-- [AspNetCore SDK](aspnetcore.md) — hosting, routing, behaviors
+### Self-hosted FirstParty service
+
+1. [FirstParty handoff](../get-started/first-party.md)
+2. Internal FirstParty SDK quickstart when available
+3. [Authoring guides](../tutorials/index.md)
+
+### Hosting SDK authors
+
+1. [AspNetCore base SDK](aspnetcore.md)
+2. [API contract](../contract/contract.md)
+3. <xref:Azure.Deployments.Extensibility.AspNetCore>

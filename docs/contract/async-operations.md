@@ -72,37 +72,19 @@ The `status` field is an open union. Extensions may define custom non-terminal v
 
 #### Create or Update
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: createOrUpdate
-    Ext-->>Host: Resource (status: Running)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Running)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Succeeded)
-```
+| Step | Host request | Extension response |
+|---|---|---|
+| 1 | createOrUpdate | `Resource` with `status: "Running"` |
+| 2 | get | `Resource` with `status: "Running"` |
+| 3 | get | `Resource` with `status: "Succeeded"` |
 
 #### Delete
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: delete
-    Ext-->>Host: Resource (status: Deleting)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Deleting)
-
-    Host->>Ext: get
-    Ext-->>Host: ErrorResponse (ResourceNotFound)
-```
+| Step | Host request | Extension response |
+|---|---|---|
+| 1 | delete | `Resource` with `status: "Deleting"` |
+| 2 | get | `Resource` with `status: "Deleting"` |
+| 3 | get | `ErrorResponse` with `ResourceNotFound` |
 
 ### Key Rules
 
@@ -349,40 +331,20 @@ The flow differs slightly between create/update and delete: after a successful c
 
 #### Create or Update
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: createOrUpdate
-    Ext-->>Host: LRO (status: Running, handle: ...)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Running, retry: 10)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Succeeded)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Succeeded)
-```
+| Step | Host request | Extension response |
+|---|---|---|
+| 1 | createOrUpdate | `LongRunningOperation` with `status: "Running"` and an operation handle |
+| 2 | getLongRunningOperation | `LongRunningOperation` with `status: "Running"` and `retryAfterSeconds: 10` |
+| 3 | getLongRunningOperation | `LongRunningOperation` with `status: "Succeeded"` |
+| 4 | get | `Resource` with `status: "Succeeded"` |
 
 #### Delete
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: delete
-    Ext-->>Host: LRO (status: Deleting, handle: ...)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Deleting, retry: 10)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Succeeded)
-```
+| Step | Host request | Extension response |
+|---|---|---|
+| 1 | delete | `LongRunningOperation` with `status: "Deleting"` and an operation handle |
+| 2 | getLongRunningOperation | `LongRunningOperation` with `status: "Deleting"` and `retryAfterSeconds: 10` |
+| 3 | getLongRunningOperation | `LongRunningOperation` with `status: "Succeeded"` |
 
 ### Key Rules
 
@@ -601,16 +563,16 @@ If the operation is canceled (e.g., the deployment is canceled by the user), the
 | Scenario | Status Code |
 |----------|-------------|
 | CreateOrUpdate / delete accepted (operation in progress) | `200 OK` |
-| Get polling — operation in progress or succeeded | `200 OK` |
-| Get polling — delete succeeded (resource not found) | `404 Not Found` |
+| Get polling: operation in progress or succeeded | `200 OK` |
+| Get polling: delete succeeded (resource not found) | `404 Not Found` |
 
 ### LRO
 
 | Scenario | Status Code |
 |----------|-------------|
 | CreateOrUpdate / delete accepted (operation in progress) | `202 Accepted` |
-| Get Long-Running Operation — in progress or terminal | `200 OK` |
-| Get Long-Running Operation — polling failure (not an operation failure) | `4xx / 5xx` |
+| Get Long-Running Operation: in progress or terminal | `200 OK` |
+| Get Long-Running Operation: polling failure (not an operation failure) | `4xx / 5xx` |
 | Final get after successful createOrUpdate | `200 OK` |
 
 ---

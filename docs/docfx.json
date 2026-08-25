@@ -25,6 +25,19 @@
       "properties": {
         "TargetFramework": "net8.0"
       }
+    },
+    {
+      "src": [
+        {
+          "files": ["src/Azure.Deployments.Extensibility.Hosting.Managed/Azure.Deployments.Extensibility.Hosting.Managed.csproj"],
+          "src": ".."
+        }
+      ],
+      "dest": "sdks/api-managed",
+      "filter": "filterConfig.yml",
+      "properties": {
+        "TargetFramework": "net8.0"
+      }
     }
   ],
   "build": {
@@ -36,9 +49,14 @@
         "files": ["sdks/api-aspnetcore/**/*.yml", "sdks/api-aspnetcore/index.md"]
       },
       {
+        "files": ["sdks/api-managed/**/*.yml", "sdks/api-managed/index.md"]
+      },
+      {
         "files": [
           "contract/**.md",
           "contract/**/toc.yml",
+          "get-started/**.md",
+          "get-started/**/toc.yml",
           "sdks/**.md",
           "sdks/**/toc.yml",
           "tutorials/**.md",

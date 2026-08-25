@@ -12,7 +12,6 @@ namespace MagicEightBallExtension;
 /// serialize/deserialize the Fortune model types.
 /// </summary>
 [JsonSerializable(typeof(FortuneProperties))]
-[JsonSerializable(typeof(FortunePropertiesV2))]
 [JsonSerializable(typeof(FortuneIdentifiers))]
 internal partial class FortuneModelSerializerContext : JsonSerializerContext
 {

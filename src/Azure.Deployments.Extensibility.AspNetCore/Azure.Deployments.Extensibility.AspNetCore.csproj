@@ -3,7 +3,7 @@
   <PropertyGroup>
     <EnableNuget>true</EnableNuget>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Description>ASP.NET Core hosting framework for building Bicep extensions. Provides fluent handler registration, middleware pipeline, request routing, and behavior (decorator) chains.</Description>
+    <Description>Shared ASP.NET Core base SDK for Bicep extension hosts. Provides handler registration, middleware, request routing, typed handlers, and behavior chains.</Description>
   </PropertyGroup>
 
   <ItemGroup>

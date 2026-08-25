@@ -5,6 +5,7 @@ using Semver;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+// TODO: Remove this legacy range-aware registry in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// Tracks behavior registrations at three scopes: global, version-scoped, and resource-type-scoped.
 /// Populated at startup; read-only at dispatch time.

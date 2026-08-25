@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Remove this legacy range-aware registry graph in the follow-up breaking-change PR after current consumers migrate.
 internal record HandlerRegistration(
     SemVersionRange VersionRange,
     Type HandlerInterface,

@@ -1,6 +1,8 @@
 <Project>
   <ItemGroup>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)\BannedSymbols.txt" />
+    <AssemblyMetadata Include="BicepExtensionName" Value="$(BicepExtensionName)" Condition="'$(BicepExtensionName)' != ''" />
+    <AssemblyMetadata Include="BicepExtensionVersion" Value="$(BicepExtensionVersion)" Condition="'$(BicepExtensionVersion)' != ''" />
   </ItemGroup>
 
   <!-- Nuget Publishing related properties that are common to all packages -->
@@ -32,4 +34,4 @@
   <ItemGroup Condition="'$(EnableNuget)' == 'true'" >
     <None Include="$(MSBuildThisFileDirectory)\assets\azure-resource-256.png" Pack="true" PackagePath="" Visible="false" />
   </ItemGroup>
-</Project>
+</Project>

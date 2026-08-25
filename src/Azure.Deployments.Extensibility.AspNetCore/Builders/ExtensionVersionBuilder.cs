@@ -11,6 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore;
 
+// TODO: Remove this legacy range-aware builder in the follow-up breaking-change PR after current consumers migrate.
 /// <summary>
 /// Configures handler registrations for a specific extension version range.
 /// Handlers registered directly on this builder are default (generic) handlers.

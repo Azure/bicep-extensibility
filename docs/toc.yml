@@ -1,8 +1,48 @@
 - name: Home
   href: index.md
-- name: Contract
-  href: contract/
-- name: SDKs
-  href: sdks/
-- name: Tutorials
-  href: tutorials/
+- name: Get started
+  href: get-started/index.md
+  items:
+  - name: Choose a hosting SDK
+    href: get-started/choose-hosting.md
+  - name: Build a managed extension
+    href: tutorials/getting-started.md
+  - name: Build a self-hosted FirstParty extension
+    href: get-started/first-party.md
+- name: Authoring guides
+  href: tutorials/index.md
+  items:
+  - name: Typed handlers
+    href: tutorials/typed-handlers.md
+  - name: Behaviors
+    href: tutorials/behaviors.md
+  - name: Validation
+    href: tutorials/validators.md
+  - name: Preview
+    href: contract/preview-operation.md
+  - name: Long-running operations
+    href: contract/async-operations.md
+  - name: API Explorer
+    href: tutorials/api-explorer.md
+- name: Hosting SDKs
+  href: sdks/index.md
+  items:
+  - name: Managed hosting
+    href: sdks/managed.md
+  - name: AspNetCore base SDK
+    href: sdks/aspnetcore.md
+  - name: Core SDK
+    href: sdks/core.md
+- name: Protocol and API reference
+  href: contract/index.md
+  items:
+  - name: API contract
+    href: contract/contract.md
+  - name: OpenAPI Explorer
+    href: api-explorer/index.html
+  - name: Core API
+    href: sdks/api-core/
+  - name: AspNetCore API
+    href: sdks/api-aspnetcore/
+  - name: Managed hosting API
+    href: sdks/api-managed/

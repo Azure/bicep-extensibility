@@ -20,17 +20,6 @@ public record FortuneProperties
 }
 
 /// <summary>
-/// The properties of a Fortune resource (v2).
-/// Adds confidence and mood on top of the v1 properties.
-/// </summary>
-public record FortunePropertiesV2 : FortuneProperties
-{
-    public int? Confidence { get; init; }
-
-    public string? Mood { get; init; }
-}
-
-/// <summary>
 /// The identifiers that uniquely identify a Fortune resource.
 /// </summary>
 public record FortuneIdentifiers

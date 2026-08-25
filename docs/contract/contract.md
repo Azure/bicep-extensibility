@@ -291,7 +291,9 @@ Authentication between the Extensibility Host and extensions depends on the exte
 | **First-party (1P, Microsoft-internal)** | OAuth 2.0 On-Behalf-Of (OBO) flow. The Extensibility Host acquires a token on behalf of the caller and passes it to the extension. See [OAuth 2.0 On-Behalf-Of flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow) for details. Teams should reach out to the Azure Deployments team for onboarding guidance. |
 | **Third-party (3P)** | Handled by the platform. Extension authors do not need to implement authentication. |
 
-> **Note:** The third-party (3P) extensibility platform is a work in progress. Details are subject to change.
+> [!WARNING]
+> The extensibility platform and SDKs are a work in progress and are not yet ready for
+> extension authors to consume. Contract details are subject to change.
 
 ### Limits and Constraints
 
