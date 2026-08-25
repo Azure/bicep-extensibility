@@ -1,5 +1,7 @@
 # Typed Handlers
 
+*Learning path, step 3 of 5. Previous: [Getting started](getting-started.md)*
+
 This tutorial shows how to use the typed handler base classes to work with strongly-typed C# models instead of raw `JsonObject` in your handlers.
 
 ## Why typed handlers?
