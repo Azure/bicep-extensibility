@@ -1,6 +1,13 @@
-- name: Typed Handlers
-  href: typed-handlers.md
-- name: Behaviors
-  href: behaviors.md
-- name: Validators
-  href: validators.md
+- name: Learning Path
+  href: getting-started.md
+  items:
+  - name: 1. How extensions work
+    href: ../contract/index.md
+  - name: 2. Getting started
+    href: getting-started.md
+  - name: 3. Typed handlers
+    href: typed-handlers.md
+  - name: 4. Behaviors
+    href: behaviors.md
+  - name: 5. Validators
+    href: validators.md
