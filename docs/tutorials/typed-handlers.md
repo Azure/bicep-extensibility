@@ -1,5 +1,8 @@
 # Typed Handlers
 
+> **Audience**: 3P Extension Authors & 1P Teams  
+> **Package**: `Azure.Deployments.Extensibility.AspNetCore` (via `Hosting.Managed` or `Hosting.FirstParty`)
+
 This tutorial shows how to use the typed handler base classes to work with strongly-typed C# models instead of raw `JsonObject` in your handlers.
 
 ## Why typed handlers?
@@ -170,14 +173,18 @@ public class WidgetPreviewHandler
 ## 3. Register the handlers
 
 ```csharp
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("Widget", type => type
-            .AddHandler<WidgetPreviewHandler>()
-            .AddHandler<WidgetCreateOrUpdateHandler>()
-            .AddHandler<WidgetGetHandler>()
-            .AddHandler<WidgetDeleteHandler>()))
-    .Run();
+var builder = WebApplication.CreateBuilder(args);
+
+builder.AddBicepExtension(extension => extension
+    .ForResourceType("Widget", type => type
+        .AddHandler<WidgetPreviewHandler>()
+        .AddHandler<WidgetCreateOrUpdateHandler>()
+        .AddHandler<WidgetGetHandler>()
+        .AddHandler<WidgetDeleteHandler>()));
+
+var app = builder.Build();
+app.UseBicepExtension();
+app.Run();
 ```
 
 ## Typed configuration

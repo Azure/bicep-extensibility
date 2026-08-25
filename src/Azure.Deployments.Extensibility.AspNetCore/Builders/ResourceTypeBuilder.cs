@@ -11,10 +11,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// Configures handler registrations scoped to a specific resource type
 /// within an extension version range.
 /// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 public sealed class ResourceTypeBuilder
 {
     private readonly IServiceCollection services;

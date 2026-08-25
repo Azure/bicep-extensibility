@@ -7,10 +7,12 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// A fallback handler returned by <see cref="HandlerRegistry"/> when the requested
 /// resource type does not match any registered resource-type-specific or generic handler.
 /// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 internal sealed class UnknownResourceTypeHandler :
     IResourcePreviewHandler,
     IResourceCreateOrUpdateHandler,

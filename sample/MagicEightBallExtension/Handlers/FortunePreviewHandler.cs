@@ -8,17 +8,15 @@ using Json.Pointer;
 using MagicEightBallExtension.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
-using System.Text.Json;
 
-namespace MagicEightBallExtension.Handlers.V2;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Previews what a v2 fortune resource would look like without persisting it.
-/// Extends the v1 preview with placeholder "confidence" and "mood" values,
-/// and marks all four server-computed fields in the preview metadata.
+/// Previews what a fortune resource would look like without persisting it.
+/// Handles unevaluated expressions and produces preview metadata.
 /// </summary>
 public class FortunePreviewHandler
-    : TypedResourcePreviewHandler<FortunePropertiesV2, FortuneIdentifiers>
+    : TypedResourcePreviewHandler<FortuneProperties, FortuneIdentifiers>
 {
     public FortunePreviewHandler(IOptions<JsonOptions> jsonOptions)
         : base(jsonOptions)
@@ -30,14 +28,12 @@ public class FortunePreviewHandler
     {
         var properties = request.Properties;
 
-        // If the "question" property is evaluable, generate a preview fortune with placeholder computed values.
+        // If the "question" property is evaluable, generate a preview fortune.
         if (properties.Question is not null)
         {
             properties = properties with
             {
                 Fortune = "Preview: The stars are aligning... (actual fortune generated on create)",
-                Confidence = 42,
-                Mood = "Cosmic",
                 AnsweredAt = DateTimeOffset.UtcNow.ToString("o"),
             };
         }
@@ -52,15 +48,11 @@ public class FortunePreviewHandler
             ConfigId = request.Config is not null ? "static-config-id" : null,
             Metadata = new ResourcePreviewMetadata
             {
-                // "fortune", "answeredAt", "confidence", and "mood" are all calculated server-side.
+                // "fortune" and "answeredAt" are calculated server-side.
                 Calculated = [JsonPointer.Parse("/properties/fortune"),
-                              JsonPointer.Parse("/properties/answeredAt"),
-                              JsonPointer.Parse("/properties/confidence"),
-                              JsonPointer.Parse("/properties/mood")],
-                // These fields are read-only — the user can't set them.
-                ReadOnly = [JsonPointer.Parse("/properties/fortune"),
-                            JsonPointer.Parse("/properties/confidence"),
-                            JsonPointer.Parse("/properties/mood")],
+                              JsonPointer.Parse("/properties/answeredAt")],
+                // "fortune" is read-only — the user can't set it.
+                ReadOnly = [JsonPointer.Parse("/properties/fortune")],
                 // Echo back any unevaluated paths from the request.
                 Unevaluated = request.Metadata?.Unevaluated,
             },

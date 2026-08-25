@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <BicepExtensionName Condition="'$(BicepExtensionName)' == '' and '$(ExtensionName)' != ''">$(ExtensionName)</BicepExtensionName>
+    <BicepExtensionName Condition="'$(BicepExtensionName)' == '' and '$(PackageId)' != ''">$(PackageId)</BicepExtensionName>
+    <BicepExtensionName Condition="'$(BicepExtensionName)' == ''">$(AssemblyName)</BicepExtensionName>
+
+    <BicepExtensionVersion Condition="'$(BicepExtensionVersion)' == '' and '$(ExtensionVersion)' != ''">$(ExtensionVersion)</BicepExtensionVersion>
+    <BicepExtensionVersion Condition="'$(BicepExtensionVersion)' == '' and '$(PackageVersion)' != ''">$(PackageVersion)</BicepExtensionVersion>
+    <BicepExtensionVersion Condition="'$(BicepExtensionVersion)' == '' and '$(Version)' != ''">$(Version)</BicepExtensionVersion>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(BicepExtensionGenerateAssemblyMetadata)' != 'false'">
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(BicepExtensionName)' != ''">
+      <_Parameter1>BicepExtensionName</_Parameter1>
+      <_Parameter2>$(BicepExtensionName)</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" Condition="'$(BicepExtensionVersion)' != ''">
+      <_Parameter1>BicepExtensionVersion</_Parameter1>
+      <_Parameter2>$(BicepExtensionVersion)</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

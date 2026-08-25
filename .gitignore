@@ -354,6 +354,7 @@ docs/_site/
 docs/api/
 docs/sdks/api-core/
 docs/sdks/api-aspnetcore/
+docs/sdks/api-managed/
 
 # osx turds
 .DS_Store

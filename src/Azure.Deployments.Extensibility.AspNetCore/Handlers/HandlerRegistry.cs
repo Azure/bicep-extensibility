@@ -8,24 +8,33 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
+/// <summary>
+/// Legacy handler registration record.
+/// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 internal record HandlerRegistration(
     SemVersionRange VersionRange,
     Type HandlerInterface,
     Type HandlerType);
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// The result of resolving a handler: the handler instance plus the version range it was matched under.
 /// <see cref="MatchedVersionRange"/> is <c>null</c> for sentinel handlers (unknown version / unknown resource type).
 /// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 internal record HandlerResolution<THandler>(THandler Handler, SemVersionRange? MatchedVersionRange)
     where THandler : IHandler;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// Stores handler registrations grouped by extension version range.
 /// Default handlers are stored separately from resource-type-specific handlers
 /// (registered via <c>ForResourceType</c>).
 /// </summary>
 /// <remarks>
+/// Legacy type to be deleted in a future PR.
 /// <see cref="ResolveHandler{THandler}"/> never throws. Instead, it returns an
 /// <see cref="UnknownExtensionVersionHandler"/> or <see cref="UnknownResourceTypeHandler"/>
 /// singleton so that pipeline behaviors (e.g., logging) still run for error cases.

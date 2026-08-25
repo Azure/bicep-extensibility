@@ -1,5 +1,8 @@
 # Behaviors
 
+> **Audience**: 3P Extension Authors & 1P Teams  
+> **Package**: `Azure.Deployments.Extensibility.AspNetCore` (via `Hosting.Managed` or `Hosting.FirstParty`)
+
 Behaviors are pipeline decorators that wrap handler invocations. Use them for cross-cutting concerns like validation, logging, authorization, or error handling.
 
 ## How behaviors work
@@ -15,7 +18,7 @@ Request → [Behavior A] → [Behavior B] → [Handler] → Response
             circuit        circuit
 ```
 
-Behaviors execute in registration order: **global → version-scoped → resource-type-scoped**.
+Behaviors execute in registration order: **global → extension-scoped → resource-type-scoped**.
 
 ## Operation-specific interfaces
 
@@ -118,18 +121,18 @@ public sealed partial class ResponseLoggingBehavior :
 
 ### Global behaviors
 
-Run for **every handler** across all extension versions:
+Registered on `IServiceCollection` to wrap every handler invocation:
 
 ```csharp
-app.AddGlobalHandlerBehavior<ResponseLoggingBehavior>();
+builder.Services.AddBicepExtensionGlobalHandlerBehavior<ResponseLoggingBehavior>();
 ```
 
-### Version-scoped behaviors
+### Extension-scoped behaviors
 
-Run for handlers in a specific version range:
+Run for all handlers in the extension:
 
 ```csharp
-app.AddExtensionVersion("1.*.*", version => version
+builder.AddBicepExtension(extension => extension
     .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01", "2024-01-01-preview"))
     ...);
 ```
@@ -139,10 +142,11 @@ app.AddExtensionVersion("1.*.*", version => version
 Run only for handlers of a specific resource type:
 
 ```csharp
-.ForResourceType("Widget", type => type
-    .AddHandlerBehavior<WidgetAuthorizationBehavior>()
-    .AddHandler<WidgetCreateOrUpdateHandler>()
-    ...);
+builder.AddBicepExtension(extension => extension
+    .ForResourceType("Widget", type => type
+        .AddHandlerBehavior<WidgetAuthorizationBehavior>()
+        .AddHandler<WidgetCreateOrUpdateHandler>()
+        ...));
 ```
 
 ### Factory registration
@@ -150,13 +154,13 @@ Run only for handlers of a specific resource type:
 Use the factory overload when your behavior needs constructor parameters that aren't in DI:
 
 ```csharp
-.AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01"))
+extension.AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01"))
 ```
 
 Or use the generic overload when all dependencies are in DI:
 
 ```csharp
-.AddHandlerBehavior<ResponseLoggingBehavior>()
+extension.AddHandlerBehavior<ResponseLoggingBehavior>()
 ```
 
 ## Execution order
@@ -164,16 +168,16 @@ Or use the generic overload when all dependencies are in DI:
 Given this registration:
 
 ```csharp
-app.AddGlobalHandlerBehavior<LoggingBehavior>();
+builder.Services.AddBicepExtensionGlobalHandlerBehavior<LoggingBehavior>();
 
-app.AddExtensionVersion("1.*.*", version => version
+builder.AddBicepExtension(extension => extension
     .AddHandlerBehavior<ApiVersionBehavior>()
     .ForResourceType("Widget", type => type
         .AddHandlerBehavior<WidgetAuthBehavior>()
         .AddHandler<WidgetCreateOrUpdateHandler>()));
 ```
 
-A create-or-update request for version `1.0.0` and type `Widget` executes:
+A create-or-update request for type `Widget` executes:
 
 ```
 LoggingBehavior → ApiVersionBehavior → WidgetAuthBehavior → WidgetCreateOrUpdateHandler

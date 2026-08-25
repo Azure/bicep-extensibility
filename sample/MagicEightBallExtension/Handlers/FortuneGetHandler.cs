@@ -9,18 +9,18 @@ using MagicEightBallExtension.Models;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.Options;
 
-namespace MagicEightBallExtension.Handlers.V2;
+namespace MagicEightBallExtension.Handlers;
 
 /// <summary>
-/// Deletes a fortune resource (v2). Returns the deleted resource (including "confidence" and "mood") on success,
-/// or null (204) if it didn't exist.
+/// Retrieves a fortune resource by its identifiers.
+/// Returns null (maps to 404) if the fortune does not exist.
 /// </summary>
-public class FortuneDeleteHandler
-    : TypedResourceDeleteHandler<FortunePropertiesV2, FortuneIdentifiers>
+public class FortuneGetHandler
+    : TypedResourceGetHandler<FortuneProperties, FortuneIdentifiers>
 {
     private readonly FortuneStore store;
 
-    public FortuneDeleteHandler(
+    public FortuneGetHandler(
         IOptions<JsonOptions> jsonOptions,
         FortuneStore store)
         : base(jsonOptions)
@@ -28,15 +28,15 @@ public class FortuneDeleteHandler
         this.store = store;
     }
 
-    protected override Task<OneOf<TypedResource?, LongRunningOperation, ErrorResponse>> HandleAsync(
+    protected override Task<OneOf<TypedResource?, ErrorResponse>> HandleAsync(
         TypedResourceReference request, CancellationToken cancellationToken)
     {
         var key = FortuneStore.GetResourceKey(request.Type, request.Identifiers.Name);
-        var removed = this.store.RemoveResource(key);
+        var resource = this.store.TryGetResource(key);
 
-        // Returning null signals 204 No Content (resource already deleted or never existed).
-        TypedResource? result = removed is not null ? this.ToTypedResource(removed) : null;
+        // Returning null signals 404 Not Found to the framework.
+        TypedResource? result = resource is not null ? this.ToTypedResource(resource) : null;
 
-        return Task.FromResult<OneOf<TypedResource?, LongRunningOperation, ErrorResponse>>(result);
+        return Task.FromResult<OneOf<TypedResource?, ErrorResponse>>(result);
     }
 }

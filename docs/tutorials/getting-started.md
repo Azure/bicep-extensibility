@@ -1,20 +1,43 @@
 # Getting Started
 
-> [!NOTE]
-> These tutorials use the **AspNetCore SDK**, which is currently intended for **first-party (Microsoft-internal) extension authors**. A wrapper SDK for third-party and local extension development will be published separately.
+> **Audience**: Third-Party (3P) Managed Extension Authors  
+> **Package**: `Azure.Deployments.Extensibility.Hosting.Managed`  
+> [!IMPORTANT]
+> **Work in Progress**: The Bicep Extensibility platform and SDKs are in active development and not yet ready for production or general consumption by extension authors.
 
-This guide walks you through building your first Bicep extension using the AspNetCore SDK.
+This guide walks you through building, running, and testing your first containerized Bicep extension using the public **Managed Hosting SDK**.
 
 ## Prerequisites
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Any HTTP testing tool (`curl`, `httpie`, or browser)
 
 ## 1. Create a new project
 
 ```bash
 dotnet new web -n MyExtension
 cd MyExtension
-dotnet add package Azure.Deployments.Extensibility.AspNetCore
+dotnet add package Azure.Deployments.Extensibility.Hosting.Managed
+```
+
+In your `MyExtension.csproj` file, specify the extension's name and version:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Extension identity metadata -->
+    <BicepExtensionName>MyExtension</BicepExtensionName>
+    <BicepExtensionVersion>1.0.0</BicepExtensionVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Deployments.Extensibility.Hosting.Managed" Version="1.0.0-*" />
+  </ItemGroup>
+</Project>
 ```
 
 ## 2. Define a handler
@@ -54,25 +77,28 @@ public class MyResourceCreateOrUpdateHandler : IResourceCreateOrUpdateHandler
 Replace the contents of `Program.cs`:
 
 ```csharp
-using Azure.Deployments.Extensibility.AspNetCore;
+var builder = WebApplication.CreateBuilder(args);
 
-ExtensionApplication.Create(args)
-    .AddExtensionVersion("1.*.*", version => version
-        .ForResourceType("MyResource", type => type
-            .AddHandler<MyResourceCreateOrUpdateHandler>()
-            .AddHandler<MyResourceGetHandler>()
-            .AddHandler<MyResourceDeleteHandler>()
-            .AddHandler<MyResourcePreviewHandler>()))
-    .Run();
+builder.AddBicepExtension(extension => extension
+    .ForResourceType("MyResource", type => type
+        .AddHandler<MyResourceCreateOrUpdateHandler>()
+        .AddHandler<MyResourceGetHandler>()
+        .AddHandler<MyResourceDeleteHandler>()
+        .AddHandler<MyResourcePreviewHandler>()));
+
+var app = builder.Build();
+
+app.UseBicepExtension();
+
+app.Run();
 ```
 
 Key concepts:
 
-- **`AddExtensionVersion`** — registers handlers for a semantic version range. The extension host routes requests to the matching version.
+- **`AddBicepExtension`** — registers the extension using the metadata defined in the project file.
 - **`ForResourceType`** — scopes handlers to a specific resource type name.
 - **`AddHandler<T>`** — registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
-
-Handlers registered directly on the version builder (outside `ForResourceType`) act as **generic handlers** that match any resource type without a type-specific handler. This is useful for resource-type-agnostic operations like LRO polling.
+- **`UseBicepExtension`** — configures standard middleware, error handling, the `/ping` health check endpoint, and contract routes.
 
 ## 4. Run and test
 
@@ -99,21 +125,11 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
   }'
 ```
 
-## 5. Add behaviors (optional)
+You can also test the health check endpoint:
 
-Behaviors are pipeline decorators that run before and after handlers. Use them for cross-cutting concerns like validation, logging, or retry logic.
-
-```csharp
-app.AddExtensionVersion("1.*.*", version => version
-    .AddHandlerBehavior<MyValidationBehavior>()
-    .ForResourceType("MyResource", type => type
-        .AddHandler<MyResourceCreateOrUpdateHandler>()));
+```bash
+curl http://localhost:5000/ping
 ```
-
-Behaviors can be registered at three levels:
-- **Global** — `app.AddGlobalHandlerBehavior<T>()` runs for every handler across all versions.
-- **Version-scoped** — `version.AddHandlerBehavior<T>()` runs for handlers in that version range.
-- **Resource-type-scoped** — `type.AddHandlerBehavior<T>()` runs only for handlers of that resource type.
 
 ## Next Steps
 
@@ -121,4 +137,5 @@ Behaviors can be registered at three levels:
 - [Behaviors](behaviors.md) — add cross-cutting concerns like validation and logging.
 - [Validators](validators.md) — validate requests with a fluent DSL.
 - Read the [API Contract](../contract/contract.md) for the complete protocol specification.
+- Explore the [Managed Hosting SDK Guide](../sdks/managed.md) for hosting options, metadata, and custom middleware integration.
 - Explore the [Magic 8-Ball sample](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension) for a full working example covering all 5 endpoints.

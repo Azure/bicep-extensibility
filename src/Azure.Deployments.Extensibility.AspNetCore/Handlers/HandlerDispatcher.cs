@@ -13,6 +13,11 @@ using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
+/// <summary>
+/// Legacy HTTP handler dispatcher for range-based ExtensionApplication.
+/// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 internal static class HandlerDispatcher
 {
     public static async Task<IResult> DispatchResourcePreviewHandlerAsync(

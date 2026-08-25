@@ -1,8 +1,9 @@
-- name: Getting Started
+- name: 1. Getting Started (3P Managed)
   href: getting-started.md
-- name: Typed Handlers
+- name: 2. Typed Handlers
   href: typed-handlers.md
-- name: Behaviors
-  href: behaviors.md
-- name: Validators
+- name: 3. Validators
   href: validators.md
+- name: 4. Behaviors & Pipeline
+  href: behaviors.md
+

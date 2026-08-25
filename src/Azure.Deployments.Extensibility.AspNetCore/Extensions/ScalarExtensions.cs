@@ -15,36 +15,60 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace Azure.Deployments.Extensibility.AspNetCore.Extensions;
+namespace Microsoft.AspNetCore.Builder;
 
 /// <summary>
 /// Extension methods for adding the Scalar API explorer to an extensibility application.
 /// </summary>
-internal static class ScalarExtensions
+public static class ScalarExtensions
 {
     private const string OpenApiDocumentName = "v2";
     private const string DefaultServerUrl = "http://localhost:8080";
-    internal const string DefaultTitle = "Bicep Extensibility Provider API";
 
     /// <summary>
-    /// Maps the Scalar API explorer UI and the OpenAPI specification endpoint.
+    /// The default title for the Scalar API explorer UI.
+    /// </summary>
+    public const string DefaultTitle = "Bicep Extensibility Provider API";
+
+    /// <summary>
+    /// Maps the Bicep extension Scalar API explorer UI and the OpenAPI specification endpoint using a builder configuration.
+    /// Only registers routes when the application is running in the Development environment.
+    /// </summary>
+    /// <param name="app">The web application.</param>
+    /// <param name="configure">Optional configuration callback for the Scalar API explorer.</param>
+    /// <returns>The same web application for chaining.</returns>
+    public static WebApplication MapBicepExtensionApiExplorer(
+        this WebApplication app,
+        Action<ScalarApiExplorerBuilder>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(app);
+
+        var builder = new ScalarApiExplorerBuilder();
+        configure?.Invoke(builder);
+
+        return app.MapBicepExtensionApiExplorer(
+            builder.ExamplesConfigurator,
+            builder.Title,
+            builder.ExtensionVersions);
+    }
+
+    /// <summary>
+    /// Maps the Bicep extension Scalar API explorer UI and the OpenAPI specification endpoint.
     /// Only registers routes when the application is running in the Development environment.
     /// </summary>
     /// <example>
     /// <code>
     /// var app = builder.Build();
-    /// app.UseDevelopmentApiExplorer(examples =>
+    /// app.MapBicepExtensionApiExplorer(examples =>
     /// {
     ///     examples.ForCreateOrUpdate(
     ///         request: new { type = "MyResource", properties = new { name = "example" } },
     ///         response: new { type = "MyResource", identifiers = new { name = "example" }, properties = new { name = "example" } });
     /// });
-    /// app.MapResourceActions();
-    /// app.MapLongRunningOperationActions();
     /// app.Run();
     /// </code>
     /// </example>
-    public static WebApplication MapDevelopmentScalarApiExplorer(
+    public static WebApplication MapBicepExtensionApiExplorer(
         this WebApplication app,
         Action<OpenApiExamplesBuilder>? configureExamples = null,
         string title = DefaultTitle,

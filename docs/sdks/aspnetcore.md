@@ -3,9 +3,9 @@
 **Package:** `Azure.Deployments.Extensibility.AspNetCore`
 
 > [!NOTE]
-> This SDK is currently intended for **first-party (Microsoft-internal) extension authors**. A wrapper SDK for third-party and local extension development will be published separately.
+> The **AspNetCore SDK** serves as the underlying base hosting framework for Bicep extensibility. Extension authors should not use this SDK directly; instead, third-party containerized extensions should use the [Managed Hosting SDK](managed.md), and first-party extensions use the internal FirstParty SDK.
 
-The AspNetCore SDK provides the hosting layer for Bicep extensions. It handles JSON serialization, correlation headers, culture propagation, endpoint routing, and the behavior pipeline automatically.
+The AspNetCore SDK provides the base hosting layer for Bicep extensions. It handles JSON serialization, correlation headers, culture propagation, endpoint routing, and the behavior pipeline automatically.
 
 ## ExtensionApplication
 
@@ -124,10 +124,17 @@ See the [Behaviors tutorial](../tutorials/behaviors.md) for a full walkthrough.
 Enable an interactive API explorer in development mode:
 
 ```csharp
+// Standard ASP.NET Core WebApplication host:
+app.MapBicepExtensionApiExplorer(explorer => explorer
+    .WithTitle("My Extension API")
+    .WithExtensionVersions("1.0.0", "2.0.0")
+    .ConfigureExamples(examples => { ... }));
+
+// Legacy ExtensionApplication host:
 app.EnableDevelopmentScalarApiExplorer(explorer => explorer
     .WithTitle("My Extension API")
     .WithExtensionVersions("1.0.0", "2.0.0")
     .ConfigureExamples(examples => { ... }));
 ```
 
-The explorer serves the embedded OpenAPI spec and renders it with [Scalar](https://scalar.com/).
+The explorer serves the embedded OpenAPI spec at `/openapi/v2.json` and renders the interactive UI at `/scalar/v1` with [Scalar](https://scalar.com/).

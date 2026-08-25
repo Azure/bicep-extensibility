@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Builder;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Builders;
 
@@ -11,11 +11,20 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Builders;
 /// </summary>
 public class ScalarApiExplorerBuilder
 {
-    internal string Title { get; private set; } = ScalarExtensions.DefaultTitle;
+    /// <summary>
+    /// Gets the title displayed in the Scalar API explorer UI.
+    /// </summary>
+    public string Title { get; private set; } = ScalarExtensions.DefaultTitle;
 
-    internal string[]? ExtensionVersions { get; private set; }
+    /// <summary>
+    /// Gets the extension versions listed as examples in the OpenAPI document.
+    /// </summary>
+    public string[]? ExtensionVersions { get; private set; }
 
-    internal Action<OpenApiExamplesBuilder>? ExamplesConfigurator { get; private set; }
+    /// <summary>
+    /// Gets the configuration callback for OpenAPI examples.
+    /// </summary>
+    public Action<OpenApiExamplesBuilder>? ExamplesConfigurator { get; private set; }
 
     /// <summary>
     /// Sets the title displayed in the Scalar API explorer UI.

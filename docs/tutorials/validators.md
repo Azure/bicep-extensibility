@@ -1,5 +1,8 @@
 # Validators
 
+> **Audience**: 3P Extension Authors & 1P Teams  
+> **Package**: `Azure.Deployments.Extensibility.Core`
+
 The Core SDK includes a fluent validation framework built around `ModelValidator<T>`. Use it to validate request models (e.g., `ResourceSpecification`) with composable, declarative rules.
 
 ## Defining a validator

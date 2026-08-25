@@ -8,12 +8,14 @@ using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// A global decorator that catches <see cref="ErrorResponseException"/>
 /// (including <see cref="Exceptions.HttpErrorResponseException"/>) and converts it
 /// to an <see cref="ErrorResponse"/> result instead of letting it propagate as an unhandled exception.
 /// </summary>
 /// <remarks>
+/// Legacy type to be deleted in a future PR.
 /// Registered by default in <see cref="ExtensionApplication"/>. Runs as the outermost
 /// decorator so that all exceptions are captured regardless of other decorators.
 /// </remarks>

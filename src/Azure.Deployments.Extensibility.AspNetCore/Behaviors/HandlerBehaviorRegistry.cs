@@ -5,10 +5,12 @@ using Semver;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// Tracks behavior registrations at three scopes: global, version-scoped, and resource-type-scoped.
 /// Populated at startup; read-only at dispatch time.
 /// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 public sealed class HandlerBehaviorRegistry
 {
     private readonly Dictionary<(SemVersionRange, string), List<Func<IServiceProvider, object>>> behaviorsByResourceType = [];

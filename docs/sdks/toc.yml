@@ -1,12 +1,18 @@
 - name: Overview
   href: index.md
-- name: Core
+- name: Managed (3P Hosting)
+  href: managed.md
+  items:
+  - name: API Reference
+    href: api-managed/
+- name: Core (Shared Contracts)
   href: core.md
   items:
   - name: API Reference
     href: api-core/
-- name: AspNetCore
+- name: AspNetCore (Base Layer)
   href: aspnetcore.md
   items:
   - name: API Reference
     href: api-aspnetcore/
+

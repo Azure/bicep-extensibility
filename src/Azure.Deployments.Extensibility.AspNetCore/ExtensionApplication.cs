@@ -14,11 +14,13 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.Deployments.Extensibility.AspNetCore;
 
+// TODO: Legacy type to be deleted in a future PR once consumers migrate to Hosting.Managed / Hosting.FirstParty.
 /// <summary>
 /// The entry point for building a Bicep extensibility provider application.
 /// Provides a fluent API that handles JSON serialization, middleware, routing,
 /// and pipeline behavior configuration automatically.
 /// </summary>
+/// <remarks>Legacy type to be deleted in a future PR.</remarks>
 /// <example>
 /// <code><![CDATA[
 /// ExtensionApplication.Create(args)
@@ -198,7 +200,7 @@ public class ExtensionApplication
     {
         if (this.apiExplorerBuilder is { } explorer)
         {
-            app.MapDevelopmentScalarApiExplorer(
+            app.MapBicepExtensionApiExplorer(
                 explorer.ExamplesConfigurator,
                 explorer.Title,
                 explorer.ExtensionVersions);
