@@ -42,13 +42,13 @@ builder.Services.AddSingleton<WidgetStore>();
 
 var app = builder.Build();
 
-app.UseBicepExtension();
+app.MapBicepExtension();
 app.MapGet("/about", () => "Widget extension");
 
 await app.RunAsync();
 ```
 
-`AddBicepExtension` creates one immutable handler registration and can only be called once. `UseBicepExtension` installs the shared middleware, maps the contract routes, and can also only be called once. The application fails startup if service registration succeeds but `UseBicepExtension` is omitted.
+`AddBicepExtension` creates one immutable handler registration and can only be called once. `MapBicepExtension` installs the shared middleware, maps the contract routes, and can also only be called once. The application fails startup if service registration succeeds but `MapBicepExtension` is omitted.
 
 ## Handler and behavior scopes
 
@@ -68,7 +68,7 @@ An unmatched value returns `UnsupportedExtensionVersion`. Missing resource handl
 
 ## Routes and health
 
-`UseBicepExtension()` maps the five bare contract routes:
+`MapBicepExtension()` maps the five bare contract routes:
 
 ```text
 POST /{extensionVersion}/resource/preview
@@ -85,7 +85,7 @@ It also maps `GET /ping`. Other methods receive `405 Method Not Allowed`.
 Map the interactive Scalar UI and OpenAPI document for local development:
 
 ```csharp
-app.MapDevelopmentApiExplorer(explorer => explorer
+app.MapManagedScalarApiExplorer(explorer => explorer
   .WithTitle("Widget Extension API")
   .ConfigureExamples(WidgetExamples.Configure));
 ```

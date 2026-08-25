@@ -30,6 +30,15 @@ public static class BicepExtensionApiExplorer
     /// Maps the API explorer UI and the OpenAPI specification endpoint.
     /// Only registers routes when the application is running in the Development environment.
     /// </summary>
+    public static WebApplication MapBicepScalarApiExplorer(
+        this WebApplication app,
+        Action<ScalarApiExplorerBuilder>? configure = null) =>
+        MapDevelopment(app, configure);
+
+    /// <summary>
+    /// Maps the API explorer UI and the OpenAPI specification endpoint.
+    /// Only registers routes when the application is running in the Development environment.
+    /// </summary>
     public static WebApplication MapDevelopment(
         WebApplication app,
         Action<ScalarApiExplorerBuilder>? configure = null)

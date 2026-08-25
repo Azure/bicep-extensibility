@@ -70,39 +70,23 @@ The `status` field is an open union. Extensions may define custom non-terminal v
    - **Create or update:** The get response includes the `Resource` with `status: "Succeeded"`.
    - **Delete:** The get response returns a not-found error, which the Extensibility Host interprets as a successful deletion.
 
-#### Create or Update
+#### Create or Update flow
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
+1. The Extensibility Host sends `createOrUpdate`.
+2. The extension returns `Resource` with `status: "Running"`.
+3. The Extensibility Host sends `get`.
+4. The extension returns `Resource` with `status: "Running"`.
+5. The Extensibility Host sends `get`.
+6. The extension returns `Resource` with `status: "Succeeded"`.
 
-    Host->>Ext: createOrUpdate
-    Ext-->>Host: Resource (status: Running)
+#### Delete flow
 
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Running)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Succeeded)
-```
-
-#### Delete
-
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: delete
-    Ext-->>Host: Resource (status: Deleting)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Deleting)
-
-    Host->>Ext: get
-    Ext-->>Host: ErrorResponse (ResourceNotFound)
-```
+1. The Extensibility Host sends `delete`.
+2. The extension returns `Resource` with `status: "Deleting"`.
+3. The Extensibility Host sends `get`.
+4. The extension returns `Resource` with `status: "Deleting"`.
+5. The Extensibility Host sends `get`.
+6. The extension returns `ErrorResponse` with `ResourceNotFound`.
 
 ### Key Rules
 
@@ -347,42 +331,25 @@ This failed state must persist across subsequent get requests until the user ini
 
 The flow differs slightly between create/update and delete: after a successful create or update, the Extensibility Host issues a final get to retrieve the resource state. Delete does not require a final get.
 
-#### Create or Update
+#### Create or Update flow
 
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
+1. The Extensibility Host sends `createOrUpdate`.
+2. The extension returns `LongRunningOperation` with `status: "Running"` and an operation handle.
+3. The Extensibility Host sends `getLongRunningOperation` with the handle.
+4. The extension returns `LongRunningOperation` with `status: "Running"` and a retry interval.
+5. The Extensibility Host sends `getLongRunningOperation` with the handle.
+6. The extension returns `LongRunningOperation` with `status: "Succeeded"`.
+7. The Extensibility Host sends `get`.
+8. The extension returns `Resource` with `status: "Succeeded"`.
 
-    Host->>Ext: createOrUpdate
-    Ext-->>Host: LRO (status: Running, handle: ...)
+#### Delete flow
 
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Running, retry: 10)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Succeeded)
-
-    Host->>Ext: get
-    Ext-->>Host: Resource (status: Succeeded)
-```
-
-#### Delete
-
-```mermaid
-sequenceDiagram
-    participant Host as Extensibility Host
-    participant Ext as Extension
-
-    Host->>Ext: delete
-    Ext-->>Host: LRO (status: Deleting, handle: ...)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Deleting, retry: 10)
-
-    Host->>Ext: getLongRunningOperation(handle)
-    Ext-->>Host: LRO (status: Succeeded)
-```
+1. The Extensibility Host sends `delete`.
+2. The extension returns `LongRunningOperation` with `status: "Deleting"` and an operation handle.
+3. The Extensibility Host sends `getLongRunningOperation` with the handle.
+4. The extension returns `LongRunningOperation` with `status: "Deleting"` and a retry interval.
+5. The Extensibility Host sends `getLongRunningOperation` with the handle.
+6. The extension returns `LongRunningOperation` with `status: "Succeeded"`.
 
 ### Key Rules
 
