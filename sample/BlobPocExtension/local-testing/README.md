@@ -38,7 +38,7 @@ $me = az ad signed-in-user show --query id -o tsv
 az deployment group create `
   --resource-group ligar-test `
   --template-file storage-account.bicep `
-  --parameters storageAccountName=mystgacct28518 principalId=$me
+  --parameters storageAccountName=mystgacct28519 principalId=$me
 ```
 
 The deployment outputs the final `storageAccountName` — use that value as `accountName`

@@ -1,10 +1,10 @@
 # @host = http://localhost:8080
-@host = https://blobpoc-app.bluebay-a7cfc1d8.eastus.azurecontainerapps.io
+@host = blobpoc-app.happygrass-476a04ea.eastus.azurecontainerapps.io
 @version = 1.0.0
 @apiVersion = 2024-01-01
 
 # Replace with the storageAccountName output by storage-account.bicep.
-@accountName = mystgacct28518
+@accountName = mystgacct28519
 @containerName = container1
 
 ### Health check (no storage call unless Storage__ProbeAccountName is set)
