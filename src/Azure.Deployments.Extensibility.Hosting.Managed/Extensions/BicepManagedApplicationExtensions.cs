@@ -20,7 +20,7 @@ public static class BicepManagedApplicationExtensions
     /// <summary>
     /// Maps the API explorer and OpenAPI document in the Development environment.
     /// </summary>
-    public static WebApplication MapDevelopmentApiExplorer(
+    public static WebApplication MapManagedScalarApiExplorer(
         this WebApplication app,
         Action<ScalarApiExplorerBuilder>? configure = null)
     {
@@ -28,8 +28,7 @@ public static class BicepManagedApplicationExtensions
 
         var state = app.Services.GetRequiredService<ManagedExtensionState>();
 
-        return BicepExtensionApiExplorer.MapDevelopment(
-            app,
+        return app.MapBicepScalarApiExplorer(
             builder =>
             {
                 configure?.Invoke(builder);
@@ -38,9 +37,17 @@ public static class BicepManagedApplicationExtensions
     }
 
     /// <summary>
+    /// Maps the API explorer and OpenAPI document in the Development environment.
+    /// </summary>
+    public static WebApplication MapDevelopmentApiExplorer(
+        this WebApplication app,
+        Action<ScalarApiExplorerBuilder>? configure = null) =>
+        app.MapManagedScalarApiExplorer(configure);
+
+    /// <summary>
     /// Installs the Bicep extension middleware and maps the contract and health endpoints.
     /// </summary>
-    public static WebApplication UseBicepExtension(this WebApplication app)
+    public static WebApplication MapBicepExtension(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
 
@@ -54,4 +61,10 @@ public static class BicepManagedApplicationExtensions
 
         return app;
     }
+
+    /// <summary>
+    /// Installs the Bicep extension middleware and maps the contract and health endpoints.
+    /// </summary>
+    public static WebApplication UseBicepExtension(this WebApplication app) =>
+        app.MapBicepExtension();
 }

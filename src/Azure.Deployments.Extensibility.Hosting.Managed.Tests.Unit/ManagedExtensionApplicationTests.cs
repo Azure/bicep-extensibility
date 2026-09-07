@@ -27,32 +27,32 @@ public class ManagedExtensionApplicationTests
     private static readonly BicepExtensionDescriptor Descriptor = new("Widget", "1.0.0");
 
     [Fact]
-    public void UseBicepExtension_WithoutServiceRegistration_Throws()
+    public void MapBicepExtension_WithoutServiceRegistration_Throws()
     {
         var builder = WebApplication.CreateBuilder();
         using var app = builder.Build();
 
-        var action = () => app.UseBicepExtension();
+        var action = () => app.MapBicepExtension();
 
         action.Should().Throw<InvalidOperationException>();
     }
 
     [Fact]
-    public void UseBicepExtension_CalledTwice_Throws()
+    public void MapBicepExtension_CalledTwice_Throws()
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         using var app = builder.Build();
-        app.UseBicepExtension();
+        app.MapBicepExtension();
 
-        var action = () => app.UseBicepExtension();
+        var action = () => app.MapBicepExtension();
 
         action.Should().Throw<InvalidOperationException>()
-            .WithMessage("UseBicepExtension can only be called once.");
+            .WithMessage("MapBicepExtension can only be called once.");
     }
 
     [Fact]
-    public async Task Application_WithoutUseBicepExtension_FailsStartup()
+    public async Task Application_WithoutMapBicepExtension_FailsStartup()
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -62,17 +62,17 @@ public class ManagedExtensionApplicationTests
         var action = () => app.StartAsync();
 
         await action.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("Call UseBicepExtension before starting the application.");
+            .WithMessage("Call MapBicepExtension before starting the application.");
     }
 
     [Fact]
-    public void UseBicepExtension_ValidRegistration_MapsBareContractRoutes()
+    public void MapBicepExtension_ValidRegistration_MapsBareContractRoutes()
     {
         var builder = WebApplication.CreateBuilder();
         builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         using var app = builder.Build();
 
-        app.UseBicepExtension();
+        app.MapBicepExtension();
 
         var routes = ((IEndpointRouteBuilder)app).DataSources
             .SelectMany(dataSource => dataSource.Endpoints)
@@ -102,15 +102,15 @@ public class ManagedExtensionApplicationTests
     }
 
     [Fact]
-    public async Task MapDevelopmentApiExplorer_ConfiguredVersion_UsesIdentityVersion()
+    public async Task MapManagedScalarApiExplorer_ConfiguredVersion_UsesIdentityVersion()
     {
         var builder = WebApplication.CreateBuilder();
         builder.Environment.EnvironmentName = Environments.Development;
         builder.WebHost.UseTestServer();
         builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
         await using var app = builder.Build();
-        app.UseBicepExtension();
-        app.MapDevelopmentApiExplorer(explorer => explorer
+        app.MapBicepExtension();
+        app.MapManagedScalarApiExplorer(explorer => explorer
             .WithTitle("Widget Extension API")
             .WithExtensionVersions("9.9.9"));
         await app.StartAsync();
@@ -205,7 +205,7 @@ public class ManagedExtensionApplicationTests
             context.Response.Headers["x-user-middleware"] = "applied";
             await next(context);
         });
-        app.UseBicepExtension();
+        app.MapBicepExtension();
         app.MapGet("/about", (UserService service) => service.Value);
         await app.StartAsync();
 
@@ -223,7 +223,7 @@ public class ManagedExtensionApplicationTests
         builder.WebHost.UseTestServer();
         builder.Services.AddBicepExtension(configure, Descriptor);
         var app = builder.Build();
-        app.UseBicepExtension();
+        app.MapBicepExtension();
         await app.StartAsync();
 
         return app;
