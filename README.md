@@ -2,8 +2,10 @@
 
 [![codecov](https://codecov.io/gh/Azure/bicep-extensibility/branch/main/graph/badge.svg)](https://codecov.io/gh/Azure/bicep-extensibility)
 
-The repository contains source code for Bicep extensibility core package and first party providers owned by the Bicep team, including:
+The repository contains source code for the Bicep extensibility core package, the shared ASP.NET Core runtime, and the public Hosting SDK, including:
 - [Azure.Deployments.Extensibility.Core](src/Azure.Deployments.Extensibility.Core/)
+- [Azure.Deployments.Extensibility.AspNetCore](src/Azure.Deployments.Extensibility.AspNetCore/)
+- [Azure.Deployments.Extensibility.Hosting](src/Azure.Deployments.Extensibility.Hosting/)
 - [Azure.Deployments.Extensibility.Providers.Kubernetes](src/Azure.Deployments.Extensibility.Providers.Kubernetes/)
 
 ## Contributing

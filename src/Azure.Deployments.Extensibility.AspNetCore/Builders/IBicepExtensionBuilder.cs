@@ -9,6 +9,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// <summary>
 /// Configures a version-independent set of Bicep extension handlers and behaviors.
 /// </summary>
+/// <remarks>
+/// This legacy hosting surface is kept for compatibility with existing consumers.
+/// New applications should use the Azure.Deployments.Extensibility.Hosting package instead.
+/// This interface is slated for removal in a future release.
+/// </remarks>
 public interface IBicepExtensionBuilder
 {
     /// <summary>

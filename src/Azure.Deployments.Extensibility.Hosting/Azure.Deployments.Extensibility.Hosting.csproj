@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <EnableNuget>true</EnableNuget>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Description>ASP.NET Core hosting SDK for Bicep extensions. Provides a standard-host wrapper around the shared AspNetCore runtime with an exact-version resolver, health checks, and /ping support.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Azure.Deployments.Extensibility.AspNetCore\Azure.Deployments.Extensibility.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Azure.Deployments.Extensibility.Hosting.Tests.Unit" />
+  </ItemGroup>
+
+</Project>
