@@ -18,11 +18,12 @@ Start with [Getting Started](tutorials/getting-started.md), then work through th
 
 **Building a third-party or local extension?**
 
-1. [Getting Started](tutorials/getting-started.md)
-2. [Typed Handlers](tutorials/typed-handlers.md)
-3. [Behaviors](tutorials/behaviors.md)
-4. [Validators](tutorials/validators.md)
-5. [Managed SDK](sdks/managed.md)
+1. [How extensions work](contract/index.md)
+2. [Getting Started](tutorials/getting-started.md)
+3. [Typed Handlers](tutorials/typed-handlers.md)
+4. [Behaviors](tutorials/behaviors.md)
+5. [Validators](tutorials/validators.md)
+6. [Managed SDK](sdks/managed.md)
 
 Keep the [Core SDK](sdks/core.md) and [API Contract](contract/contract.md) handy as reference.
 

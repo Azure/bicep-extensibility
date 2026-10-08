@@ -1,5 +1,7 @@
 # Behaviors
 
+*Learning path, step 4 of 5. Previous: [Typed handlers](typed-handlers.md)*
+
 Behaviors are pipeline decorators that wrap handler invocations. Use them for cross-cutting concerns like validation, logging, authorization, or error handling.
 
 ## How behaviors work
