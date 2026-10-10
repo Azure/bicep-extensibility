@@ -1,29 +1,23 @@
 # Getting Started
 
-> [!WARNING]
-> The Bicep Extensibility platform is a work in progress and the SDKs are not yet ready for extension authors to consume. Follow this guide to explore and give feedback, not to build a production extension.
+> [!NOTE]
+> These tutorials use the public **Hosting SDK** wrapper for third-party and local extension authors. See [Hosting SDK](../sdks/hosting.md) for the public entry point.
 
-This guide walks you through building a third-party or local Bicep extension using the Managed SDK.
+This guide walks you through building your first Bicep extension using the public Hosting SDK.
+
+> [!WARNING]
+> The extensibility platform is still a work in progress. The public authoring experience is not yet ready for broad extension-author consumption.
 
 ## Prerequisites
 
-- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 
 ## 1. Create a new project
 
 ```bash
 dotnet new web -n MyExtension
 cd MyExtension
-dotnet add package Azure.Deployments.Extensibility.Hosting.Managed
-```
-
-Declare one extension name and exact version in the project file:
-
-```xml
-<PropertyGroup>
-    <BicepExtensionName>MyExtension</BicepExtensionName>
-    <BicepExtensionVersion>1.0.0</BicepExtensionVersion>
-</PropertyGroup>
+dotnet add package Azure.Deployments.Extensibility.Hosting
 ```
 
 ## 2. Define a handler
@@ -63,33 +57,31 @@ public class MyResourceCreateOrUpdateHandler : IResourceCreateOrUpdateHandler
 Replace the contents of `Program.cs`:
 
 ```csharp
-using Azure.Deployments.Extensibility.Hosting.Managed.Extensions;
+using Azure.Deployments.Extensibility.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddBicepExtension(extension => extension
-    .ForResourceType("MyResource", type => type
-    .AddHandler<MyResourceCreateOrUpdateHandler>()
-    .AddHandler<MyResourceGetHandler>()
-    .AddHandler<MyResourceDeleteHandler>()
-    .AddHandler<MyResourcePreviewHandler>()));
+builder.AddBicepExtension("1.0.0", extension => extension
+    .ForResourceType("MyResource", resourceType => resourceType
+        .AddHandler<MyResourceCreateOrUpdateHandler>()
+        .AddHandler<MyResourceGetHandler>()
+        .AddHandler<MyResourceDeleteHandler>()
+        .AddHandler<MyResourcePreviewHandler>()));
 
 var app = builder.Build();
-
 app.UseBicepExtension();
-
 await app.RunAsync();
 ```
 
+The Hosting SDK also expects the entry assembly to declare `BicepExtensionIdentity` assembly metadata so it can identify the extension.
+
 Key concepts:
 
-- **`BicepExtensionVersion`**: declares the one exact version hosted by this process.
-- **`AddBicepExtension`**: creates one immutable handler registration.
-- **`ForResourceType`**: scopes handlers to a specific resource type name.
-- **`AddHandler<T>`**: registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
-- **`UseBicepExtension`**: installs middleware and maps the five contract routes plus `GET /ping`.
+- **`AddBicepExtension`** — registers a single exact extension version and the host wiring for the extension.
+- **`ForResourceType`** — scopes handlers to a specific resource type name.
+- **`AddHandler<T>`** — registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
 
-Handlers registered directly on the extension builder (outside `ForResourceType`) act as defaults. This is required for resource-type-agnostic operations such as LRO polling.
+Handlers registered directly on the extension builder (outside `ForResourceType`) act as **generic handlers** that match any resource type without a type-specific handler. This is useful for resource-type-agnostic operations like LRO polling.
 
 ## 4. Run and test
 
@@ -121,22 +113,21 @@ curl -X POST http://localhost:5000/1.0.0/resource/preview \
 Behaviors are pipeline decorators that run before and after handlers. Use them for cross-cutting concerns like validation, logging, or retry logic.
 
 ```csharp
-builder.Services.AddBicepExtension(extension => extension
-    .AddGlobalHandlerBehavior<LoggingBehavior>()
+builder.AddBicepExtension("1.0.0", extension => extension
     .AddHandlerBehavior<MyValidationBehavior>()
-    .ForResourceType("MyResource", type => type
+    .ForResourceType("MyResource", resourceType => resourceType
         .AddHandler<MyResourceCreateOrUpdateHandler>()));
 ```
 
 Behaviors can be registered at three levels:
-- **Global**: `extension.AddGlobalHandlerBehavior<T>()` also wraps unsupported extension versions.
-- **Registration-scoped**: `extension.AddHandlerBehavior<T>()` runs after the exact version resolves.
-- **Resource-type-scoped**: `type.AddHandlerBehavior<T>()` runs only for handlers of that resource type.
+- **Global** — `builder.Services.AddBicepExtensionGlobalHandlerBehavior<T>()` runs for every handler across all versions.
+- **Extension-scoped** — `extension.AddHandlerBehavior<T>()` runs for handlers in the extension registration.
+- **Resource-type-scoped** — `resourceType.AddHandlerBehavior<T>()` runs only for handlers of that resource type.
 
 ## Next Steps
 
-- [Typed Handlers](typed-handlers.md): use strongly-typed models instead of raw `JsonObject`.
-- [Behaviors](behaviors.md): add cross-cutting concerns like validation and logging.
-- [Validators](validators.md): validate requests with a fluent DSL.
+- [Typed Handlers](typed-handlers.md) — use strongly-typed models instead of raw `JsonObject`.
+- [Behaviors](behaviors.md) — add cross-cutting concerns like validation and logging.
+- [Validators](validators.md) — validate requests with a fluent DSL.
 - Read the [API Contract](../contract/contract.md) for the complete protocol specification.
 - Explore the [Magic 8-Ball sample](https://github.com/Azure/bicep-extensibility/tree/main/sample/MagicEightBallExtension) for a full working example covering all 5 endpoints.

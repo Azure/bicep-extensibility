@@ -15,6 +15,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// Configures handler registrations scoped to a specific resource type
 /// within an extension version range.
 /// </summary>
+/// <remarks>
+/// This legacy hosting surface is kept for compatibility with existing consumers.
+/// New applications should use the Azure.Deployments.Extensibility.Hosting package instead.
+/// This type is slated for removal in a future release.
+/// </remarks>
 public sealed class ResourceTypeBuilder
 {
     private readonly IServiceCollection services;

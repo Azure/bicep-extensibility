@@ -19,6 +19,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// Provides a fluent API that handles JSON serialization, middleware, routing,
 /// and pipeline behavior configuration automatically.
 /// </summary>
+/// <remarks>
+/// This legacy hosting surface is kept for compatibility with existing consumers.
+/// New applications should use the Azure.Deployments.Extensibility.Hosting package instead.
+/// This type is slated for removal in a future release.
+/// </remarks>
 /// <example>
 /// <code><![CDATA[
 /// ExtensionApplication.Create(args)
@@ -29,7 +34,6 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 ///     .Run();
 /// ]]></code>
 /// </example>
-// TODO: Remove this legacy hosting surface after existing consumers migrate to Hosting.FirstParty.
 public class ExtensionApplication
 {
     private readonly HandlerRegistry handlerRegistry = new();
@@ -199,7 +203,10 @@ public class ExtensionApplication
     {
         if (this.apiExplorerBuilder is { } explorer)
         {
-            BicepExtensionApiExplorer.MapDevelopment(app, explorer);
+            app.MapBicepScalarApiExplorer(
+                explorer.ExamplesConfigurator,
+                explorer.Title,
+                explorer.ExtensionVersions);
         }
 
         app.MapResourceActions();
