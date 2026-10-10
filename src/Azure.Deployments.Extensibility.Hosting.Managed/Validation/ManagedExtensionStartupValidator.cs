@@ -19,7 +19,7 @@ internal sealed class ManagedExtensionStartupValidator : IHostedService
         if (!this.state.ApplicationConfigured)
         {
             throw new InvalidOperationException(
-                "Call UseBicepExtension before starting the application.");
+                "Call MapBicepExtension before starting the application.");
         }
 
         return Task.CompletedTask;

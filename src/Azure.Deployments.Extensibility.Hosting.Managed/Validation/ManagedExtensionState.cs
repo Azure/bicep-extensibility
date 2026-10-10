@@ -22,7 +22,7 @@ internal sealed class ManagedExtensionState
         if (Interlocked.Exchange(ref this.applicationConfigured, 1) == 1)
         {
             throw new InvalidOperationException(
-                "UseBicepExtension can only be called once.");
+                "MapBicepExtension can only be called once.");
         }
     }
 }
