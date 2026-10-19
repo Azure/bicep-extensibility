@@ -1,0 +1,16 @@
+{
+  "resources": {
+    "Fortune@2025-01-01": {
+      "$ref": "types.json#/3"
+    }
+  },
+  "resourceFunctions": {},
+  "namespaceFunctions": [],
+  "settings": {
+    "name": "MagicEightBall",
+    "version": "2.0.0",
+    "isSingleton": false,
+    "isPreview": false,
+    "isDeprecated": false
+  }
+}

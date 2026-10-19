@@ -195,7 +195,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<FortuneStore>();
 builder.Services.Configure<JsonOptions>(options =>
 {
-  options.SerializerOptions.TypeInfoResolverChain.Insert(0, FortuneModelSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, FortuneModelSerializerContext.Default);
 });
 
 builder.Services.AddBicepExtension(extension => extension
@@ -205,10 +205,10 @@ builder.Services.AddBicepExtension(extension => extension
     .AddHandlerBehavior(_ => new ApiVersionValidationBehavior("2025-01-01", "2025-01-01-preview"))
     .AddHandler<FortuneLongRunningOperationGetHandler>()
     .ForResourceType("Fortune", type => type
-      .AddHandler<FortunePreviewHandler>()
-      .AddHandler<FortuneCreateOrUpdateHandler>()
-      .AddHandler<FortuneGetHandler>()
-      .AddHandler<FortuneDeleteHandler>()));
+        .AddHandler<FortunePreviewHandler>()
+        .AddHandler<FortuneCreateOrUpdateHandler>()
+        .AddHandler<FortuneGetHandler>()
+        .AddHandler<FortuneDeleteHandler>()));
 
 var app = builder.Build();
 
@@ -228,6 +228,28 @@ Each handler extends one of the SDK's typed base classes (`TypedResourceCreateOr
 - **Behaviors** (decorators) that run cross-cutting logic before/after handlers — both global (e.g., `ResponseLoggingBehavior`) and registration-scoped (e.g., `ApiVersionValidationBehavior`)
 - Resource-type routing via `ForResourceType` — handlers are scoped to specific resource types like `"Fortune"`
 
+## Publish as a Bicep Extension
+
+`Publish-Extension.ps1` builds a self-contained `linux-x64` single-file binary and publishes it, together with the Bicep types in `types/`, as an OCI artifact. The binary layer uses the media type that marks an Extension API Contract V2 (HTTP) binary.
+
+Prerequisites:
+
+- PowerShell 7 and the .NET 10 SDK
+- A Bicep CLI whose `publish-extension` command has the `--contract` option. No released Bicep CLI has it yet, so build one from a branch that does and pass it with `-BicepPath`.
+- For a registry target, `az login` with push access to the registry
+
+```powershell
+# Build only; prints the binary's path, size and sha256 digest
+./Publish-Extension.ps1
+
+# Build and publish to a registry
+./Publish-Extension.ps1 -Target br:myregistry.azurecr.io/bicep/extensions/magiceightball:2.0.0 -BicepPath <path-to-bicep>
+```
+
+The binary is written to `artifacts/MagicEightBallExtension/linux-x64/` at the repository root.
+
+The types in `types/` are written by hand in the Bicep types v1 format. Keep them in sync with `Models/FortuneModels.cs`: `name` is the required identifier, `question` is the only other input, and the remaining properties are read-only. The resource type is `Fortune@2025-01-01`, one of the API versions that `ApiVersionValidationBehavior` accepts.
+
 ## Project Structure
 
 ```
@@ -235,11 +257,11 @@ sample/MagicEightBallExtension/
 ├── Program.cs                                          # Entry point — wires up handlers and behaviors
 ├── FortuneExamples.cs                                  # OpenAPI examples for the Scalar explorer
 ├── MagicEightBallExtension.csproj                      # Project file
+├── Publish-Extension.ps1                               # Builds the linux-x64 binary and publishes the extension
 ├── README.md                                           # This file
 ├── Behaviors/
 │   ├── ApiVersionValidationBehavior.cs                 # Registration-scoped: validates resource API version
 │   ├── NameValidationBehavior.cs                       # Global: validates required "name" property/identifier
-│   ├── PreviewMetadataProcessingBehavior.cs            # Global: handles unevaluated ARM expressions in preview
 │   └── ResponseLoggingBehavior.cs                      # Global: logs handler results
 ├── Data/
 │   └── FortuneStore.cs                                 # Thread-safe in-memory store for resources and LROs
@@ -249,7 +271,12 @@ sample/MagicEightBallExtension/
 │   ├── FortuneCreateOrUpdateHandler.cs                 # Create/Update — adds confidence & mood
 │   ├── FortuneGetHandler.cs                            # Get — deserializes fortune properties
 │   └── FortuneDeleteHandler.cs                         # Delete — deserializes fortune properties
-└── Models/
-    ├── FortuneModels.cs                                # FortuneProperties, FortunePropertiesV2, FortuneIdentifiers
-    └── FortuneModelSerializerContext.cs                 # Source-generated JSON serializer context
+├── Models/
+│   ├── FortuneModels.cs                                # FortuneProperties, FortunePropertiesV2, FortuneIdentifiers
+│   └── FortuneModelSerializerContext.cs                # Source-generated JSON serializer context
+├── Properties/
+│   └── launchSettings.json                             # Local run profile (http://localhost:5000)
+└── types/
+    ├── index.json                                      # Bicep types index (Fortune@2025-01-01)
+    └── types.json                                      # Bicep type definitions for the Fortune resource
 ```
