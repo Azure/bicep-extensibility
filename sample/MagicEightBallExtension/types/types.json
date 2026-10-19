@@ -1,0 +1,65 @@
+[
+  {
+    "$type": "StringType"
+  },
+  {
+    "$type": "IntegerType"
+  },
+  {
+    "$type": "ObjectType",
+    "name": "Fortune",
+    "properties": {
+      "name": {
+        "type": {
+          "$ref": "#/0"
+        },
+        "flags": 17,
+        "description": "The name that identifies the fortune."
+      },
+      "question": {
+        "type": {
+          "$ref": "#/0"
+        },
+        "flags": 0,
+        "description": "The question to ask the Magic 8-Ball."
+      },
+      "fortune": {
+        "type": {
+          "$ref": "#/0"
+        },
+        "flags": 2,
+        "description": "The answer from the Magic 8-Ball."
+      },
+      "answeredAt": {
+        "type": {
+          "$ref": "#/0"
+        },
+        "flags": 2,
+        "description": "When the question was answered, as an ISO 8601 timestamp."
+      },
+      "confidence": {
+        "type": {
+          "$ref": "#/1"
+        },
+        "flags": 2,
+        "description": "How confident the Magic 8-Ball is in its answer, from 1 to 100."
+      },
+      "mood": {
+        "type": {
+          "$ref": "#/0"
+        },
+        "flags": 2,
+        "description": "The mood of the Magic 8-Ball when it answered."
+      }
+    }
+  },
+  {
+    "$type": "ResourceType",
+    "name": "Fortune@2025-01-01",
+    "body": {
+      "$ref": "#/2"
+    },
+    "readableScopes": 31,
+    "writableScopes": 31
+  }
+]
