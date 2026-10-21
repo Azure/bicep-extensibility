@@ -10,15 +10,16 @@ namespace Azure.Deployments.Extensibility.TypeGeneration.Tests.Support;
 
 internal sealed class RealProjectFixture : IDisposable
 {
-    private RealProjectFixture()
+    private RealProjectFixture(string projectFileName = "Fixture.csproj")
     {
         DirectoryPath = Path.Combine(Path.GetTempPath(), "TypeGenerationTests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(DirectoryPath);
+        ProjectPath = Path.Combine(DirectoryPath, projectFileName);
     }
 
     public string DirectoryPath { get; }
 
-    public string ProjectPath => Path.Combine(DirectoryPath, "Fixture.csproj");
+    public string ProjectPath { get; }
 
     public static string RepositoryRoot
     {
@@ -70,9 +71,7 @@ internal sealed class RealProjectFixture : IDisposable
                 {{properties ?? "<BicepExtensionName>Contoso</BicepExtensionName><BicepExtensionVersion>1.2</BicepExtensionVersion>"}}
                 </PropertyGroup></Project>
                 """);
-            File.WriteAllText(Path.Combine(fixture.DirectoryPath, "Directory.Build.props"), "<Project />");
-            File.WriteAllText(Path.Combine(fixture.DirectoryPath, "Directory.Build.targets"), "<Project />");
-            File.Copy(Path.Combine(RepositoryRoot, "global.json"), Path.Combine(fixture.DirectoryPath, "global.json"));
+            fixture.IsolateBuildSettings();
             foreach (var (path, source) in ContosoAuthoringFixture.Sources)
             {
                 File.WriteAllText(Path.Combine(fixture.DirectoryPath, path), source);
@@ -93,6 +92,48 @@ internal sealed class RealProjectFixture : IDisposable
                 fixture.Dispose();
             }
         }
+    }
+
+    public static async Task<RealProjectFixture> CopyProjectAsync(string projectPath)
+    {
+        var fixture = new RealProjectFixture(Path.GetFileName(projectPath));
+        var ready = false;
+        try
+        {
+            var sourceDirectory = Path.GetDirectoryName(projectPath)!;
+            var project = XDocument.Load(projectPath);
+            foreach (var reference in project.Descendants("ProjectReference"))
+            {
+                var include = reference.Attribute("Include")
+                    ?? throw new InvalidOperationException($"Project reference in '{projectPath}' has no Include.");
+                include.Value = Path.GetFullPath(include.Value.Replace('\\', Path.DirectorySeparatorChar), sourceDirectory);
+            }
+
+            project.Save(fixture.ProjectPath);
+            foreach (var source in Directory.GetFiles(sourceDirectory, "*.cs"))
+            {
+                File.Copy(source, Path.Combine(fixture.DirectoryPath, Path.GetFileName(source)));
+            }
+
+            fixture.IsolateBuildSettings();
+            await fixture.RestoreAsync();
+            ready = true;
+            return fixture;
+        }
+        finally
+        {
+            if (!ready)
+            {
+                fixture.Dispose();
+            }
+        }
+    }
+
+    private void IsolateBuildSettings()
+    {
+        File.WriteAllText(Path.Combine(DirectoryPath, "Directory.Build.props"), "<Project />");
+        File.WriteAllText(Path.Combine(DirectoryPath, "Directory.Build.targets"), "<Project />");
+        File.Copy(Path.Combine(RepositoryRoot, "global.json"), Path.Combine(DirectoryPath, "global.json"));
     }
 
     public async Task RestoreAsync()

@@ -27,8 +27,10 @@ dotnet run --project 'src\Azure.Deployments.Extensibility.TypeGeneration.Tool\Az
 
 The extension references the `.Sdk` project/package and uses its existing
 `Azure.Deployments.Extensibility.TypeGeneration.Attributes` namespace. It does not reference
-the Tool or the old Local Extension SDK. The formal repository demo and F5 configuration
-are separate S09/S10 steps and are not provided by S08.
+the Tool or the old Local Extension SDK. The
+[Contoso sample](../../sample/Azure.Deployments.Extensibility.TypeGeneration.Sample/README.md)
+provides a ready-to-run project, a complete output snapshot, two input-change experiments,
+and a real duplicate-configuration error example.
 
 ## Project settings
 

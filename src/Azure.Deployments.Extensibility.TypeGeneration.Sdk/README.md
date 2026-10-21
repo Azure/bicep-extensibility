@@ -12,6 +12,11 @@ The SDK project, assembly, and package name is `Azure.Deployments.Extensibility.
 Public namespaces remain `Azure.Deployments.Extensibility.TypeGeneration` and its subnamespaces.
 The SDK does not depend on the Tool, MSBuild, or Roslyn Workspaces.
 
+For a complete runnable example, see the
+[Contoso authoring sample](../../sample/Azure.Deployments.Extensibility.TypeGeneration.Sample/README.md).
+It includes nested collections, a map, an enum, nullable properties, a recursive type,
+and a real invalid-input example. It needs restore, not a prebuilt sample DLL.
+
 ## Authoring
 
 Reference `Azure.Deployments.Extensibility.TypeGeneration.Sdk` and use:
@@ -88,7 +93,8 @@ roots are not resource/configuration objects. Reachable properties can use the s
 listed below, including constructed generic classes and inherited or positional record properties.
 Indexers remain errors (TG1403).
 
-For example, a Roslyn host with a resolved compilation can analyze the authoring model:
+For example, a Roslyn host with a resolved compilation can analyze the authoring model.
+Here `reportDiagnostic` is the host's diagnostic-reporting callback:
 
 ```csharp
 using Azure.Deployments.Extensibility.TypeGeneration;
@@ -96,21 +102,35 @@ using Azure.Deployments.Extensibility.TypeGeneration.Roslyn;
 
 var frontend = new TypeGenerationFrontend();
 var result = frontend.Build(compilation, new ExtensionBuildMetadata("Contoso", "1.0.0"));
-if (result.Succeeded)
+foreach (var diagnostic in result.Diagnostics)
 {
-    var model = result.Model!;
-    // Pass model to inspection or a future type-package backend.
+    reportDiagnostic(diagnostic);
 }
+
+if (!result.Succeeded)
+{
+    return;
+}
+
+var model = result.Model!;
+// Pass the validated model to the next stage, without re-reading authoring attributes.
 ```
 
 `ExtensionBuildMetadata` carries the resolved name, version, and optional singleton setting.
 Names and versions must be non-empty and not whitespace-only; no SemVer parser or implicit
-trimming is applied. Project-file loading and boolean text parsing belong to the future host.
+trimming is applied. Project-file loading and boolean text parsing belong to the companion
+[Tool](../Azure.Deployments.Extensibility.TypeGeneration.Tool/README.md), not the SDK.
 
 `TypeGenerationResult` contains a model and immutable diagnostics. Success requires a model
 and no errors. Its constructor rejects an uninitialized diagnostic array, null diagnostic
 entries, or a partial model accompanied by errors. Warnings and informational diagnostics
 do not make a complete result fail.
+
+The model is a graph, not necessarily a tree: shared and cyclic nodes retain reference identity.
+Consumers should use reference-based visited sets rather than recursive record equality or
+`ToString()`. Source locations support diagnostics but are not semantic identity. Resource
+version labels remain unprojected; downstream consumers must not treat each label as an already
+materialized resource. The SDK currently stops at ETSM and does not generate a type package.
 
 | Code | Meaning |
 |---|---|
