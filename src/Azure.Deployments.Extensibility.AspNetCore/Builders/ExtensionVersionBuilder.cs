@@ -16,6 +16,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// Handlers registered directly on this builder are default (generic) handlers.
 /// Use <see cref="ForResourceType"/> to register handlers scoped to a named resource type.
 /// </summary>
+/// <remarks>
+/// This legacy hosting surface is kept for compatibility with existing consumers.
+/// New applications should use the Azure.Deployments.Extensibility.Hosting package instead.
+/// This type is slated for removal in a future release.
+/// </remarks>
 public sealed class ExtensionVersionBuilder
 {
     private readonly IServiceCollection services;

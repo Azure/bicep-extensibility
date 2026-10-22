@@ -11,11 +11,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Builders;
 /// </summary>
 public class ScalarApiExplorerBuilder
 {
-    internal string Title { get; private set; } = BicepExtensionApiExplorer.DefaultTitle;
+    public string Title { get; private set; } = BicepScalarApiExplorerExtensions.DefaultTitle;
 
-    internal string[]? ExtensionVersions { get; private set; }
+    public string[]? ExtensionVersions { get; private set; }
 
-    internal Action<OpenApiExamplesBuilder>? ExamplesConfigurator { get; private set; }
+    public Action<OpenApiExamplesBuilder>? ExamplesConfigurator { get; private set; }
 
     /// <summary>
     /// Sets the title displayed in the Scalar API explorer UI.

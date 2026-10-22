@@ -4,17 +4,18 @@ Behaviors are pipeline decorators that wrap handler invocations. Use them for cr
 
 ## How behaviors work
 
-A behavior receives the request and a `next` delegate. Call `next` to continue the pipeline, or return early to short-circuit. A request flows through each registered behavior in order before reaching the handler, and the response flows back out in reverse:
+A behavior receives the request and a `next` delegate. Call `next` to continue the pipeline, or return early to short-circuit:
 
 ```
-Request
-   [Behavior A]   can inspect, modify, or short-circuit
-   [Behavior B]   can inspect, modify, or short-circuit
-   [Handler]      does the work
-Response
+Request → [Behavior A] → [Behavior B] → [Handler] → Response
+                ↑              ↑              ↑
+            can inspect    can inspect    does the work
+            can modify     can modify
+            can short-     can short-
+            circuit        circuit
 ```
 
-Behaviors execute in registration order: global first, then registration-scoped, then resource-type-scoped.
+Behaviors execute in registration order: **global → extension-scoped → resource-type-scoped**.
 
 ## Operation-specific interfaces
 
@@ -120,19 +121,17 @@ public sealed partial class ResponseLoggingBehavior :
 Run for **every handler** across all extension versions:
 
 ```csharp
-builder.Services.AddBicepExtension(extension => extension
-    .AddGlobalHandlerBehavior<ResponseLoggingBehavior>()
-    .AddHandler<OperationStatusHandler>());
+builder.Services.AddBicepExtensionGlobalHandlerBehavior<ResponseLoggingBehavior>();
 ```
 
-### Registration-scoped behaviors
+### Version-scoped behaviors
 
-Run after the Managed host resolves its exact extension version:
+Run for handlers in a specific version range:
 
 ```csharp
-builder.Services.AddBicepExtension(extension => extension
+builder.AddBicepExtension("1.0.0", extension => extension
     .AddHandlerBehavior(sp => new ApiVersionValidationBehavior("2024-01-01", "2024-01-01-preview"))
-    .AddHandler<OperationStatusHandler>());
+    ...);
 ```
 
 ### Resource-type-scoped behaviors
@@ -140,7 +139,7 @@ builder.Services.AddBicepExtension(extension => extension
 Run only for handlers of a specific resource type:
 
 ```csharp
-.ForResourceType("Widget", type => type
+.ForResourceType("Widget", resourceType => resourceType
     .AddHandlerBehavior<WidgetAuthorizationBehavior>()
     .AddHandler<WidgetCreateOrUpdateHandler>()
     ...);
@@ -165,21 +164,22 @@ Or use the generic overload when all dependencies are in DI:
 Given this registration:
 
 ```csharp
-builder.Services.AddBicepExtension(extension => extension
-    .AddGlobalHandlerBehavior<LoggingBehavior>()
+builder.Services.AddBicepExtensionGlobalHandlerBehavior<LoggingBehavior>();
+
+builder.AddBicepExtension("1.0.0", extension => extension
     .AddHandlerBehavior<ApiVersionBehavior>()
-    .ForResourceType("Widget", type => type
+    .ForResourceType("Widget", resourceType => resourceType
         .AddHandlerBehavior<WidgetAuthBehavior>()
         .AddHandler<WidgetCreateOrUpdateHandler>()));
 ```
 
-A create-or-update request for version `1.0.0` and type `Widget` executes in this order:
+A create-or-update request for version `1.0.0` and type `Widget` executes:
 
 ```
-LoggingBehavior, then ApiVersionBehavior, then WidgetAuthBehavior, then WidgetCreateOrUpdateHandler
+LoggingBehavior → ApiVersionBehavior → WidgetAuthBehavior → WidgetCreateOrUpdateHandler
 ```
 
 ## Next steps
 
-- [Typed Handlers](typed-handlers.md): use strongly-typed models in your handlers.
-- [Validators](validators.md): validate request models with a fluent DSL.
+- [Typed Handlers](typed-handlers.md) — use strongly-typed models in your handlers.
+- [Validators](validators.md) — validate request models with a fluent DSL.
