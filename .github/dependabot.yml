@@ -10,6 +10,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     cooldown:
       default-days: 7
   - package-ecosystem: "nuget"
@@ -17,6 +21,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "sunday"
+    groups:
+      nuget:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: "Moq"
       - dependency-name: "FluentAssertions"
@@ -24,11 +32,15 @@ updates:
       - dependency-name: "JsonPath.Net"
       - dependency-name: "JsonPointer.Net"
       - dependency-name: "JsonSchema.Net"
-  - package-ecosystem: dotnet-sdk
-    directory: /
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
     schedule:
-      interval: weekly
-      day: wednesday
+      interval: "weekly"
+      day: "wednesday"
+    groups:
+      dotnet-sdk:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: '*'
         update-types:
