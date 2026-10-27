@@ -4,24 +4,27 @@
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
-multi-ecosystem-groups:
-  dependencies:
-    schedule:
-      interval: "weekly"
-      day: "sunday"
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "dependencies"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
     cooldown:
       default-days: 7
   - package-ecosystem: "nuget"
     directory: "/"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "dependencies"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+    groups:
+      nuget:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: "Moq"
       - dependency-name: "FluentAssertions"
@@ -31,9 +34,13 @@ updates:
       - dependency-name: "JsonSchema.Net"
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "dependencies"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    groups:
+      dotnet-sdk:
+        patterns:
+          - "*"
     ignore:
       - dependency-name: '*'
         update-types:
