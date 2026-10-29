@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.Core.V2.Validation.Criteria;
-using Json.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using Azure.Deployments.Extensibility.Core.V2.Validation.Criteria;
+using Json.Schema;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Validation
 {
@@ -59,15 +59,20 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
         /// <param name="schema">The JSON schema to validate against.</param>
         /// <param name="schemaSpecVersion">The JSON Schema specification version. Defaults to Draft7.</param>
         /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <param name="filter">Optional filter to apply to the JSON schema violations.</param>
         /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, TJsonNode?> MatchesJsonSchema<TModel, TJsonNode>(
             this IPropertyRuleBuilder<TModel, TJsonNode?> builder,
             JsonSchema schema,
             SpecVersion schemaSpecVersion = SpecVersion.Draft7,
-            Action<ErrorBuilder>? configureError = null)
+            Action<ErrorBuilder>? configureError = null,
+            JsonSchemaViolationFilter<TModel>? filter = null)
             where TJsonNode : JsonNode
         {
-            var criterion = new MatchJsonSchemaCriterion<TModel>(_ => schema, schemaSpecVersion);
+            var criterion = new MatchJsonSchemaCriterion<TModel>(_ => schema, schemaSpecVersion)
+            {
+                Filter = filter
+            };
 
             ApplyErrorOverrides(criterion, configureError);
             builder.AddCriterion(criterion);
@@ -83,14 +88,19 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation
         /// <param name="schemaResolver">A delegate that resolves the JSON schema from the model.</param>
         /// <param name="schemaSpecVersion">The JSON Schema specification version. Defaults to Draft7.</param>
         /// <param name="configureError">Optional callback to override the error code and message.</param>
+        /// <param name="filter">Optional filter to apply to the JSON schema violations.</param>
         /// <returns>The builder for chaining.</returns>
         public static IPropertyRuleBuilder<TModel, JsonElement> MatchesJsonSchema<TModel>(
             this IPropertyRuleBuilder<TModel, JsonElement> builder,
             JsonSchemaResolver<TModel> schemaResolver,
             SpecVersion schemaSpecVersion = SpecVersion.Draft7,
-            Action<ErrorBuilder>? configureError = null)
+            Action<ErrorBuilder>? configureError = null,
+            JsonSchemaViolationFilter<TModel>? filter = null)
         {
-            var criterion = new MatchJsonSchemaCriterion<TModel>(schemaResolver, schemaSpecVersion);
+            var criterion = new MatchJsonSchemaCriterion<TModel>(schemaResolver, schemaSpecVersion)
+            {
+                Filter = filter
+            };
 
             ApplyErrorOverrides(criterion, configureError);
             builder.AddCriterion(criterion);

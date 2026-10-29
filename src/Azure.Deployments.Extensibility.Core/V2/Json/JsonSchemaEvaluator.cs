@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Json.Pointer;
-using Json.Schema;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Json.Pointer;
+using Json.Schema;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json
 {
-    internal record JsonSchemaViolation(JsonPointer InstanceLocation, string ErrorMessage);
+    public record JsonSchemaViolation(JsonPointer InstanceLocation, string ErrorMessage);
 
     internal class JsonSchemaEvaluator
     {
@@ -31,21 +31,21 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json
             };
         }
 
-        public IEnumerable<JsonSchemaViolation> Evaluate(JsonElement value)
+        public IReadOnlyCollection<JsonSchemaViolation> Evaluate(JsonElement value)
         {
             var result = this.schema.Evaluate(value, this.evaluationOptions);
 
             return CheckResult(result);
         }
 
-        public IEnumerable<JsonSchemaViolation> Evaluate(JsonNode? value)
+        public IReadOnlyCollection<JsonSchemaViolation> Evaluate(JsonNode? value)
         {
             var result = this.schema.Evaluate(value, this.evaluationOptions);
 
             return CheckResult(result);
         }
 
-        private static IEnumerable<JsonSchemaViolation> CheckResult(EvaluationResults result)
+        private static IReadOnlyCollection<JsonSchemaViolation> CheckResult(EvaluationResults result)
         {
             if (result.IsValid)
             {
