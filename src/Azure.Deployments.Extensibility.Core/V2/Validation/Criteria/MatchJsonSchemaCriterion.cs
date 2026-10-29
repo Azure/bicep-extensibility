@@ -15,7 +15,7 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
     /// </summary>
     public delegate JsonSchema JsonSchemaResolver<TModel>(TModel model);
 
-    public delegate IEnumerable<JsonSchemaViolation> JsonSchemaViolationFilter<in TModel>(IReadOnlyCollection<JsonSchemaViolation> errors, TModel model);
+    public delegate IEnumerable<JsonSchemaViolation> JsonSchemaViolationFilter<in TModel>(IReadOnlyCollection<JsonSchemaViolation> errors, TModel model, JsonPointer modelPointer);
 
     /// <summary>
     /// A validation criterion that fails when a JSON property does not conform to the specified JSON schema.
@@ -47,15 +47,15 @@ namespace Azure.Deployments.Extensibility.Core.V2.Validation.Criteria
 
         /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, JsonNode? propertyValue, JsonPointer propertyPointer) =>
-            this.FilteredErrors(this.CreateSchemaEvaluator(model).Evaluate(propertyValue), model).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
+            this.FilteredErrors(this.CreateSchemaEvaluator(model).Evaluate(propertyValue), model, propertyPointer).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
 
         /// <inheritdoc/>
         public IEnumerable<ErrorDetail> Evaluate(TModel model, JsonElement propertyValue, JsonPointer propertyPointer) =>
-            this.FilteredErrors(this.CreateSchemaEvaluator(model).Evaluate(propertyValue), model).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
+            this.FilteredErrors(this.CreateSchemaEvaluator(model).Evaluate(propertyValue), model, propertyPointer).Select(schemaViolation => this.CreateErrorDetail(schemaViolation, propertyPointer));
 
-        private IEnumerable<JsonSchemaViolation> FilteredErrors(IReadOnlyCollection<JsonSchemaViolation> errors, TModel model) =>
+        private IEnumerable<JsonSchemaViolation> FilteredErrors(IReadOnlyCollection<JsonSchemaViolation> errors, TModel model, JsonPointer modelPointer) =>
             this.Filter is not null && errors.Count != 0
-                ? this.Filter.Invoke(errors, model)
+                ? this.Filter.Invoke(errors, model, modelPointer)
                 : errors;
 
         private JsonSchemaEvaluator CreateSchemaEvaluator(TModel model) => new(this.schemaResolver.Invoke(model), this.schemaSpecVersion);
