@@ -55,6 +55,7 @@ if ($Force) {
     $publishArgs += '--force'
 }
 
+Write-Host "Publishing to $Target..."
 & $BicepPath @publishArgs
 if ($LASTEXITCODE -ne 0) {
     throw "bicep publish-extension failed with exit code $LASTEXITCODE."
