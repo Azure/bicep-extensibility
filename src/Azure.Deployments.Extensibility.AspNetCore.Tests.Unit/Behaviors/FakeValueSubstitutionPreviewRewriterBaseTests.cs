@@ -14,13 +14,13 @@ namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Behaviors;
 public class FakeValueSubstitutionPreviewRewriterBaseTests
 {
     [Fact]
-    public void RewritePreview_WithoutUnevaluatedPointers_ReturnsOriginalRequestAndResponse()
+    public async Task RewritePreview_WithoutUnevaluatedPointers_ReturnsOriginalRequestAndResponse()
     {
         var sut = new TestPreviewRewriter();
         var request = CreateRequest();
         var response = CreateResponse(request);
 
-        sut.RewritePreviewRequest(request).Should().BeSameAs(request);
+        (await sut.RewritePreviewRequestAsync(request)).Should().BeSameAs(request);
         sut.RewritePreviewResponse(response).AsT0.Should().BeSameAs(response);
         sut.FakeValueCalls.Should().BeEmpty();
     }
@@ -32,7 +32,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [InlineData(true, false, "/config/name")]
     [InlineData(true, true, "/Properties/name")]
     [InlineData(true, true, "/Config/name")]
-    public void RewritePreview_WithoutHandledPointers_ReturnsOriginalRequestAndResponse(
+    public async Task RewritePreview_WithoutHandledPointers_ReturnsOriginalRequestAndResponse(
         bool handlesRewritingProperties,
         bool handlesRewritingConfig,
         string pointer)
@@ -41,19 +41,19 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
         var request = CreateRequest(pointer);
         var response = CreateResponse(request);
 
-        sut.RewritePreviewRequest(request).Should().BeSameAs(request);
+        (await sut.RewritePreviewRequestAsync(request)).Should().BeSameAs(request);
         sut.RewritePreviewResponse(response).AsT0.Should().BeSameAs(response);
         sut.FakeValueCalls.Should().BeEmpty();
     }
 
     [Fact]
-    public void RewritePreview_WithNullConfig_ReturnsOriginalRequestAndResponse()
+    public async Task RewritePreview_WithNullConfig_ReturnsOriginalRequestAndResponse()
     {
         var sut = new TestPreviewRewriter();
         var request = CreateRequest("/config/name") with { Config = null };
         var response = CreateResponse(request);
 
-        sut.RewritePreviewRequest(request).Should().BeSameAs(request);
+        (await sut.RewritePreviewRequestAsync(request)).Should().BeSameAs(request);
         sut.RewritePreviewResponse(response).AsT0.Should().BeSameAs(response);
         sut.FakeValueCalls.Should().BeEmpty();
     }
@@ -62,7 +62,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public void RewritePreviewRequest_ReplacesUnevaluatedValuesInHandledScopes(
+    public async Task RewritePreviewRequest_ReplacesUnevaluatedValuesInHandledScopes(
         bool handlesRewritingProperties,
         bool handlesRewritingConfig)
     {
@@ -83,7 +83,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
         var originalProperties = request.Properties.DeepClone();
         var originalConfig = request.Config!.DeepClone();
 
-        var result = sut.RewritePreviewRequest(request);
+        var result = await sut.RewritePreviewRequestAsync(request);
 
         result.Should().NotBeSameAs(request);
         result.Properties["name"]!.GetValue<string>()
@@ -128,7 +128,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [InlineData("config", "/nested/value")]
     [InlineData("config", "/items/0")]
     [InlineData("config", "/a~1b/~0value")]
-    public void RewritePreview_ReplacesAndRestoresValuesWithoutMutatingInputs(string scope, string path)
+    public async Task RewritePreview_ReplacesAndRestoresValuesWithoutMutatingInputs(string scope, string path)
     {
         var pointer = JsonPointer.Parse($"/{scope}{path}");
         var relativePointer = JsonPointer.Parse(path);
@@ -140,7 +140,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
             .Should()
             .BeTrue();
 
-        var rewrittenRequest = sut.RewritePreviewRequest(request);
+        var rewrittenRequest = await sut.RewritePreviewRequestAsync(request);
 
         relativePointer.TryEvaluate(scope == "properties" ? rewrittenRequest.Properties : rewrittenRequest.Config, out var fakeValue)
             .Should()
@@ -174,11 +174,11 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreviewResponse_RestoresMultiplePropertiesAndConfigValues()
+    public async Task RewritePreviewResponse_RestoresMultiplePropertiesAndConfigValues()
     {
         var sut = new TestPreviewRewriter();
         var request = CreateRequest("/properties/name", "/properties/nested/value", "/config/name", "/config/items/0");
-        var rewritten = sut.RewritePreviewRequest(request);
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
         sut.FakeValueCalls.Should().HaveCount(4);
         var response = CreateResponse(rewritten);
 
@@ -191,12 +191,12 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreview_WithUnrecognizedPointerAlongsideHandledPointer_IgnoresUnrecognizedPointer()
+    public async Task RewritePreview_WithUnrecognizedPointerAlongsideHandledPointer_IgnoresUnrecognizedPointer()
     {
         var sut = new TestPreviewRewriter();
         var request = CreateRequest("/identifiers/name", "/properties/name", "/nonsense");
 
-        var rewritten = sut.RewritePreviewRequest(request);
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
         var result = sut.RewritePreviewResponse(CreateResponse(rewritten));
 
         sut.FakeValueCalls.Should().ContainSingle().Which.Pointer.ToString().Should().Be("/properties/name");
@@ -208,10 +208,10 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [Theory]
     [InlineData("<changed-value>")]
     [InlineData(null)]
-    public void RewritePreviewResponse_WithChangedOutgoingValue_RestoresOriginalValue(string? outgoingValue)
+    public async Task RewritePreviewResponse_WithChangedOutgoingValue_RestoresOriginalValue(string? outgoingValue)
     {
         var sut = new TestPreviewRewriter();
-        var rewritten = sut.RewritePreviewRequest(CreateRequest("/properties/name"));
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest("/properties/name"));
         var response = CreateResponse(rewritten);
         response.Properties["name"] = outgoingValue;
 
@@ -222,13 +222,13 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreviewResponse_AfterOriginalRequestIsMutated_RestoresSnapshot()
+    public async Task RewritePreviewResponse_AfterOriginalRequestIsMutated_RestoresSnapshot()
     {
         var sut = new TestPreviewRewriter();
         var request = CreateRequest("/properties/nested/value", "/config/nested/value");
         var originalProperties = request.Properties.DeepClone();
         var originalConfig = request.Config!.DeepClone();
-        var rewritten = sut.RewritePreviewRequest(request);
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
         request.Properties["nested"]!["value"] = "changed";
         request.Config["nested"]!["value"] = "changed";
 
@@ -241,10 +241,10 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [Theory]
     [InlineData("name", "/properties/name")]
     [InlineData("nested", "/properties/nested/value")]
-    public void RewritePreviewResponse_WhenPropertyOrAncestorWasRemoved_DoesNotRestoreIt(string removedProperty, string pointer)
+    public async Task RewritePreviewResponse_WhenPropertyOrAncestorWasRemoved_DoesNotRestoreIt(string removedProperty, string pointer)
     {
         var sut = new TestPreviewRewriter();
-        var rewritten = sut.RewritePreviewRequest(CreateRequest(pointer));
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest(pointer));
         var response = CreateResponse(rewritten);
         response.Properties.Remove(removedProperty);
 
@@ -261,10 +261,10 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [InlineData("/config/missing")]
     [InlineData("/config/nullValue")]
     [InlineData("/config")]
-    public void RewritePreviewResponse_WithMissingOrNullOriginalValue_ReturnsOriginalResponse(string pointer)
+    public async Task RewritePreviewResponse_WithMissingOrNullOriginalValue_ReturnsOriginalResponse(string pointer)
     {
         var sut = new TestPreviewRewriter();
-        var rewritten = sut.RewritePreviewRequest(CreateRequest(pointer));
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest(pointer));
         var response = CreateResponse(rewritten);
 
         var result = sut.RewritePreviewResponse(response);
@@ -277,11 +277,11 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [Theory]
     [InlineData("<resolved-value>")]
     [InlineData(null)]
-    public void RewritePreviewResponse_WithCustomFinalValue_RemovesOnlyResolvedPointerFromMetadata(string? outgoingValue)
+    public async Task RewritePreviewResponse_WithCustomFinalValue_RemovesOnlyResolvedPointerFromMetadata(string? outgoingValue)
     {
         var sut = new RetainOutgoingValuePreviewRewriter();
         var request = CreateRequest("/properties/name", "/properties/nested/value");
-        var rewritten = sut.RewritePreviewRequest(request);
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
         var response = CreateResponse(rewritten);
         response.Properties["name"] = outgoingValue;
 
@@ -296,10 +296,10 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreviewResponse_WithNullUnevaluatedMetadata_PreservesNullMetadata()
+    public async Task RewritePreviewResponse_WithNullUnevaluatedMetadata_PreservesNullMetadata()
     {
         var sut = new RetainOutgoingValuePreviewRewriter();
-        var rewritten = sut.RewritePreviewRequest(CreateRequest("/properties/name"));
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest("/properties/name"));
         var response = CreateResponse(rewritten) with { Metadata = new ResourcePreviewMetadata() };
 
         var result = sut.RewritePreviewResponse(response);
@@ -310,11 +310,11 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreviewResponse_WithFinalizationOverride_PassesRestoredPreviewAndReturnsError()
+    public async Task RewritePreviewResponse_WithFinalizationOverride_PassesRestoredPreviewAndReturnsError()
     {
         var sut = new FinalizingPreviewRewriter();
         var request = CreateRequest("/properties/name");
-        var rewritten = sut.RewritePreviewRequest(request);
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
 
         var result = sut.RewritePreviewResponse(CreateResponse(rewritten));
 
@@ -325,10 +325,10 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Fact]
-    public void RewritePreviewResponse_WhenRewritingIsSkipped_DoesNotFinalize()
+    public async Task RewritePreviewResponse_WhenRewritingIsSkipped_DoesNotFinalize()
     {
         var sut = new FinalizingPreviewRewriter();
-        var rewritten = sut.RewritePreviewRequest(CreateRequest());
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest());
         var response = CreateResponse(rewritten);
 
         sut.RewritePreviewResponse(response).AsT0.Should().BeSameAs(response);

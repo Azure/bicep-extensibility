@@ -11,8 +11,8 @@ using Json.Pointer;
 namespace Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 
 /// <summary>
-/// Rewrites resource preview requests and responses by substituting unevaluated template expressions
-/// with fake placeholder values and restoring the original values during the response rewrite.
+/// Rewrites resource preview requests and responses by substituting unevaluated template expressions with fake placeholder values and
+/// restoring the original values on the outgoing response. This implementation is not stateless and must be instanced for each request.
 /// </summary>
 public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePreviewRewriter
 {
@@ -30,14 +30,19 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
         this.HandlesRewritingConfig = handlesRewritingConfig;
     }
 
-    public ResourcePreviewSpecification RewritePreviewRequest(ResourcePreviewSpecification request)
+    public async Task<ResourcePreviewSpecification> RewritePreviewRequestAsync(ResourcePreviewSpecification request)
     {
         this.DetermineRewritingScope(request);
 
         // Before: replace unevaluated ARM template expressions with fake valid values.
-        return this.IsRewritingSkipped
-            ? request
-            : this.ApplyFakeValues(request);
+        if (this.IsRewritingSkipped)
+        {
+            return request;
+        }
+
+        await this.PrepareRewriterAsync(request);
+
+        return this.ApplyFakeValues(request);
     }
 
     public OneOf<ResourcePreview, ErrorResponse> RewritePreviewResponse(ResourcePreview response) =>
@@ -45,6 +50,13 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
         this.IsRewritingSkipped
             ? response
             : this.Finalize(this.RestoreOriginalValues(response));
+
+    /// <summary>
+    /// Prepares the rewriter for this request.
+    /// </summary>
+    /// <remarks>Override this to perform any setup before fake values are requested and applied. Do not mutate the request.</remarks>
+    /// <example>Statically and asynchronously load a JSON schema.</example>
+    protected virtual Task PrepareRewriterAsync(ResourcePreviewSpecification request) => Task.CompletedTask;
 
     /// <summary>
     /// Produces a fake value for an unevaluated JSON node for an incoming resource preview request.
