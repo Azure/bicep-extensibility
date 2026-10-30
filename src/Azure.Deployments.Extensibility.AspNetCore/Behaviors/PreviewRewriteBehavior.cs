@@ -16,7 +16,7 @@ public class PreviewRewriteBehavior(IResourcePreviewRewriter previewRewriter) : 
         ResourcePreviewHandlerDelegate next,
         CancellationToken cancellationToken)
     {
-        var processedRequest = this.PreviewRewriter.RewritePreviewRequest(request);
+        var processedRequest = await this.PreviewRewriter.RewritePreviewRequestAsync(request);
         var wasRewritten = !ReferenceEquals(request, processedRequest);
 
         var response = await next(processedRequest);
