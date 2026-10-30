@@ -29,13 +29,13 @@ A Bicep extension is an API abstraction that enables users to deploy Azure data-
 
 ## API Operations Overview
 
-| Operation | Required | Description |
-|-----------|----------|-------------|
-| [Preview Resource](#preview-resource) | Yes | Simulates a create or update without persisting changes. Used for preflight validation and What-If. |
-| [Create or Update Resource](#create-or-update-resource) | Yes | Creates or updates a resource, synchronously or via a long-running operation. |
-| [Get Resource](#get-resource) | Yes | Retrieves the current state of a resource. |
-| [Delete Resource](#delete-resource) | Yes | Deletes a resource, synchronously or via a long-running operation. |
-| [Get Long-Running Operation](#long-running-operations) | No | Polls the status of a long-running operation. Only required if the extension supports the [stepwise LRO pattern](async-operations.md). |
+| Operation                                               | Required | Description                                                                                                                            |
+|---------------------------------------------------------|----------|----------------------------------------------------------------------------------------------------------------------------------------|
+| [Preview Resource](#preview-resource)                   | Yes      | Simulates a create or update without persisting changes. Used for preflight validation and What-If.                                    |
+| [Create or Update Resource](#create-or-update-resource) | Yes      | Creates or updates a resource, synchronously or via a long-running operation.                                                          |
+| [Get Resource](#get-resource)                           | Yes      | Retrieves the current state of a resource.                                                                                             |
+| [Delete Resource](#delete-resource)                     | Yes      | Deletes a resource, synchronously or via a long-running operation.                                                                     |
+| [Get Long-Running Operation](#long-running-operations)  | No       | Polls the status of a long-running operation. Only required if the extension supports the [stepwise LRO pattern](async-operations.md). |
 
 ## Core Models
 
@@ -127,7 +127,8 @@ model Resource {
 ```
 
 - `identifiers`: Must always be included in successful responses.
-- `config` / `configId`: Required if the resource has a configuration. Secret properties must be removed from `config`; any property not echoed back is treated as a secret by the deployment engine.
+- `config` / `configId`: Required if the resource has a configuration.
+  See [Configuration Handling](#configuration-handling).
 - `status` / `error`: Used in RELO long-running operations. A non-terminal status (e.g., `"Running"`) indicates the operation is in progress. Set `error` only when `status` is `"Failed"`.
 
 ### Resource Preview
@@ -183,19 +184,98 @@ This section describes the contract requirements for each resource operation.
 
 The following configuration rules apply to **all** resource operations that accept or return a `config` object:
 
-- **Echo back configuration:** The extension must include the `config` it received in the response, excluding any secret properties. Any property not echoed back is treated as a secret by the deployment engine.
-- **Return a `configId`:** If a configuration is present, the extension must return a `configId`, a value that uniquely identifies the deployment control plane. The format is determined by the extension (e.g., a hash of the endpoint URL). This value serves as a checksum for subsequent operations such as deletion.
-- **Validate `configId`:** If a `configId` is provided in the request, the extension should validate it when possible.
+The extension must include the `config` it received in the response, excluding any secret properties. Any property not
+echoed back is treated as a secret by the deployment engine.
 
----
+#### Configuration Identifier (`configId`)
+
+##### Return a `configId`
+
+If a configuration is present, the extension must return a `configId`, a value that uniquely identifies the deployment
+target of the extension. The `configId` must be based on the `config`. This value serves as a checksum for future
+operations such as deletion. An example of a deployment target could be a specific cloud region or environment.
+
+The format is determined by the extension, and it could be anything from a human-readable string, an actual ID, or a
+hash of various inputs. However, the `configId` should not depend on unstable inputs for reasons explained in the
+compatibility section below. If unstable inputs must be used to compute it, such as a URL, map it to a stable GUID
+instead. Even if an extension can only deploy to one deployment target or the configuration does not affect the
+deployment target, a `configId` is required to be returned. A `configId` is case-sensitive, so inputs to calculate it
+should be normalized. See the [Examples](#configid-examples) section below for some ideas.
+
+Do not return a `configId` when the customer passed no configuration to the extension.
+
+##### Preserve `configId` compatibility
+
+The `configId` value must be both backward and forward compatible across extension versions. Backward compatibility is
+required because an extension can receive a `configId` generated by any older version of the extension. Forward
+compatibility requires keeping the returned `configId` stable for the same deployment target across version upgrades.
+
+Forward compatibility is critical for customers that deploy their resources with Deployment stacks. Deployment stacks
+use it as part of a resource's unique identity, which determines whether that resource remains managed on future stack
+updates.
+
+Deployment stacks execute the following workflow when a customer updates their stack:
+
+1. Deploys the customer's latest deployment template.
+2. Uses the pre-existing state of the stack combined with the deployment results to calculate which resources to
+   unmanage from the stack.
+3. If the customer sets their action-on-unmanage setting to delete resources, the stack will then delete unmanaged
+   resources after deployment completes.
+
+Here is an example of what will happen if forward compatibility is broken:
+
+Suppose an extension returns `configId` of `"prod.com"` for a resource. A customer then deploys a stack with that
+resource. Later an extension developer changes the `configId` to `"renamedProd.com"` for the same configuration the
+customer is providing and releases a new extension version. The customer decides to update their deployment extension to
+the new version and redeploys their stack with action-on-unmanage set to delete resources but with no deployment
+template or input changes (what should be a no-op). When the resource is deployed, the `configId` of `"renamedProd.com"`
+will cause a resource record mismatch between the deployment and the state persisted on the stack. This results in the
+resource being deployed again, then deleted shortly after!
+
+If breaking forward compatibility is unavoidable, the extension must document it as a **breaking change** and instruct
+customers to use an **action-on-unmanage** setting to **detach resources** for the first deployment update of a stack
+with the breaking change effective. Subsequent updates to the stack do not require this setting override.
+
+Another possible scenario that doesn't require an extension version update is when the customer updates their config to
+point to the new URL and extension returns the URL the customer provided in the config for the `configId`. If the URL
+changes, this will cause stack resources to be inadvertently deleted.
+
+##### Validate `configId`
+
+If a `configId` is provided in the request, the extension must validate it against the configuration passed to the
+request. This should always be present on a deletion request for an extension resource that was deployed with a
+configuration and should always be validated for deletion requests. The validation check ensures the operation being
+performed is being performed on the same exact resource from a previous record of it.
+
+##### configId Examples
+
+Here are some examples of a `configId` calculation:
+
+| Scenario                                                                                                                   | `config`                                                                                         | `configId`                                                                                            |
+|----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Deploying secrets to an Azure key vault (cannot be renamed)                                                                | `{ "keyVaultUri": ".../myKeyVault" }`<br/>`{ "keyVaultUri": ".../MYKEYVAULT" }`                  | `".../mykeyvault"` (normalized)                                                                       |
+| Deploying to a renamed resource                                                                                            | `{ "resourceId": ".../myResource" }`<br/>then later, `{ "resourceId": ".../myRenamedResource" }` | `"00000000-0000-0000-0000-000000000001"` (use a stable GUID to track it)                              |
+| Use a new authorization mechanism to deploy                                                                                | `{ "authorization": "Old" }`<br/>then later, `{ "authorization": "New" }`                        | `"default"` (we're still deploying to the same target, so the configId should be the same)            |
+| Introduce possibility to deploy to a new environment                                                                       | `{ "environment": "Prod" }`<br/>then later, `{ "environment": "Test" }`                          | `"Prod"` for production, `"Test"` for test                                                            |
+| Introduce possibility to deploy to a new environment, no config previously, defaulted to prod                              | `null`<br/>then later `{ "environment": "Test" }`                                                | `null` for production resources as it was, `"Test"` for test resources                                |
+| Introduce possibility to deploy to a new environment, no config previously, defaulted to prod, now requires prod specified | `null`<br/>then later `{ "environment": "Prod" }`                                                | **BREAKING CHANGE**: prod resources previously had no config or configId, and now it will be `"Prod"` |
+
+Here are some examples of bad practices to avoid:
+
+| Example                      | Reason it's not ideal                                                                    | Suggested alternative                                                                                                                                                                                                   |
+|------------------------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `prod-0001-asdf.company.com` | A URL will likely change. Only use a URL if you are confident the URL will never change. | GUID. Maintain a mapping of URLs to GUIDs, that way the URL can be updated or aliased to the same GUID. A user could update the URL in their config when it changes, but the extension would still return the same GUID |
+
+Given these examples, a good approach would be to maintain a mapping of extension config possibilities to stable GUIDs
+and use the GUID as the `configId`. If your `configId` is sensitive in nature, normalize the GUID and hash it.
 
 ### Preview Resource
 
 Simulates a resource creation or update without persisting any changes. The deployment engine uses preview for two purposes: **preflight validation** (triggered by both template deployment validate and PUT requests) and **[What-If](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-what-if)** (computing a diff between the current and desired state of each resource).
 
-| | Type |
-|---|---|
-| **Input** | `ResourcePreviewSpecification` |
+|            | Type                               |
+|------------|------------------------------------|
+| **Input**  | `ResourcePreviewSpecification`     |
 | **Output** | `ResourcePreview \| ErrorResponse` |
 
 The request may contain ARM template language expressions that the deployment engine could not evaluate at preview time. The paths to these properties are listed in `metadata.unevaluated`. The extension must handle expressions at any JSON node, echo them back as-is, and return a best-effort preview with the available information.
@@ -215,9 +295,9 @@ For detailed guidance, metadata field definitions, and end-to-end examples, see 
 
 Creates or updates a resource. The operation may complete synchronously and return the resource, or initiate a long-running operation.
 
-| | Type |
-|---|---|
-| **Input** | `ResourceSpecification` |
+|            | Type                                                |
+|------------|-----------------------------------------------------|
+| **Input**  | `ResourceSpecification`                             |
 | **Output** | `Resource \| LongRunningOperation \| ErrorResponse` |
 
 The extension must include `identifiers` in the response. Its sub-properties, combined with the resource type and configuration, form a *globally unique* key for the resource. The structure is defined by the extension and is opaque to the deployment engine.
@@ -228,9 +308,9 @@ The extension must include `identifiers` in the response. Its sub-properties, co
 
 Retrieves the current state of a resource given its type, identifiers, and configuration.
 
-| | Type |
-|---|---|
-| **Input** | `ResourceReference` |
+|            | Type                        |
+|------------|-----------------------------|
+| **Input**  | `ResourceReference`         |
 | **Output** | `Resource \| ErrorResponse` |
 
 If the resource does not exist, the extension must return an error indicating the resource was not found.
@@ -241,9 +321,9 @@ If the resource does not exist, the extension must return an error indicating th
 
 Deletes a resource given its type, identifiers, configuration, and configuration ID.
 
-| | Type |
-|---|---|
-| **Input** | `ResourceReference` |
+|            | Type                                                |
+|------------|-----------------------------------------------------|
+| **Input**  | `ResourceReference`                                 |
 | **Output** | `Resource \| LongRunningOperation \| ErrorResponse` |
 
 The operation may complete synchronously and return the deleted resource, indicate that the resource was already deleted, or initiate a long-running operation.
@@ -254,18 +334,18 @@ The operation may complete synchronously and return the deleted resource, indica
 
 When an operation cannot complete synchronously, either because it would exceed the request timeout or because the underlying API is itself asynchronous, the extension may initiate a long-running operation. The Extensibility Host supports two patterns:
 
-| Pattern | Polling Mechanism | When to Use |
-|---------|-------------------|-------------|
-| **RELO** (resource-based) | Poll via the get operation | Preferred. Use whenever possible. |
-| **LRO** (stepwise) | Poll via a dedicated operation handle | Alternative when RELO is not feasible. |
+| Pattern                   | Polling Mechanism                     | When to Use                            |
+|---------------------------|---------------------------------------|----------------------------------------|
+| **RELO** (resource-based) | Poll via the get operation            | Preferred. Use whenever possible.      |
+| **LRO** (stepwise)        | Poll via a dedicated operation handle | Alternative when RELO is not feasible. |
 
 Both patterns support create, update, and delete operations. For detailed flows, examples, and guidance on choosing between them, see [Asynchronous Operations](async-operations.md). For general background, see the [Azure REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#long-running-operations--jobs) and [Microsoft Graph REST API Guidelines](https://github.com/microsoft/api-guidelines/blob/vNext/graph/patterns/long-running-operations.md).
 
 The Extensibility Host retrieves the current status of a stepwise long-running operation via the **Get Long-Running Operation** endpoint:
 
-| | Type |
-|---|---|
-| **Input** | `operationHandle: Record<unknown>` |
+|            | Type                                    |
+|------------|-----------------------------------------|
+| **Input**  | `operationHandle: Record<unknown>`      |
 | **Output** | `LongRunningOperation \| ErrorResponse` |
 
 An error response from this endpoint indicates a problem retrieving the status (e.g., a network error), **not** a failure of the operation itself. Operation failures are reported through `status: "Failed"` and the accompanying `error` property.
@@ -286,10 +366,10 @@ The HTTP binding is defined in [`http.tsp`](https://github.com/Azure/bicep-exten
 
 Authentication between the Extensibility Host and extensions depends on the extension type:
 
-| Extension Type | Authentication Mechanism |
-|----------------|-------------------------|
+| Extension Type                           | Authentication Mechanism                                                                                                                                                                                                                                                                                                                               |
+|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **First-party (1P, Microsoft-internal)** | OAuth 2.0 On-Behalf-Of (OBO) flow. The Extensibility Host acquires a token on behalf of the caller and passes it to the extension. See [OAuth 2.0 On-Behalf-Of flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow) for details. Teams should reach out to the Azure Deployments team for onboarding guidance. |
-| **Third-party (3P)** | Handled by the platform. Extension authors do not need to implement authentication. |
+| **Third-party (3P)**                     | Handled by the platform. Extension authors do not need to implement authentication.                                                                                                                                                                                                                                                                    |
 
 > **Note:** The third-party (3P) extensibility platform is a work in progress. Details are subject to change.
 
