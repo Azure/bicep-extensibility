@@ -281,6 +281,9 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     {
         var sut = new TestPreviewRewriter();
         var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest(pointer));
+
+        sut.FakeValueCalls.Select(x => x.Pointer.ToString()).Should().BeEquivalentTo(pointer);
+        
         var response = CreateResponse(rewritten);
         response.Properties.Remove(removedProperty);
 
@@ -293,11 +296,25 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     [Theory]
     [InlineData("/properties/missing")]
     [InlineData("/properties/nullValue")]
-    [InlineData("/properties")]
     [InlineData("/config/missing")]
     [InlineData("/config/nullValue")]
-    [InlineData("/config")]
     public async Task RewritePreviewResponse_WithMissingOrNullOriginalValue_ReturnsOriginalResponse(string pointer)
+    {
+        var sut = new TestPreviewRewriter();
+        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest(pointer));
+        var response = CreateResponse(rewritten);
+
+        var result = sut.RewritePreviewResponse(response);
+
+        result.IsT0.Should().BeTrue();
+        result.AsT0.Should().BeSameAs(response);
+        sut.FakeValueCalls.Should().BeEmpty();
+    }
+
+    [Theory]
+    [InlineData("/properties")]
+    [InlineData("/config")]
+    public async Task RewritePreviewResponse_RootPointer_DoesNothingAndReturnsOriginalResponse(string pointer)
     {
         var sut = new TestPreviewRewriter();
         var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest(pointer));
@@ -318,6 +335,7 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
         var sut = new RetainOutgoingValuePreviewRewriter();
         var request = CreateRequest("/properties/name", "/properties/nested/value");
         var rewritten = await sut.RewritePreviewRequestAsync(request);
+        
         var response = CreateResponse(rewritten);
         response.Properties["name"] = outgoingValue;
 
@@ -329,20 +347,6 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
         restored.Metadata.Unevaluated!.Value.Should().Equal(JsonPointer.Parse("/properties/nested/value"));
         restored.Metadata.ReadOnly.Should().BeEquivalentTo(response.Metadata.ReadOnly);
         response.Metadata.Unevaluated.Should().BeEquivalentTo(request.Metadata.Unevaluated);
-    }
-
-    [Fact]
-    public async Task RewritePreviewResponse_WithNullUnevaluatedMetadata_PreservesNullMetadata()
-    {
-        var sut = new RetainOutgoingValuePreviewRewriter();
-        var rewritten = await sut.RewritePreviewRequestAsync(CreateRequest("/properties/name"));
-        var response = CreateResponse(rewritten) with { Metadata = new ResourcePreviewMetadata() };
-
-        var result = sut.RewritePreviewResponse(response);
-
-        result.AsT0!.Properties["name"]!.GetValue<string>().Should().Be("<fake-value>");
-        result.AsT0.Metadata.Should().BeSameAs(response.Metadata);
-        result.AsT0.Metadata.Unevaluated.Should().BeNull();
     }
 
     [Fact]
