@@ -112,7 +112,7 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
                 continue;
             }
 
-            var relativePointer = unevaluatedPointer.GetLocal(unevaluatedPointer.Count - 1);
+            var relativePointer = unevaluatedPointer.GetLocal(1);
             var evalNode = isPropertiesSegment ? request.Properties : request.Config!;
 
             if (!relativePointer.TryEvaluate(evalNode, out var originalValue) || originalValue is null)
@@ -179,14 +179,14 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
                 continue;
             }
 
-            var relativePointer = unevaluatedPointer.GetLocal(unevaluatedPointer.Count - 1);
+            var relativePointer = unevaluatedPointer.GetLocal(1);
             var originalEvalNode = this.OriginalCopies[rootObjectPointerSegment];
             var responseEvalNode = isPropertiesSegment ? preview.Properties : preview.Config!;
 
             if (!relativePointer.TryEvaluate(originalEvalNode, out var originalValue) || originalValue is null)
             {
-                // The original property value should be a language expression to get here.
-                throw new InvalidOperationException($"Original value is null or undefined at {unevaluatedPointer}");
+                // This reflects the continuation of the same condition in ApplyFakeValues.
+                continue;
             }
 
             // If the pointer doesn't evaluate in the response, it means the property was explicitly removed or some higher node was removed,
@@ -258,8 +258,8 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
 
         this.OriginalUnevaluatedPointers = request.Metadata.Unevaluated;
 
-        var isRewritingProperties = this.HandlesRewritingProperties && request.Metadata.Unevaluated.Any(p => string.Equals(p[0], PropertiesSegment, StringComparison.Ordinal));
-        var isRewritingConfig = this.HandlesRewritingConfig && request.Config is not null && request.Metadata.Unevaluated.Any(p => string.Equals(p[0], ConfigSegment, StringComparison.Ordinal));
+        var isRewritingProperties = this.HandlesRewritingProperties && request.Metadata.Unevaluated.Any(p => p.Count > 1 && string.Equals(p[0], PropertiesSegment, StringComparison.Ordinal));
+        var isRewritingConfig = this.HandlesRewritingConfig && request.Config is not null && request.Metadata.Unevaluated.Any(p => p.Count > 1 && string.Equals(p[0], ConfigSegment, StringComparison.Ordinal));
 
         // NOTE: Deep clones of portions of the original request must be stored to restore the original values because they can be mutated
         // between rewrite and restore.
