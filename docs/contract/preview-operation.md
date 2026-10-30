@@ -287,7 +287,8 @@ error message explaining the reason.
 If the request includes a `config` object, the extension must:
 
 1. **Echo back the configuration** in the response, excluding any secret properties. Any property not echoed back is treated as a secret by the deployment engine.
-2. **Return a `configId`**, a value that uniquely identifies the deployment control plane. The format is determined by the extension (e.g., a hash of the endpoint URL).
+2. **Return a `configId`**, a value that uniquely identifies the deployment target.
+   See [Configuration Handling](./contract.md#configuration-handling)
     - **If `configId` cannot be calculated, the extension should omit `configId` or set it to null and include its JSON pointer in `metadata.unknown` in its response.**
 3. **Validate the `configId`** if one is provided in the request.
 

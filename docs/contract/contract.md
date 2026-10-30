@@ -242,11 +242,10 @@ changes, this will cause stack resources to be inadvertently deleted.
 
 ##### Validate `configId`
 
-If a `configId` is provided in the request, the extension should validate it when possible. This should always be
-present on a deletion request for an extension resource that was deployed with a configuration and should always be
-validated for deletion requests. The other resource operations have this as nullable, and the extension can choose to
-validate it or not. The validation check ensures the operation being performed is being performed on the same exact
-resource from a previous record of it.
+If a `configId` is provided in the request, the extension must validate it against the configuration passed to the
+request. This should always be present on a deletion request for an extension resource that was deployed with a
+configuration and should always be validated for deletion requests. The validation check ensures the operation being
+performed is being performed on the same exact resource from a previous record of it.
 
 ##### configId Examples
 
