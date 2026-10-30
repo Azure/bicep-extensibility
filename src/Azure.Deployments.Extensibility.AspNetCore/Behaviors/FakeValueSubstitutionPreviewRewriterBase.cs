@@ -113,7 +113,7 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
         }
 
         // Create fake value replace patch operations
-        foreach (var unevaluatedPointer in unevaluatedPointers.Where(p => p.Count > 1))
+        foreach (var unevaluatedPointer in unevaluatedPointers.Where(p => p.Count > 1 && workingCopies.ContainsKey(p[0])))
         {
             var rootObjectPointerSegment = unevaluatedPointer[0];
             var isPropertiesSegment = string.Equals(rootObjectPointerSegment, PropertiesSegment);
@@ -121,7 +121,7 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
 
             if (!isPropertiesSegment && !isConfigSegment)
             {
-                continue;
+                throw new InvalidOperationException($"Pointer cannot be processed: {unevaluatedPointer}");
             }
 
             var relativePointer = unevaluatedPointer.GetLocal(1);
@@ -180,7 +180,7 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
         var unevaluatedToRemove = new HashSet<JsonPointer>();
 
         // Restore original values
-        foreach (var unevaluatedPointer in this.OriginalUnevaluatedPointers)
+        foreach (var unevaluatedPointer in this.OriginalUnevaluatedPointers.Value.Where(p => p.Count > 1 && this.OriginalCopies.ContainsKey(p[0])))
         {
             var rootObjectPointerSegment = unevaluatedPointer[0];
             var isPropertiesSegment = string.Equals(rootObjectPointerSegment, PropertiesSegment);
@@ -226,12 +226,15 @@ public abstract class FakeValueSubstitutionPreviewRewriterBase : IResourcePrevie
             return preview;
         }
 
-        // Patch
+        // Patch the outgoing response with original values
         var patchedCopies = new Dictionary<string, JsonObject>();
 
         foreach (var (rootObjectPointerSegment, patchOperations) in operations.Where(kvp => kvp.Value.Count > 0))
         {
-            var patchResult = new JsonPatch(patchOperations).Apply(this.OriginalCopies[rootObjectPointerSegment]);
+            var isPropertiesSegment = string.Equals(rootObjectPointerSegment, PropertiesSegment);
+            var responseEvalNode = isPropertiesSegment ? preview.Properties : preview.Config!;
+
+            var patchResult = new JsonPatch(patchOperations).Apply(responseEvalNode);
 
             if (patchResult is { IsSuccess: true, Result: JsonObject resultObj })
             {

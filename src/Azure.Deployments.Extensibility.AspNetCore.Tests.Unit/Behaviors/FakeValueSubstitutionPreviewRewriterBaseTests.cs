@@ -206,6 +206,42 @@ public class FakeValueSubstitutionPreviewRewriterBaseTests
     }
 
     [Theory]
+    [InlineData("properties")]
+    [InlineData("config")]
+    public async Task RewritePreviewResponse_WhenOutgoingBodyHasChanges_RestoresExpressionsWithoutLosingChanges(string scope)
+    {
+        var sut = new TestPreviewRewriter();
+        var request = CreateRequest($"/{scope}/name", $"/{scope}/nested/value");
+        var requestBody = scope == "properties" ? request.Properties : request.Config!;
+        var originalBody = requestBody.DeepClone();
+
+        var rewritten = await sut.RewritePreviewRequestAsync(request);
+        var rewrittenBody = scope == "properties" ? rewritten.Properties : rewritten.Config!;
+        rewrittenBody["name"]!.GetValue<string>().Should().Be("<fake-value>");
+        rewrittenBody["nested"].Should().NotBeNull();
+
+        var response = CreateResponse(rewritten);
+        var responseBody = scope == "properties" ? response.Properties : response.Config!;
+        responseBody["name"] = "changed-name-that-is-not-retained-by-default";
+        responseBody["evaluated"] = "updated-by-handler";
+        responseBody["id"] = "generated-by-handler";
+        responseBody.Remove("nested");
+        var outgoingBody = responseBody.DeepClone();
+
+        var result = sut.RewritePreviewResponse(response);
+
+        result.IsT0.Should().BeTrue();
+        var restoredBody = scope == "properties" ? result.AsT0!.Properties : result.AsT0!.Config!;
+        originalBody["name"]!.GetValue<string>().Should().Be(scope == "properties" ? "[parameters('name')]" : "[parameters('configName')]");
+        restoredBody["name"]!.GetValue<string>().Should().Be(originalBody["name"]!.GetValue<string>());
+        restoredBody["evaluated"]!.GetValue<string>().Should().Be("updated-by-handler");
+        restoredBody["id"]!.GetValue<string>().Should().Be("generated-by-handler");
+        restoredBody.ContainsKey("nested").Should().BeFalse();
+        JsonNode.DeepEquals(requestBody, originalBody).Should().BeTrue();
+        JsonNode.DeepEquals(responseBody, outgoingBody).Should().BeTrue();
+    }
+
+    [Theory]
     [InlineData("<changed-value>")]
     [InlineData(null)]
     public async Task RewritePreviewResponse_WithChangedOutgoingValue_RestoresOriginalValue(string? outgoingValue)
