@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore;
 using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using Azure.Deployments.Extensibility.Hosting.Managed.Extensions;
 using MagicEightBallExtension;
