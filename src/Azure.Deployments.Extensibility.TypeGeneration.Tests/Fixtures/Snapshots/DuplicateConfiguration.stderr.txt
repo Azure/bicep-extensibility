@@ -1,0 +1,2 @@
+<project>/Configuration.cs(8,2): error TG1205: An extension can declare at most one configuration class.
+<project>/Configuration.cs(11,2): error TG1205: An extension can declare at most one configuration class.
