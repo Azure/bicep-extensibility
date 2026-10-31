@@ -60,7 +60,32 @@ the tool does not ignore failures in unselected project variants.
 Restore the project and its references beforehand. The tool neither restores automatically
 nor builds/executes the extension's output assembly. Analysis does not call Emit or read that
 assembly. MSBuild still evaluates imports and runs design-time targets: **only analyze trusted
-projects**, since MSBuild projects/tasks can execute code.
+projects**, since MSBuild projects/tasks and source generators can execute code.
+
+### Source generators
+
+C# source generators supplied through Analyzer references participate in analysis. Generated
+partial declarations and reachable helper types are included in the compilation passed to the
+SDK; the consumer project's output DLL and emitted generated-source files are not required.
+Project-referenced generator assemblies must already be built for the input project's Debug
+configuration, in addition to restoring its dependencies. Building the generator is different
+from building or executing the extension assembly.
+
+The Tool uses the public Roslyn generator driver once per reachable project, in dependency order,
+with that project's parse options, analyzer configuration, and additional files. It does not
+first run generators through Workspaces and then rerun them to recover diagnostics.
+The frontend still consumes an ordinary `Compilation`; its type-mapping rules are unchanged.
+
+Generator errors, execution exceptions, and unresolved/unloadable analyzer references fail
+analysis with TGH1009 and no successful model. Generator warnings are reported while allowing a
+complete model to succeed, respecting the project's warning settings. A generation exception
+remains fatal even if the compiler's corresponding failure warning is suppressed. Generated
+source locations use virtual paths; source line/column information is shown when available.
+
+The compatibility tests cover an incremental generator adding properties/helper types,
+additional files and compiler options, generated types in a referenced project, error/warning
+handling, and single execution. This does not claim equivalence with every custom build target
+or diagnostic analyzer run by `dotnet build`.
 
 ## Output and failures
 
@@ -92,6 +117,7 @@ projects**, since MSBuild projects/tasks can execute code.
 | TGH1006 | Invalid singleton project setting |
 | TGH1007 | Unsupported tree output |
 | TGH1008 | I/O failure |
+| TGH1009 | Source-generator diagnostics or analyzer/generator loading failure |
 
 SDK diagnostics retain their `TGxxxx` codes. A compiler warning can accompany successful
 output, but a diagnostic classified by Workspaces as `Failure` is fatal, even if the original
@@ -107,6 +133,11 @@ dotnet test 'src\Azure.Deployments.Extensibility.TypeGeneration.Tests\Azure.Depl
 
 Integration tests create isolated real projects using the shared Contoso authoring fixture,
 restore them, and compare the result with the independently constructed typed ETSM. They do
-not build these fixture projects. A throwing module initializer and absence-of-DLL checks
+not build the projects being inspected. A throwing module initializer and absence-of-DLL checks
 guard against accidentally depending on their runtime output. Tests clean up their own
 temporary project directories.
+
+Source-generator compatibility additionally builds a separate control copy whose handwritten
+code references generated members. Disabling generation makes that control fail compilation;
+the Tool then analyzes a different, unbuilt copy and checks the complete expected ETSM. Only
+the test generator's assembly is a prerequisite for that analysis.

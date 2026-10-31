@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Azure.Deployments.Extensibility.TypeGeneration.Sdk\Azure.Deployments.Extensibility.TypeGeneration.Sdk.csproj" />
     <ProjectReference Include="..\Azure.Deployments.Extensibility.TypeGeneration.Tool\Azure.Deployments.Extensibility.TypeGeneration.Tool.csproj" />
+    <ProjectReference Include="Fixtures\SourceGenerator\Generator\Generator.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

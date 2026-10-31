@@ -37,51 +37,24 @@ internal static class ProjectCompilationLoader
             }
 
             var project = candidates[0];
-            var compilation = await project.GetCompilationAsync(cancellationToken);
+            var generated = await ProjectGeneratorRunner.CompileAsync(project, cancellationToken);
+            var compilation = generated.Compilation;
             var loadDiagnostics = workspaceDiagnostics.Concat(workspace.Diagnostics)
                 .OrderBy(diagnostic => diagnostic.Message, StringComparer.Ordinal)
                 .Select(diagnostic => new TypeGenDiagnostic("TGH1004",
                     diagnostic.Kind == WorkspaceDiagnosticKind.Failure ? TypeGenDiagnosticSeverity.Error : TypeGenDiagnosticSeverity.Warning,
                     $"Project '{options.ProjectPath}': {diagnostic.Message}", null))
+                .Concat(generated.Diagnostics)
                 .Distinct()
                 .ToImmutableArray();
             if (loadDiagnostics.Any(diagnostic => diagnostic.Severity == TypeGenDiagnosticSeverity.Error))
             {
-                return new(new(null, loadDiagnostics), loadDiagnostics.Select(FormatWithoutLocation).ToImmutableArray());
-            }
-
-            if (compilation is null)
-            {
-                throw new ToolException("TGH1004", $"Workspace did not produce a compilation for '{options.ProjectPath}'.");
+                return await FormatAnalysisAsync(new(null, loadDiagnostics), compilation, workspace, cancellationToken);
             }
 
             var result = new TypeGenerationFrontend().Build(compilation, evaluated.Metadata, cancellationToken);
             result = new(result.Model, loadDiagnostics.AddRange(result.Diagnostics));
-            var messages = ImmutableArray.CreateBuilder<string>();
-            foreach (var diagnostic in result.Diagnostics)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var message = FormatWithoutLocation(diagnostic);
-                if (diagnostic.SourceLocation is { } location)
-                {
-                    var documentId = workspace.CurrentSolution.GetDocumentIdsWithFilePath(location.FilePath).FirstOrDefault();
-                    var document = documentId is null ? null : workspace.CurrentSolution.GetDocument(documentId);
-                    if (document is not null)
-                    {
-                        var text = await document.GetTextAsync(cancellationToken);
-                        var position = text.Lines.GetLinePosition(location.Start);
-                        message = $"{location.FilePath}({position.Line + 1},{position.Character + 1}): {message}";
-                    }
-                    else
-                    {
-                        message = $"{location.FilePath}[{location.Start}+{location.Length}]: {message}";
-                    }
-                }
-
-                messages.Add(message);
-            }
-
-            return new(result, messages.ToImmutable());
+            return await FormatAnalysisAsync(result, compilation, workspace, cancellationToken);
         }
         catch (InvalidProjectFileException exception)
         {
@@ -99,6 +72,41 @@ internal static class ProjectCompilationLoader
         {
             throw new ToolException("TGH1002", $"Cannot access project '{options.ProjectPath}': {exception.Message}", exception);
         }
+    }
+
+    private static async Task<ProjectAnalysis> FormatAnalysisAsync(
+        TypeGenerationResult result,
+        Compilation compilation,
+        MSBuildWorkspace workspace,
+        CancellationToken cancellationToken)
+    {
+        var messages = ImmutableArray.CreateBuilder<string>();
+        foreach (var diagnostic in result.Diagnostics)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var message = FormatWithoutLocation(diagnostic);
+            if (diagnostic.SourceLocation is { } location)
+            {
+                var tree = compilation.SyntaxTrees.FirstOrDefault(tree => tree.FilePath == location.FilePath);
+                var documentId = workspace.CurrentSolution.GetDocumentIdsWithFilePath(location.FilePath).FirstOrDefault();
+                var document = documentId is null ? null : workspace.CurrentSolution.GetDocument(documentId);
+                var text = tree is not null ? await tree.GetTextAsync(cancellationToken)
+                    : document is not null ? await document.GetTextAsync(cancellationToken) : null;
+                if (text is not null)
+                {
+                    var position = text.Lines.GetLinePosition(location.Start);
+                    message = $"{location.FilePath}({position.Line + 1},{position.Character + 1}): {message}";
+                }
+                else
+                {
+                    message = $"{location.FilePath}[{location.Start}+{location.Length}]: {message}";
+                }
+            }
+
+            messages.Add(message);
+        }
+
+        return new(result, messages.ToImmutable());
     }
 
     private static string FormatWithoutLocation(TypeGenDiagnostic diagnostic) =>
