@@ -19,7 +19,7 @@ public interface IResourcePreviewRewriter
     /// </summary>
     /// <param name="request">The original resource preview request.</param>
     /// <returns>The rewritten preview request or the original request if no rewrite is needed.</returns>
-    ResourcePreviewSpecification RewritePreviewRequest(ResourcePreviewSpecification request);
+    Task<ResourcePreviewSpecification> RewritePreviewRequestAsync(ResourcePreviewSpecification request);
 
     /// <summary>
     /// Rewrites the resource preview response to handle scenarios where Deployments engine sends requests containing unevaluated ARM
