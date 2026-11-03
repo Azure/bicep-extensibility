@@ -7,6 +7,7 @@ using Azure.Deployments.Extensibility.TypeGeneration.Semantics;
 using Azure.Deployments.Extensibility.TypeGeneration.Tests.Support;
 using Azure.Deployments.Extensibility.TypeGeneration.Tool;
 using Xunit;
+using static Azure.Deployments.Extensibility.TypeGeneration.Tests.Support.TypePackageTestReader;
 
 namespace Azure.Deployments.Extensibility.TypeGeneration.Tests.Integration;
 
@@ -128,6 +129,81 @@ public class SourceGeneratorTests : IClassFixture<SourceGeneratorBuildFixture>
         Assert.Contains("generatedCount", cli.Output);
         Assert.Contains("GeneratedDetails", cli.Output);
         AssertNoConsumerOutputs(fixture);
+    }
+
+    [Fact]
+    public async Task Generate_RunsTheGeneratorOnceAndSerializesTheCompleteGeneratedGraph()
+    {
+        using var fixture = await RealProjectFixture.CopyProjectAsync(ConsumerProjectPath);
+        SetMode(fixture, "once");
+        var target = Path.Combine(fixture.DirectoryPath, "types.tgz");
+        var result = await fixture.RunToolAsync("generate", "--project", fixture.ProjectPath, "--output", target);
+        Assert.True(result.ExitCode == 0, result.Error);
+        Assert.Equal("", result.Error);
+        Assert.Contains("resourceNames=1 concreteResources=1", result.Output);
+        var (index, types) = ReadArchive(target);
+        Assert.Equal("GeneratedModels", index.GetProperty("settings").GetProperty("name").GetString());
+        Assert.Equal("1.0", index.GetProperty("settings").GetProperty("version").GetString());
+        Assert.False(index.GetProperty("settings").TryGetProperty("configurationType", out _));
+        var resource = Assert.Single(index.GetProperty("resources").EnumerateObject());
+        Assert.Equal("Repository@2026-10-01", resource.Name);
+        var body = Resolve(Resolve(resource.Value, types, true).GetProperty("body"), types);
+        var properties = body.GetProperty("properties");
+        Assert.Equal<string>(["details", "generatedCount", "name"], properties.EnumerateObject().Select(property => property.Name));
+        Assert.Equal(17, properties.GetProperty("name").GetProperty("flags").GetInt32());
+        Assert.Equal("StringType", Resolve(properties.GetProperty("name").GetProperty("type"), types).GetProperty("$type").GetString());
+        var count = properties.GetProperty("generatedCount");
+        Assert.Equal(2, count.GetProperty("flags").GetInt32());
+        Assert.Equal("Generated count", count.GetProperty("description").GetString());
+        var integer = Resolve(count.GetProperty("type"), types);
+        Assert.Equal("IntegerType", integer.GetProperty("$type").GetString());
+        Assert.Equal(int.MinValue, integer.GetProperty("minValue").GetInt64());
+        Assert.Equal(int.MaxValue, integer.GetProperty("maxValue").GetInt64());
+        var details = Resolve(properties.GetProperty("details").GetProperty("type"), types);
+        Assert.Equal("UnionType", details.GetProperty("$type").GetString());
+        Assert.Equal(2, details.GetProperty("elements").GetArrayLength());
+        Assert.Equal("NullType", Resolve(details.GetProperty("elements")[1], types).GetProperty("$type").GetString());
+        var generated = Resolve(details.GetProperty("elements")[0], types);
+        Assert.Equal("ObjectType", generated.GetProperty("$type").GetString());
+        Assert.Equal("GeneratedDetails", generated.GetProperty("name").GetString());
+        var label = Assert.Single(generated.GetProperty("properties").EnumerateObject());
+        Assert.Equal("label", label.Name);
+        var nullableLabel = Resolve(label.Value.GetProperty("type"), types);
+        Assert.Equal("UnionType", nullableLabel.GetProperty("$type").GetString());
+        Assert.Equal<string?>(["StringType", "NullType"], nullableLabel.GetProperty("elements").EnumerateArray()
+            .Select(reference => Resolve(reference, types).GetProperty("$type").GetString()));
+        AssertNoConsumerOutputs(fixture);
+    }
+
+    [Theory]
+    [InlineData("throw", "CS8785")]
+    [InlineData("error", "TH0801")]
+    [InlineData("unsupported", "TG1501")]
+    public async Task Generate_GeneratorFailuresPreserveThePreviouslyGeneratedPackage(string mode, string code)
+    {
+        using var fixture = await RealProjectFixture.CopyProjectAsync(ConsumerProjectPath);
+        var target = Path.Combine(fixture.DirectoryPath, "types.tgz");
+        var success = await fixture.RunToolAsync("generate", "--project", fixture.ProjectPath, "--output", target);
+        Assert.True(success.ExitCode == 0, success.Error);
+        ReadArchive(target);
+        var bytes = File.ReadAllBytes(target);
+        File.SetLastWriteTimeUtc(target, new DateTime(2020, 1, 2, 3, 4, 5, DateTimeKind.Utc));
+        var timestamp = File.GetLastWriteTimeUtc(target);
+        SetMode(fixture, mode);
+        var newTarget = Path.Combine(fixture.DirectoryPath, "unpublished", "types.tgz");
+        foreach (var destination in new[] { target, newTarget })
+        {
+            var result = await fixture.RunToolAsync("generate", "--project", fixture.ProjectPath, "--output", destination);
+            Assert.Equal(1, result.ExitCode);
+            Assert.Equal("", result.Output);
+            Assert.Contains(code, result.Error);
+            Assert.Contains(mode == "unsupported" ? "Repository.generated.cs(" : "error TGH1009", result.Error);
+            Assert.Equal<byte>(bytes, File.ReadAllBytes(target));
+            Assert.Equal(timestamp, File.GetLastWriteTimeUtc(target));
+            Assert.False(Directory.Exists(Path.GetDirectoryName(newTarget)));
+            Assert.Empty(Directory.GetFiles(fixture.DirectoryPath, "*.tmp", SearchOption.AllDirectories));
+            AssertNoConsumerOutputs(fixture);
+        }
     }
 
     [Fact]

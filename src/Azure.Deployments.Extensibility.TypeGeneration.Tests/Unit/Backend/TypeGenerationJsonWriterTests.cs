@@ -17,6 +17,7 @@ using Azure.Deployments.Extensibility.TypeGeneration.Roslyn;
 using Azure.Deployments.Extensibility.TypeGeneration.Semantics;
 using Azure.Deployments.Extensibility.TypeGeneration.Tests.Support;
 using Xunit;
+using static Azure.Deployments.Extensibility.TypeGeneration.Tests.Support.TypePackageTestReader;
 
 namespace Azure.Deployments.Extensibility.TypeGeneration.Tests.Unit.Backend;
 
@@ -395,108 +396,8 @@ public class TypeGenerationJsonWriterTests
         Assert.Equal<byte>(expected, actual);
     }
 
-    private static void AssertCanonical(TypeGenerationSerializedPackage package)
-    {
-        foreach (var bytes in new[] { package.IndexJson, package.TypesJson })
-        {
-            Assert.False(bytes.AsSpan().StartsWith(new byte[] { 0xef, 0xbb, 0xbf }));
-            Assert.DoesNotContain((byte)'\r', bytes);
-            Assert.Equal((byte)'\n', bytes[^1]);
-            Assert.DoesNotContain((byte)'\t', bytes);
-        }
-        using var index = JsonDocument.Parse(package.IndexJson.ToArray());
-        using var types = JsonDocument.Parse(package.TypesJson.ToArray());
-        Assert.Equal(JsonValueKind.Object, index.RootElement.ValueKind);
-        Assert.Equal(JsonValueKind.Array, types.RootElement.ValueKind);
-        Keys(index.RootElement, ["resources", "settings"], []);
-        var settings = index.RootElement.GetProperty("settings");
-        Keys(settings, ["name", "version", "isSingleton"], ["configurationType"]);
-        Assert.Equal(JsonValueKind.String, settings.GetProperty("name").ValueKind);
-        Assert.Equal(JsonValueKind.String, settings.GetProperty("version").ValueKind);
-        Assert.Contains(settings.GetProperty("isSingleton").ValueKind, new[] { JsonValueKind.False, JsonValueKind.True });
-        Assert.Equal(JsonValueKind.Object, index.RootElement.GetProperty("resources").ValueKind);
-        foreach (var resource in index.RootElement.GetProperty("resources").EnumerateObject())
-        {
-            var target = Resolve(resource.Value, types.RootElement, true);
-            Assert.Equal("ResourceType", target.GetProperty("$type").GetString());
-            Assert.Equal(resource.Name, target.GetProperty("name").GetString());
-        }
-        if (settings.TryGetProperty("configurationType", out var configuration))
-        {
-            Assert.Equal("ObjectType", Resolve(configuration, types.RootElement, true).GetProperty("$type").GetString());
-        }
-        foreach (var type in types.RootElement.EnumerateArray())
-        {
-            switch (type.GetProperty("$type").GetString())
-            {
-                case "AnyType" or "NullType" or "BooleanType":
-                    Keys(type, ["$type"], []);
-                    break;
-                case "IntegerType":
-                    Keys(type, ["$type"], ["minValue", "maxValue"]);
-                    break;
-                case "StringType":
-                    Keys(type, ["$type"], ["sensitive", "minLength", "maxLength", "pattern"]);
-                    break;
-                case "StringLiteralType":
-                    Keys(type, ["$type", "value"], []);
-                    Assert.Equal(JsonValueKind.String, type.GetProperty("value").ValueKind);
-                    break;
-                case "ArrayType":
-                    Keys(type, ["$type", "itemType"], ["minLength", "maxLength"]);
-                    Resolve(type.GetProperty("itemType"), types.RootElement, false);
-                    break;
-                case "UnionType":
-                    Keys(type, ["$type", "elements"], []);
-                    foreach (var element in type.GetProperty("elements").EnumerateArray()) { Resolve(element, types.RootElement, false); }
-                    break;
-                case "ObjectType":
-                    Keys(type, ["$type", "name", "properties"], ["additionalProperties", "sensitive"]);
-                    foreach (var property in type.GetProperty("properties").EnumerateObject())
-                    {
-                        Keys(property.Value, ["type", "flags"], ["description"]);
-                        Assert.Equal(JsonValueKind.Number, property.Value.GetProperty("flags").ValueKind);
-                        Resolve(property.Value.GetProperty("type"), types.RootElement, false);
-                    }
-                    if (type.TryGetProperty("additionalProperties", out var additional)) { Resolve(additional, types.RootElement, false); }
-                    break;
-                case "ResourceType":
-                    Keys(type, ["$type", "name", "body", "readableScopes", "writableScopes"], []);
-                    Assert.Equal(JsonValueKind.Number, type.GetProperty("readableScopes").ValueKind);
-                    Assert.Equal(JsonValueKind.Number, type.GetProperty("writableScopes").ValueKind);
-                    Assert.Equal("ObjectType", Resolve(type.GetProperty("body"), types.RootElement, false).GetProperty("$type").GetString());
-                    break;
-                default:
-                    Assert.Fail($"Unexpected serialized kind: {type.GetProperty("$type").GetString()}");
-                    break;
-            }
-        }
-    }
-
-    private static void Keys(JsonElement value, string[] required, string[] optional)
-    {
-        Assert.Equal(JsonValueKind.Object, value.ValueKind);
-        foreach (var name in required) { Assert.True(value.TryGetProperty(name, out _), $"Missing {name}"); }
-        foreach (var property in value.EnumerateObject())
-        {
-            Assert.Contains(property.Name, required.Concat(optional));
-            Assert.NotEqual(JsonValueKind.Null, property.Value.ValueKind);
-        }
-    }
-
-    private static JsonElement Resolve(JsonElement reference, JsonElement types, bool crossFile)
-    {
-        Assert.Equal("$ref", Assert.Single(reference.EnumerateObject()).Name);
-        var value = reference.GetProperty("$ref").GetString()!;
-        var prefix = crossFile ? "types.json#/" : "#/";
-        Assert.StartsWith(prefix, value, StringComparison.Ordinal);
-        var suffix = value[prefix.Length..];
-        Assert.NotEmpty(suffix);
-        Assert.All(suffix, character => Assert.InRange(character, '0', '9'));
-        var index = int.Parse(suffix, CultureInfo.InvariantCulture);
-        Assert.InRange(index, 0, types.GetArrayLength() - 1);
-        return types[index];
-    }
+    private static void AssertCanonical(TypeGenerationSerializedPackage package) =>
+        ReadJson(package.IndexJson.ToArray(), package.TypesJson.ToArray());
 
     private static TypeGenerationLoweredPackage Lower(ExtensionTypeSemanticModel source)
     {

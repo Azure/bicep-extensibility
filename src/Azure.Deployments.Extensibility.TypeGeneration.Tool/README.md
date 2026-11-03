@@ -72,8 +72,15 @@ The extension references the `.Sdk` project/package and uses its existing
 `Azure.Deployments.Extensibility.TypeGeneration.Attributes` namespace. It does not reference
 the Tool or the old Local Extension SDK. The
 [Contoso sample](../../sample/Azure.Deployments.Extensibility.TypeGeneration.Sample/README.md)
-provides a ready-to-run project, a complete output snapshot, two input-change experiments,
-and a real duplicate-configuration error example.
+provides a ready-to-run inspection/generation project, a complete tree snapshot, package
+expectations, an executable isolated success/change/failure demo, and a real
+duplicate-configuration error example.
+
+The demo checks retained bytes and timestamps after an expected failed generation; it does not
+mistake an existing output file for success. Build automation should likewise use the exit code
+and diagnostics, not file existence alone. TGH1014 is an explicit post-publication summary failure.
+An identical valid package intentionally retains its timestamp. Automatic MSBuild integration
+and global-tool installation are not delivered by this command.
 
 ## Project settings
 
@@ -106,6 +113,11 @@ assembly. MSBuild still evaluates imports and runs design-time targets: **only a
 projects**, since MSBuild projects/tasks and source generators can execute code.
 
 ### Source generators
+
+Resource/configuration root discovery is limited to declarations in the input project.
+Independent roots declared in project references are not merged into the package. Referenced
+property/base types, including generated helper types, can still participate in the root's
+reachable type graph. This is not cross-project root discovery.
 
 C# source generators supplied through Analyzer references participate in analysis. Generated
 partial declarations and reachable helper types are included in the compilation passed to the

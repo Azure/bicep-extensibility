@@ -494,6 +494,27 @@ outer extension envelope; that is not added by this generator. Output publicatio
 by the [Tool's generate command](../Azure.Deployments.Extensibility.TypeGeneration.Tool/README.md),
 not by the SDK.
 
+### Integration boundaries
+
+The backend's public input remains `ExtensionTypeSemanticModel`, not a Roslyn compilation,
+project path or serialized type graph. Resource discovery, metadata precedence and source-text
+capture belong upstream. A future cross-project discovery flow can supply the same validated
+ETSM contract without replacing projection, serialization, validation or packaging. Current
+project analysis still discovers resource/configuration roots only in the selected input project;
+reachable referenced types are usable, but independent referenced roots are not merged.
+
+Build automation should call the same Tool `generate` entry point rather than duplicate its
+analysis or publication logic. It must handle nonzero exits and retained old outputs; file
+existence alone is not success, and byte-identical output deliberately does not get a new
+timestamp. Automatic MSBuild targets and global-tool installation are separate work.
+
+The [Contoso demo](../../sample/Azure.Deployments.Extensibility.TypeGeneration.Sample/README.md#run-the-complete-isolated-demo)
+exercises the complete CLI flow in a new workspace without executing a consumer DLL.
+Independent acceptance used Bicep CLI 0.48.1 (`cec7951cf6`) with the exact emitted archive inside
+a verification-only outer envelope. This does not claim an external Validator ran in the SDK,
+that every Bicep resource-property mismatch is fatal, or that deployment/registry publishing
+has been implemented.
+
 ## Migrating from Local Extension attributes
 
 - Replace the authoring reference to `Azure.Bicep.Local.Extension` with this SDK.
