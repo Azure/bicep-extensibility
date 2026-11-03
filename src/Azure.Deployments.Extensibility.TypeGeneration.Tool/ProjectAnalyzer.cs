@@ -6,7 +6,10 @@ using Microsoft.Build.Locator;
 
 namespace Azure.Deployments.Extensibility.TypeGeneration.Tool;
 
-internal sealed record ProjectAnalysis(TypeGenerationResult Result, ImmutableArray<string> DiagnosticMessages);
+internal sealed record ProjectAnalysis(
+    TypeGenerationResult Result,
+    ImmutableArray<string> DiagnosticMessages,
+    ProjectDiagnosticFormatter DiagnosticFormatter);
 
 internal static class ProjectAnalyzer
 {

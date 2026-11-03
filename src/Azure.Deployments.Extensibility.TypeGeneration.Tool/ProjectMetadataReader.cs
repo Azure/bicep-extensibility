@@ -16,9 +16,13 @@ internal static class ProjectMetadataReader
     public static EvaluatedProject Read(ToolOptions options, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        if (string.IsNullOrWhiteSpace(options.Configuration))
+        {
+            throw new ToolException("TGH1010", $"A nonblank build configuration is required for '{options.ProjectPath}'.");
+        }
         var globals = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            ["Configuration"] = "Debug",
+            ["Configuration"] = options.Configuration,
         };
         using var collection = new ProjectCollection();
         var project = collection.LoadProject(options.ProjectPath, globals, toolsVersion: null);

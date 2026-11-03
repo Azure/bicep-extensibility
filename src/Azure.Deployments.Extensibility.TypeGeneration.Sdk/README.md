@@ -6,7 +6,8 @@ the frontend, resource/configuration registration checks, property metadata, and
 C#-to-ETSM mapping. The authoring example below can be analyzed into a complete typed model.
 The generated graph is validated before a successful result is returned. The companion
 [Tool](../Azure.Deployments.Extensibility.TypeGeneration.Tool/README.md) loads real projects
-and prints this graph. Type-file generation is not implemented yet.
+and prints this graph. The separate backend generates a verified in-memory type package;
+the Tool's `generate` command can publish that package safely to an output file.
 
 The SDK project, assembly, and package name is `Azure.Deployments.Extensibility.TypeGeneration.Sdk`.
 Public namespaces remain `Azure.Deployments.Extensibility.TypeGeneration` and its subnamespaces.
@@ -130,7 +131,8 @@ The model is a graph, not necessarily a tree: shared and cyclic nodes retain ref
 Consumers should use reference-based visited sets rather than recursive record equality or
 `ToString()`. Source locations support diagnostics but are not semantic identity. Resource
 version labels remain unprojected; downstream consumers must not treat each label as an already
-materialized resource. The SDK currently stops at ETSM and does not generate a type package.
+materialized resource. The frontend stops at ETSM; the separate package generator performs
+projection, lowering, serialization, validation and archiving.
 
 | Code | Meaning |
 |---|---|
@@ -305,6 +307,192 @@ Do not use generated record equality, hashing, or recursive `ToString()` as grap
 semantic comparison. Graph operations must track visited nodes or node pairs by reference.
 `SourceLocation` uses UTF-16 offsets and is diagnostic information, not type semantics.
 The tests use a cycle-safe comparer that ignores source locations.
+
+## Backend input validation and package contracts
+
+`Backend.Validation.TypeGenerationModelValidator.Validate(model, cancellationToken)` validates
+an ETSM without loading a project, using Roslyn, projecting versions, or writing output.
+It returns immutable diagnostics, with an empty array for valid supported input. Null arguments
+throw argument exceptions; cancellation throws `OperationCanceledException`.
+
+The validator supports the frontend's complete current output, shared/cyclic graphs, basic scalar
+constraints, and disjoint API-version definitions with the same resource name. This does not relax
+the frontend's authoring restrictions. Validation is iterative and does not mutate the graph or
+normalize names/version labels. Diagnostics use the nearest available source location and stable
+ordering. Unknown types or invalid graph edges are errors, never `Any` fallbacks.
+
+Lifecycle metadata, discriminated objects, resource functions, fallback resources, and non-default
+preview/deprecated settings are explicitly unsupported. Extension Resource packages omit the
+`resourceFunctions` and `namespaceFunctions` format fields, even when empty. Ordinary business
+properties with those names remain valid; the fixed ETSM contracts are not removed or reshaped.
+
+`Backend.TypeGenerationPackage` and `Backend.TypeGenerationPackageResult` define the immutable
+payload/result contract for later generation. Package construction is internal and requires all
+three nonempty buffers: index JSON, type JSON, and archive bytes. This is a payload-shape check,
+not JSON/archive validation; the generation pipeline validates content before constructing it.
+An error result cannot expose a package; warnings and informational diagnostics can accompany a
+complete package. The public package generator below returns these contracts after all checks;
+the Tool's `generate` command uses the same API.
+
+| Code | Backend validation meaning |
+|---|---|
+| TG2001 | Missing extension name or version |
+| TG2002 | Invalid resource name |
+| TG2003 | Uninitialized, blank, null, or repeated API-version label |
+| TG2004 | Overlapping registrations or mixed versioned/unversioned definitions |
+| TG2005 | Resource/configuration root is not object-like |
+| TG2006 | Invalid graph structure, required collections, or metadata |
+| TG2007 | Invalid or duplicate property name |
+| TG2008 | Unknown property flag bits |
+| TG2009 | Unknown scope bits |
+| TG2010 | Invalid scalar or length bounds |
+| TG2011 | Unsupported semantic metadata |
+| TG2012 | Unsupported type node |
+| TG2201 | Multiple concrete resources encode to the same public resource key |
+| TG2301 | JSON serialization failed; neither output buffer is returned |
+| TG2401 | Invalid JSON document, UTF-8 or string encoding |
+| TG2402 | Invalid JSON shape, missing/duplicate/unknown/null member or unsupported kind |
+| TG2403 | Invalid reference placement, file, index, shape or target kind |
+| TG2404 | Invalid JSON value, bounds, flags/scopes or resource entry identity |
+| TG2405 | Serialized semantics differ from the expected projection |
+| TG2501 | Archive creation failed |
+| TG2502 | Archive framing, layout, metadata or content verification failed |
+
+### API-version projection
+
+The internal `Backend.Projection.TypeGenerationProjectionService.Project` stage validates the
+entire ETSM using the same backend validator before producing any projected resources. Failure
+returns the original diagnostics and no projected model, even if other resources were valid.
+Null arguments and cancellation retain the validator's exception contract.
+
+An empty API-version list produces one `ProjectedResourceTypeDefinition` with `ApiVersion = null`;
+otherwise each declared label produces one resource in its original order. Resource-definition
+order is also preserved. Names and API versions remain separate: no `Name@ApiVersion` keys,
+JSON references, file names, or type-file indices are introduced here.
+
+Each resource keeps its scopes and source location. The stage returns extension name, version,
+singleton setting, configuration and source location alongside the projected resources in an
+internal result container, without adding a public ETSM model. Bodies and configuration retain
+their original reference identity, including shared and recursive nodes. No per-version deep
+copy is needed because lifecycle metadata is explicitly rejected before projection.
+
+Same-name disjoint version sets are accepted; overlapping sets, mixed versioned/unversioned
+definitions and unsupported semantics fail with the existing backend diagnostics. This does
+not change the frontend's more restrictive registration rules. Internal projected function
+arrays are initialized but empty; they do not imply emitting function indexes in JSON.
+The projection stage does not itself generate a package or implement a CLI command.
+
+### Type graph lowering
+
+The internal `Backend.Lowering.TypeGenerationLowerer.Lower` stage consumes the projected extension.
+An internal projected-input entry point reuses the backend validator's graph checks, so hand-built
+projected inputs cannot bypass root, constraint, scope/flag or unsupported-semantic validation.
+It does not revisit C# or evaluate lifecycle metadata. Invalid input returns diagnostics and no
+partial target graph.
+
+Lowering uses the actual `Azure.Bicep.Types` models and `TypeFactory` references. It registers
+semantic nodes by reference identity in iterative depth-first order: configuration first, then
+resource bodies by final public key, with ordinal property traversal and original union-element
+order. It creates all target nodes, appends resource nodes by public key, then hydrates references
+once before returning. Shared nodes and cycles remain shared/cyclic; equal-looking independent
+nodes are not merged. Input graphs are never mutated, and each call owns its caches and factory.
+
+Public keys are the unversioned name or `Name@ApiVersion`. Duplicate encoded keys, including
+collisions between different name/version pairs containing `@`, fail with TG2201 at both sources.
+Scope and property flags are mapped explicitly; nullable unions, map values, descriptions, bounds,
+patterns and sensitive markers are preserved. Legacy preview/deprecated settings are passed as
+null, not their unsafe library defaults.
+
+The internal result contains a real `TypeIndex` and an immutable array of `TypeBase` objects,
+with in-memory references targeting the planned single `types.json`. The library requires
+non-null function-index collections, so these are empty internally. This is not permission to
+emit them: the later writer must omit both format fields under the Extension Resource contract.
+This stage does not itself write JSON or an archive.
+
+### Canonical JSON writing
+
+The internal `Backend.Serialization.TypeGenerationJsonWriter.Write` stage turns a lowered model
+into immutable `index.json` and `types.json` buffers. It reuses the type library's reference
+converters and source-generated metadata, with narrowly scoped metadata modifiers for the
+Extension Resource format. No second type model or general JSON serializer is introduced.
+
+Output uses UTF-8 without a BOM, two-space indentation and LF, including a final LF. Required
+false/zero values and empty required objects remain present. Absent optional values are omitted,
+and unused function indexes, embedded functions and legacy preview/deprecated settings are not
+emitted. Modifiers only affect the corresponding library types: ordinary business properties,
+resource names and string values with these names remain untouched.
+
+Nonempty function indexes/embedded functions, enabled legacy settings or fallback resources fail before omission;
+they are never silently discarded. Recognized serializer/reference failures produce TG2301 with
+file context and no partial buffers. Null arguments and cancellation remain exceptions.
+Each call owns its options and reference factory; library defaults and other callers are not
+modified. Deterministic numbering and collection order come from Lowering.
+
+The serialized result is a candidate for the next validation stage, not a validated archive.
+
+### Independent package validation and JSON generation
+
+The internal `Backend.Validation.TypeGenerationPackageValidator.Validate` reads the actual
+index/type byte buffers using `JsonDocument`, independently of the Bicep serializer and
+TypeFactory. It checks this generator's fixed-file output subset: exact fields and kinds,
+duplicate members, optional-null omission, required defaults, numeric bounds, flags/scopes,
+reference syntax/placement/range and target kinds. Every reference is checked, including
+references in cycles; the validator does not recursively expand the type graph.
+
+Function indexes are forbidden format members even when empty. Same-named ordinary properties
+remain valid. This is not a general legacy/multi-file Bicep package validator; extension settings
+are required by this producer's contract. JSON whitespace is not semantic, and validation never
+rewrites or normalizes the supplied files.
+
+An optional expected projected model adds an independent comparison of extension metadata,
+resource/configuration entries and effective type-graph semantics. It uses reference-identity
+node/index pairs to terminate cycles while allowing equivalent graphs with different sharing
+topologies. Field/value changes cannot pass merely because the JSON is structurally valid.
+Diagnostics include the JSON file/pointer; semantic differences retain available expected
+source locations. Invalid input returns no validated-package marker.
+
+`Backend.TypeGenerationJsonGenerator.Generate` connects Projection, Lowering, canonical writing
+and validation in memory. It always supplies the expected projection, propagates stage diagnostics,
+and returns the original immutable files only after every stage succeeds. Null arguments and
+cancellation remain exceptions. The internal validated-JSON handoff is ready for the archive stage;
+no placeholder archive bytes are created.
+
+### Complete package generation
+
+`Backend.TypeGenerationPackageGenerator.Generate(model, cancellationToken)` is the public,
+synchronous ETSM-to-package entry point. It runs the JSON pipeline, creates a Tar/Gzip archive
+from the validated files, and verifies the archive before returning `TypeGenerationPackageResult`.
+Successful results contain index JSON, type JSON and actual `types.tgz` bytes; failures expose
+diagnostics and no partial package. The generator is stateless and does not load a project,
+write files, publish to a registry or start an extension runtime.
+
+```csharp
+using Azure.Deployments.Extensibility.TypeGeneration.Backend;
+
+var result = new TypeGenerationPackageGenerator().Generate(model, cancellationToken);
+if (result.Succeeded)
+{
+    var archiveBytes = result.Package!.ArchiveBytes;
+}
+```
+
+The archive contains exactly two Ustar regular files, `index.json` then `types.json`, at the root.
+Entries use Unix epoch timestamps, uid/gid zero, empty owner/group names and mode 0644. The
+writer buffers the complete Tar before compressing it with `GZipStream` at Optimal level.
+Repeated and concurrent runs are byte-identical on the tested runtime/platform.
+
+The internal archive verifier is intentionally limited to this writer's own output profile,
+not an arbitrary archive importer. It bounds decompression by the expected validated content,
+checks the exact layout/metadata/padding and file bytes using `TarReader`, and independently
+validates the extracted JSON. It also recompresses the decoded Tar to check current-runtime
+canonical framing, because `GZipStream` can otherwise accept trailing input. Alternative
+compression encodings may be valid for consumers but are not accepted by this own-output check.
+No cross-runtime or cross-OS byte-level guarantee is claimed without verification.
+
+The type archive is the inner `types.tgz` payload. A local Bicep extension may need a separate
+outer extension envelope; that is not added by this generator. Output publication is handled
+by the [Tool's generate command](../Azure.Deployments.Extensibility.TypeGeneration.Tool/README.md),
+not by the SDK.
 
 ## Migrating from Local Extension attributes
 

@@ -2,8 +2,9 @@
 
 This is the command-line entry point for the
 [Type Generation SDK](../Azure.Deployments.Extensibility.TypeGeneration.Sdk/README.md).
-It evaluates a C# project, obtains a Roslyn compilation, calls the SDK, and prints the ETSM
-as a readable tree. It does not implement a second type analyzer.
+It evaluates a C# project, obtains a Roslyn compilation and calls the SDK. It can inspect the
+ETSM as a readable tree or generate and safely publish a type archive. It does not implement
+a second type analyzer.
 
 The solution groups `.Sdk`, `.Tool`, and `.Tests` under `TypeGeneration`.
 Only this tool depends on MSBuild and Roslyn Workspaces.
@@ -24,6 +25,48 @@ framework after the `--` separator as well:
 ```powershell
 dotnet run --project 'src\Azure.Deployments.Extensibility.TypeGeneration.Tool\Azure.Deployments.Extensibility.TypeGeneration.Tool.csproj' --framework net10.0 -- --project 'C:\work\Example\Example.csproj' --framework net10.0 --name Contoso --version 1.2 --singleton false
 ```
+
+The existing no-verb form remains an alias for `inspect`. To inspect the input project's
+Release compilation explicitly:
+
+```powershell
+dotnet run --project 'src\Azure.Deployments.Extensibility.TypeGeneration.Tool\Azure.Deployments.Extensibility.TypeGeneration.Tool.csproj' --framework net10.0 -- inspect --project 'C:\work\Example\Example.csproj' --configuration Release
+```
+
+The `--configuration` after `--` selects the input project's compilation, independently of
+the configuration used to build the Tool itself. Its default is Debug; custom nonblank
+configuration names are accepted without silently selecting Debug instead.
+
+`--format` is inspect-only and `--output` is generate-only. Use `inspect --help` /
+`generate --help` for command-specific help; bare `--help` / `-h` remains supported.
+
+## Generate a type archive
+
+```powershell
+dotnet run --project 'src\Azure.Deployments.Extensibility.TypeGeneration.Tool\Azure.Deployments.Extensibility.TypeGeneration.Tool.csproj' --framework net10.0 -- generate --project 'C:\work\Example\Example.csproj' --configuration Release --output '.\artifacts\types.tgz'
+```
+
+The command reuses one Host/Frontend analysis, calls the SDK's complete package generator, and
+formats backend diagnostics using the captured source text. The archive is published only after
+internal JSON, semantic, reference and archive checks succeed. This does not run an external
+Validator, deploy an extension or publish to a registry.
+
+Output paths are relative to the current working directory, not the input project's directory.
+The Tool rejects directory destinations and collisions with the input project or captured source
+files. Existing directory links are resolved for comparison/publication; linked/reparse-point
+output files are rejected. On Windows, ambiguous trailing-dot/space components and invalid file
+name characters are rejected rather than relying on Win32 alias normalization.
+
+Publishing creates a unique staging file in the destination directory, writes and flushes the
+complete archive, then atomically moves it over the destination without deleting the old file
+first. Identical bytes leave the target content and timestamp unchanged. Failures or cancellation
+before the commit preserve an existing target; cleanup only touches this call's owned staging
+file. Cleanup failures are reported with the staging path. Newly created empty parent directories
+may remain after an unsuccessful publication.
+
+The final rename is the commit boundary. Cancellation after a successful commit is not reported
+as if publication were undone. If writing the success summary fails after publication, TGH1014
+explicitly reports that the package is already written/unchanged; it does not claim rollback.
 
 The extension references the `.Sdk` project/package and uses its existing
 `Azure.Deployments.Extensibility.TypeGeneration.Attributes` namespace. It does not reference
@@ -49,7 +92,7 @@ defaults to false only when absent/empty. Otherwise it must contain Boolean text
 `false`, case-insensitive); numbers and `yes`/`no` are errors. An explicit CLI override wins,
 including `--singleton false` over a true or invalid project value.
 
-Properties are evaluated for the selected framework in Debug configuration, not obtained by
+Properties are evaluated for the selected framework and configuration (Debug by default), not obtained by
 reading raw XML or reflecting over an extension DLL. Multiple target frameworks require
 `--framework`; an undeclared framework is an error. Workspaces loads the project graph with
 its normal reference-framework selection. The tool then selects the root project by its
@@ -67,7 +110,7 @@ projects**, since MSBuild projects/tasks and source generators can execute code.
 C# source generators supplied through Analyzer references participate in analysis. Generated
 partial declarations and reachable helper types are included in the compilation passed to the
 SDK; the consumer project's output DLL and emitted generated-source files are not required.
-Project-referenced generator assemblies must already be built for the input project's Debug
+Project-referenced generator assemblies must already be built for the input project's selected
 configuration, in addition to restoring its dependencies. Building the generator is different
 from building or executing the extension assembly.
 
@@ -82,6 +125,13 @@ complete model to succeed, respecting the project's warning settings. A generati
 remains fatal even if the compiler's corresponding failure warning is suppressed. Generated
 source locations use virtual paths; source line/column information is shown when available.
 
+The Host retains immutable source text from the actual root compilation and reachable compilation
+references, including generated trees. Later backend diagnostics reuse this snapshot after the
+Workspace is disposed; no second project load, generator execution or disk reread is required.
+If a path has conflicting source texts, is unknown, or has an invalid span, formatting preserves
+the original span instead of inventing a line/column. Physical UTF-16 offsets are used, not `#line`
+remapping.
+
 The compatibility tests cover an incremental generator adding properties/helper types,
 additional files and compiler options, generated types in a referenced project, error/warning
 handling, and single execution. This does not claim equivalence with every custom build target
@@ -89,19 +139,22 @@ or diagnostic analyzer run by `dotnet build`.
 
 ## Output and failures
 
-- `--format tree` is the only format and the default.
-- Standard output contains only the completed tree (or `--help`).
+- For inspect, `--format tree` is the only format and the default.
+- Inspection stdout contains only the completed tree (or help). Generation stdout contains one
+  summary only after successful publication: identity, distinct resource-name count, concrete
+  resource count, resolved output path, written/unchanged status and internal validation status.
 - Standard error contains compiler, SDK, and workspace diagnostics. Source diagnostics include
   one-based line/column when the document is available, otherwise the original character span.
 - Stable local IDs and `ref #N` represent shared/cyclic graph nodes. IDs are display-only,
   not canonical type-package references.
-- This phase prints resource version labels without projecting separate versioned resources.
-- There is no `index.json`/`types.json` generation, packaging, publishing, or extension execution.
+- Inspection prints resource version labels without projecting separate versioned resources.
+- Generation writes one `types.tgz` containing `index.json` and `types.json`; it does not write
+  JSON sidecars or execute the extension runtime.
 
 | Exit | Meaning |
 |---|---|
-| 0 | Analysis and tree output succeeded, or help was requested |
-| 1 | Project loading, compilation, semantic analysis, inspection, or I/O failed |
+| 0 | Inspection, generation/publication (including unchanged output), or help succeeded |
+| 1 | Loading, analysis, generation, publication, cleanup, summary output or other I/O failed |
 | 2 | Invalid command-line arguments |
 | 130 | Cancellation, including Ctrl+C |
 
@@ -118,6 +171,11 @@ or diagnostic analyzer run by `dotnet build`.
 | TGH1007 | Unsupported tree output |
 | TGH1008 | I/O failure |
 | TGH1009 | Source-generator diagnostics or analyzer/generator loading failure |
+| TGH1010 | Blank build configuration supplied directly to the Host |
+| TGH1011 | Invalid output destination or input/output collision |
+| TGH1012 | Output-path access, staging write, comparison or atomic publication failed |
+| TGH1013 | Owned staging-file cleanup failed; original operation context is retained |
+| TGH1014 | Publication completed, but the success summary could not be written |
 
 SDK diagnostics retain their `TGxxxx` codes. A compiler warning can accompany successful
 output, but a diagnostic classified by Workspaces as `Failure` is fatal, even if the original

@@ -49,12 +49,12 @@ internal static class ProjectCompilationLoader
                 .ToImmutableArray();
             if (loadDiagnostics.Any(diagnostic => diagnostic.Severity == TypeGenDiagnosticSeverity.Error))
             {
-                return await FormatAnalysisAsync(new(null, loadDiagnostics), compilation, workspace, cancellationToken);
+                return await FormatAnalysisAsync(new(null, loadDiagnostics), compilation, cancellationToken);
             }
 
             var result = new TypeGenerationFrontend().Build(compilation, evaluated.Metadata, cancellationToken);
             result = new(result.Model, loadDiagnostics.AddRange(result.Diagnostics));
-            return await FormatAnalysisAsync(result, compilation, workspace, cancellationToken);
+            return await FormatAnalysisAsync(result, compilation, cancellationToken);
         }
         catch (InvalidProjectFileException exception)
         {
@@ -77,38 +77,9 @@ internal static class ProjectCompilationLoader
     private static async Task<ProjectAnalysis> FormatAnalysisAsync(
         TypeGenerationResult result,
         Compilation compilation,
-        MSBuildWorkspace workspace,
         CancellationToken cancellationToken)
     {
-        var messages = ImmutableArray.CreateBuilder<string>();
-        foreach (var diagnostic in result.Diagnostics)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var message = FormatWithoutLocation(diagnostic);
-            if (diagnostic.SourceLocation is { } location)
-            {
-                var tree = compilation.SyntaxTrees.FirstOrDefault(tree => tree.FilePath == location.FilePath);
-                var documentId = workspace.CurrentSolution.GetDocumentIdsWithFilePath(location.FilePath).FirstOrDefault();
-                var document = documentId is null ? null : workspace.CurrentSolution.GetDocument(documentId);
-                var text = tree is not null ? await tree.GetTextAsync(cancellationToken)
-                    : document is not null ? await document.GetTextAsync(cancellationToken) : null;
-                if (text is not null)
-                {
-                    var position = text.Lines.GetLinePosition(location.Start);
-                    message = $"{location.FilePath}({position.Line + 1},{position.Character + 1}): {message}";
-                }
-                else
-                {
-                    message = $"{location.FilePath}[{location.Start}+{location.Length}]: {message}";
-                }
-            }
-
-            messages.Add(message);
-        }
-
-        return new(result, messages.ToImmutable());
+        var formatter = await ProjectDiagnosticFormatter.CreateAsync(compilation, cancellationToken);
+        return new(result, formatter.Format(result.Diagnostics, cancellationToken), formatter);
     }
-
-    private static string FormatWithoutLocation(TypeGenDiagnostic diagnostic) =>
-        $"{diagnostic.Severity.ToString().ToLowerInvariant()} {diagnostic.Code}: {diagnostic.Message}";
 }
