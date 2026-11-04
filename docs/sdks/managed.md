@@ -89,7 +89,7 @@ The process that launches the extension chooses where it listens, so extension c
 | `EXTENSION_PORT` | An integer from 1 to 65535. |
 | `EXTENSION_HOST` | Optional IP address, such as `127.0.0.1`, `0.0.0.0`, or `::`. Defaults to `127.0.0.1`. Host names are not accepted. |
 
-The application fails to start when either value is invalid, or when `EXTENSION_HOST` is set without `EXTENSION_PORT`. When neither variable is set, standard ASP.NET Core endpoint configuration applies, so `dotnet run` keeps using the launch profile. Kestrel endpoints that the application configures itself are kept in addition to the extension endpoint.
+The application fails to start when either value is invalid, or when `EXTENSION_HOST` is set without `EXTENSION_PORT`. When neither variable is set, standard ASP.NET Core endpoint configuration applies, so `dotnet run` keeps using the launch profile. Kestrel endpoints that the application configures itself are kept in addition to the extension endpoint. Endpoint defaults set with `ConfigureEndpointDefaults`, such as HTTPS, apply only to those endpoints; the extension endpoint always serves plain HTTP.
 
 ## Scalar API explorer
 

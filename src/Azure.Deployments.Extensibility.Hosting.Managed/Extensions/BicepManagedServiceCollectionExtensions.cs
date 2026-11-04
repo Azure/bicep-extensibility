@@ -59,7 +59,8 @@ public static class BicepManagedServiceCollectionExtensions
         services.AddSingleton<IBicepExtensionResolver>(
             new ExactVersionExtensionResolver(descriptor.Version, registration));
         services.AddSingleton<IHostedService, ManagedExtensionStartupValidator>();
-        services.AddSingleton<IConfigureOptions<KestrelServerOptions>, ExtensionListenAddressSetup>();
+        // First in line so app and Kestrel endpoint defaults (such as HTTPS) don't reach the host-set endpoint.
+        services.Insert(0, ServiceDescriptor.Singleton<IConfigureOptions<KestrelServerOptions>, ExtensionListenAddressSetup>());
 
         return services;
     }

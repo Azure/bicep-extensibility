@@ -9,11 +9,14 @@ using Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Xunit;
 
 namespace Azure.Deployments.Extensibility.Hosting.Managed.Tests.Unit;
@@ -66,13 +69,40 @@ public class ManagedExtensionListenAddressTests
     {
         var extensionPort = GetFreePort();
         var appPort = GetFreePort();
-        var builder = CreateBuilder(Invariant(extensionPort), host: null);
-        builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, appPort));
+        var builder = CreateBuilder(
+            Invariant(extensionPort),
+            host: null,
+            options => options.Listen(IPAddress.Loopback, appPort));
         await using var app = BuildApplication(builder);
 
         await app.StartAsync();
 
         app.Urls.Should().BeEquivalentTo($"http://127.0.0.1:{extensionPort}", $"http://127.0.0.1:{appPort}");
+    }
+
+    [Fact]
+    public async Task Start_WithHttpsEndpointDefaults_KeepsExtensionEndpointHttpAndAppEndpointHttps()
+    {
+        var extensionPort = GetFreePort();
+        var appPort = GetFreePort();
+        using var certificate = CreateSelfSignedCertificate();
+        var builder = CreateBuilder(
+            Invariant(extensionPort),
+            host: null,
+            options =>
+            {
+                options.ConfigureEndpointDefaults(endpoint => endpoint.UseHttps(certificate));
+                options.Listen(IPAddress.Loopback, appPort);
+            });
+        await using var app = BuildApplication(builder);
+
+        await app.StartAsync();
+
+        app.Urls.Should().HaveCount(2)
+            .And.Contain($"http://127.0.0.1:{extensionPort}")
+            .And.Contain($"https://127.0.0.1:{appPort}");
+        var status = await PingAsync($"http://127.0.0.1:{extensionPort}");
+        status.Should().Be(HttpStatusCode.OK);
     }
 
     [Theory]
@@ -116,7 +146,10 @@ public class ManagedExtensionListenAddressTests
     private static WebApplication BuildApplication(string? port, string? host) =>
         BuildApplication(CreateBuilder(port, host));
 
-    private static WebApplicationBuilder CreateBuilder(string? port, string? host)
+    private static WebApplicationBuilder CreateBuilder(
+        string? port,
+        string? host,
+        Action<KestrelServerOptions>? configureKestrelBeforeExtension = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -126,6 +159,11 @@ public class ManagedExtensionListenAddressTests
             ["EXTENSION_PORT"] = port,
             ["EXTENSION_HOST"] = host,
         });
+        if (configureKestrelBeforeExtension is not null)
+        {
+            builder.WebHost.ConfigureKestrel(configureKestrelBeforeExtension);
+        }
+
         builder.Services.AddBicepExtension(extension => extension.AddHandler<GetHandler>(), Descriptor);
 
         return builder;
@@ -163,6 +201,16 @@ public class ManagedExtensionListenAddressTests
     }
 
     private static string Invariant(int value) => value.ToString(CultureInfo.InvariantCulture);
+
+    private static X509Certificate2 CreateSelfSignedCertificate()
+    {
+        using var key = RSA.Create(2048);
+        var request = new CertificateRequest("CN=localhost", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        using var ephemeral = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddMinutes(-5), DateTimeOffset.UtcNow.AddHours(1));
+
+        // Reloading from PFX gives Windows TLS a usable private key; ephemeral keys fail there.
+        return X509CertificateLoader.LoadPkcs12(ephemeral.Export(X509ContentType.Pfx), password: null);
+    }
 
     private sealed class GetHandler : IResourceGetHandler
     {
