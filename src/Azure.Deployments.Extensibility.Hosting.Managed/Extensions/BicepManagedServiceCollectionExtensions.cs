@@ -6,8 +6,11 @@ using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Hosting.Managed;
 using Azure.Deployments.Extensibility.Hosting.Managed.Resolution;
 using Azure.Deployments.Extensibility.Hosting.Managed.Metadata;
+using Azure.Deployments.Extensibility.Hosting.Managed.Server;
 using Azure.Deployments.Extensibility.Hosting.Managed.Validation;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -56,6 +59,7 @@ public static class BicepManagedServiceCollectionExtensions
         services.AddSingleton<IBicepExtensionResolver>(
             new ExactVersionExtensionResolver(descriptor.Version, registration));
         services.AddSingleton<IHostedService, ManagedExtensionStartupValidator>();
+        services.AddSingleton<IConfigureOptions<KestrelServerOptions>, ExtensionListenAddressSetup>();
 
         return services;
     }
