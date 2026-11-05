@@ -1,0 +1,18 @@
+{
+  "resources": {
+    "Repository@v1": {
+      "$ref": "types.json#/5"
+    },
+    "Repository@v2": {
+      "$ref": "types.json#/6"
+    }
+  },
+  "settings": {
+    "name": "Contoso",
+    "version": "1.2",
+    "isSingleton": false,
+    "configurationType": {
+      "$ref": "types.json#/0"
+    }
+  }
+}
