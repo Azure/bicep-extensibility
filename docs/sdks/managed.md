@@ -80,6 +80,17 @@ POST /{extensionVersion}/longRunningOperation/get
 
 It also maps `GET /ping`. Other methods receive `405 Method Not Allowed`.
 
+## Listen address
+
+The process that launches the extension chooses where it listens, so extension code contains no port settings. When `EXTENSION_PORT` is set, the SDK binds Kestrel to `EXTENSION_HOST:EXTENSION_PORT` over HTTP, overriding `ASPNETCORE_URLS`, `ASPNETCORE_HTTP_PORTS`, `--urls`, and launch-profile URLs. Don't enable `PreferHostingUrls`: it makes those URLs win, and the extension listener is ignored.
+
+| Variable | Value |
+|---|---|
+| `EXTENSION_PORT` | An integer from 1 to 65535. |
+| `EXTENSION_HOST` | Optional IP address, such as `127.0.0.1`, `0.0.0.0`, or `::`. Defaults to `127.0.0.1`. Host names are not accepted. |
+
+The application fails to start when either value is invalid, or when `EXTENSION_HOST` is set without `EXTENSION_PORT`. When neither variable is set, standard ASP.NET Core endpoint configuration applies, so `dotnet run` keeps using the launch profile. Kestrel listeners that the application configures itself are kept alongside the extension listener, and endpoint defaults set with `ConfigureEndpointDefaults`, such as HTTPS, apply only to the application's listeners. The extension listener always serves plain HTTP.
+
 ## Scalar API explorer
 
 Map the interactive Scalar UI and OpenAPI document for local development:

@@ -397,5 +397,15 @@ This section documents operational requirements that apply to **Bicep third-part
 
 ### Health Check
 
-> [!NOTE]
-> Health check API documentation is coming soon.
+Extensions serve `GET /ping`. A `2xx` response means the extension is ready to receive contract requests; the response body is not defined. Hosts use it to wait for startup, and the platform uses it for readiness and liveness probes.
+
+### Listen Address
+
+The host that launches the extension sets its listen address through environment variables:
+
+| Variable | Required | Meaning |
+|---|---|---|
+| `EXTENSION_PORT` | Yes | TCP port to listen on, from 1 to 65535. |
+| `EXTENSION_HOST` | No | IP address to bind. Defaults to `127.0.0.1`, which keeps local extensions off the network. |
+
+Extensions serve HTTP on that address and fail to start when a value is invalid. The managed runtime sets `EXTENSION_HOST=0.0.0.0` so that ingress and probes can reach the container; a local host sets only `EXTENSION_PORT` and relies on the loopback default.
