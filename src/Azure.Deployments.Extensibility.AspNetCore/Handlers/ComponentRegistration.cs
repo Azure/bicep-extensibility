@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
-internal sealed class ComponentRegistration
+internal sealed class ComponentRegistration : IComponentRegistrationResolver
 {
     private readonly Type serviceType;
     private readonly object? serviceKey;
@@ -16,7 +16,7 @@ internal sealed class ComponentRegistration
         this.serviceKey = serviceKey;
     }
 
-    internal object Resolve(IServiceProvider serviceProvider) => this.serviceKey is null
+    public object Resolve(IServiceProvider serviceProvider) => this.serviceKey is null
         ? serviceProvider.GetRequiredService(this.serviceType)
         : serviceProvider.GetRequiredKeyedService(this.serviceType, this.serviceKey);
 }

@@ -3,7 +3,7 @@
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
-internal sealed class BicepExtensionRuntimeOptions
+public sealed class BicepExtensionRuntimeOptions
 {
-    internal List<ComponentRegistration> GlobalBehaviors { get; } = [];
+    public List<IComponentRegistrationResolver> GlobalBehaviors { get; } = [];
 }

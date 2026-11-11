@@ -1,14 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
+using System.Diagnostics.CodeAnalysis;
 using Azure.Deployments.Extensibility.AspNetCore.ExceptionHandlers;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -96,7 +95,7 @@ public static class BicepExtensionServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
 
         services.AddOptions<BicepExtensionRuntimeOptions>();
-        services.TryAddScoped<HandlerInvoker>();
+        services.TryAddScoped<BicepExtensionHandlerInvoker>();
 
         return services;
     }
