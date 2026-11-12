@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using Azure.Deployments.Extensibility.AspNetCore.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
@@ -9,12 +10,11 @@ using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json.Nodes;
 using Xunit;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Tests.Unit.Handlers;
 
-public class HandlerInvokerTests
+public class BicepExtensionHandlerInvokerTests
 {
     [Fact]
     public async Task Invoke_WithResolvedRegistration_OrdersBehaviors()
@@ -31,7 +31,7 @@ public class HandlerInvokerTests
         services.AddBicepExtensionHandlerRuntime();
         using var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         using var scope = serviceProvider.CreateScope();
-        var sut = scope.ServiceProvider.GetRequiredService<HandlerInvoker>();
+        var sut = scope.ServiceProvider.GetRequiredService<BicepExtensionHandlerInvoker>();
 
         var result = await sut.InvokeResourceGetAsync("1.0.0", CreateReference(), CancellationToken.None);
 
@@ -56,7 +56,7 @@ public class HandlerInvokerTests
         services.AddBicepExtensionHandlerRuntime();
         using var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         using var scope = serviceProvider.CreateScope();
-        var sut = scope.ServiceProvider.GetRequiredService<HandlerInvoker>();
+        var sut = scope.ServiceProvider.GetRequiredService<BicepExtensionHandlerInvoker>();
 
         var result = await sut.InvokeResourceGetAsync("invalid", CreateReference(), CancellationToken.None);
 
@@ -74,7 +74,7 @@ public class HandlerInvokerTests
         services.AddBicepExtensionHandlerRuntime();
         using var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         using var scope = serviceProvider.CreateScope();
-        var sut = scope.ServiceProvider.GetRequiredService<HandlerInvoker>();
+        var sut = scope.ServiceProvider.GetRequiredService<BicepExtensionHandlerInvoker>();
 
         var result = await sut.InvokeResourceGetAsync("1.0.0", CreateReference(), CancellationToken.None);
 
@@ -91,7 +91,7 @@ public class HandlerInvokerTests
         services.AddBicepExtensionHandlerRuntime();
         using var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
         using var scope = serviceProvider.CreateScope();
-        var sut = scope.ServiceProvider.GetRequiredService<HandlerInvoker>();
+        var sut = scope.ServiceProvider.GetRequiredService<BicepExtensionHandlerInvoker>();
 
         var result = await sut.InvokeLongRunningOperationGetAsync("1.0.0", [], CancellationToken.None);
 

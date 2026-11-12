@@ -1,13 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using Azure.Deployments.Extensibility.AspNetCore.Models;
-using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json.Nodes;
-
 using static Microsoft.AspNetCore.Http.TypedResults;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
@@ -17,7 +15,7 @@ internal static class BicepExtensionHandlerDispatcher
     public static async Task<IResult> DispatchResourcePreviewAsync(
         string extensionVersion,
         ResourcePreviewSpecification request,
-        [FromServices] HandlerInvoker handlerInvoker,
+        [FromServices] BicepExtensionHandlerInvoker handlerInvoker,
         CancellationToken cancellationToken)
     {
         var response = await handlerInvoker.InvokeResourcePreviewAsync(extensionVersion, request, cancellationToken);
@@ -30,7 +28,7 @@ internal static class BicepExtensionHandlerDispatcher
     public static async Task<IResult> DispatchResourceCreateOrUpdateAsync(
         string extensionVersion,
         ResourceSpecification request,
-        [FromServices] HandlerInvoker handlerInvoker,
+        [FromServices] BicepExtensionHandlerInvoker handlerInvoker,
         CancellationToken cancellationToken)
     {
         var response = await handlerInvoker.InvokeResourceCreateOrUpdateAsync(extensionVersion, request, cancellationToken);
@@ -44,7 +42,7 @@ internal static class BicepExtensionHandlerDispatcher
     public static async Task<IResult> DispatchResourceGetAsync(
         string extensionVersion,
         ResourceReference request,
-        [FromServices] HandlerInvoker handlerInvoker,
+        [FromServices] BicepExtensionHandlerInvoker handlerInvoker,
         CancellationToken cancellationToken)
     {
         var response = await handlerInvoker.InvokeResourceGetAsync(extensionVersion, request, cancellationToken);
@@ -61,7 +59,7 @@ internal static class BicepExtensionHandlerDispatcher
     public static async Task<IResult> DispatchResourceDeleteAsync(
         string extensionVersion,
         ResourceReference request,
-        [FromServices] HandlerInvoker handlerInvoker,
+        [FromServices] BicepExtensionHandlerInvoker handlerInvoker,
         CancellationToken cancellationToken)
     {
         var response = await handlerInvoker.InvokeResourceDeleteAsync(extensionVersion, request, cancellationToken);
@@ -75,7 +73,7 @@ internal static class BicepExtensionHandlerDispatcher
     public static async Task<IResult> DispatchLongRunningOperationGetAsync(
         string extensionVersion,
         JsonObject request,
-        [FromServices] HandlerInvoker handlerInvoker,
+        [FromServices] BicepExtensionHandlerInvoker handlerInvoker,
         CancellationToken cancellationToken)
     {
         var response = await handlerInvoker.InvokeLongRunningOperationGetAsync(extensionVersion, request, cancellationToken);

@@ -1,23 +1,23 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Text.Json.Nodes;
 using Azure.Deployments.Extensibility.AspNetCore.Behaviors;
 using Azure.Deployments.Extensibility.Core.V2.Contracts;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Exceptions;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Handlers;
 using Azure.Deployments.Extensibility.Core.V2.Contracts.Models;
 using Microsoft.Extensions.Options;
-using System.Text.Json.Nodes;
 
 namespace Azure.Deployments.Extensibility.AspNetCore.Handlers;
 
-internal sealed class HandlerInvoker
+public sealed class BicepExtensionHandlerInvoker
 {
     private readonly IBicepExtensionResolver resolver;
     private readonly IServiceProvider serviceProvider;
     private readonly BicepExtensionRuntimeOptions options;
 
-    public HandlerInvoker(
+    public BicepExtensionHandlerInvoker(
         IBicepExtensionResolver resolver,
         IServiceProvider serviceProvider,
         IOptions<BicepExtensionRuntimeOptions> options)
@@ -27,7 +27,7 @@ internal sealed class HandlerInvoker
         this.options = options.Value;
     }
 
-    internal Task<OneOf<ResourcePreview, ErrorResponse>> InvokeResourcePreviewAsync(
+    public Task<OneOf<ResourcePreview, ErrorResponse>> InvokeResourcePreviewAsync(
         string extensionVersion,
         ResourcePreviewSpecification request,
         CancellationToken cancellationToken) => this.InvokeAsync<
@@ -43,7 +43,7 @@ internal sealed class HandlerInvoker
                 static errorResponse => errorResponse,
                 cancellationToken);
 
-    internal Task<OneOf<Resource, LongRunningOperation, ErrorResponse>> InvokeResourceCreateOrUpdateAsync(
+    public Task<OneOf<Resource, LongRunningOperation, ErrorResponse>> InvokeResourceCreateOrUpdateAsync(
         string extensionVersion,
         ResourceSpecification request,
         CancellationToken cancellationToken) => this.InvokeAsync<
@@ -59,7 +59,7 @@ internal sealed class HandlerInvoker
                 static errorResponse => errorResponse,
                 cancellationToken);
 
-    internal Task<OneOf<Resource?, ErrorResponse>> InvokeResourceGetAsync(
+    public Task<OneOf<Resource?, ErrorResponse>> InvokeResourceGetAsync(
         string extensionVersion,
         ResourceReference request,
         CancellationToken cancellationToken) => this.InvokeAsync<
@@ -75,7 +75,7 @@ internal sealed class HandlerInvoker
                 static errorResponse => errorResponse,
                 cancellationToken);
 
-    internal Task<OneOf<Resource?, LongRunningOperation, ErrorResponse>> InvokeResourceDeleteAsync(
+    public Task<OneOf<Resource?, LongRunningOperation, ErrorResponse>> InvokeResourceDeleteAsync(
         string extensionVersion,
         ResourceReference request,
         CancellationToken cancellationToken) => this.InvokeAsync<
@@ -91,7 +91,7 @@ internal sealed class HandlerInvoker
                 static errorResponse => errorResponse,
                 cancellationToken);
 
-    internal Task<OneOf<LongRunningOperation, ErrorResponse>> InvokeLongRunningOperationGetAsync(
+    public Task<OneOf<LongRunningOperation, ErrorResponse>> InvokeLongRunningOperationGetAsync(
         string extensionVersion,
         JsonObject request,
         CancellationToken cancellationToken) => this.InvokeAsync<

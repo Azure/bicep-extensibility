@@ -85,7 +85,7 @@ public static class BicepExtensionEndpointRouteBuilderExtensions
 
         var serviceProviderIsService = endpoints.ServiceProvider.GetService<IServiceProviderIsService>();
 
-        if (serviceProviderIsService?.IsService(typeof(HandlerInvoker)) != true)
+        if (serviceProviderIsService?.IsService(typeof(BicepExtensionHandlerInvoker)) != true)
         {
             throw new InvalidOperationException(
                 $"Call {nameof(BicepExtensionServiceCollectionExtensions.AddBicepExtensionHandlerRuntime)} before mapping Bicep extension endpoints.");

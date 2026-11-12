@@ -37,7 +37,7 @@ public record ResourcePreviewSpecification<TProperties, TConfig> : ResourceSpeci
     /// <summary>
     /// Metadata for the preview specification, such as properties that could not be evaluated.
     /// </summary>
-    public required ResourcePreviewSpecificationMetadata Metadata { get; init; }
+    public ResourcePreviewSpecificationMetadata Metadata { get; init; } = new();
 }
 
 /// <inheritdoc cref="ResourcePreviewSpecification{TProperties, TConfig}"/>
