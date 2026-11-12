@@ -1,0 +1,69 @@
+[
+  {
+    "$type": "ObjectType",
+    "name": "ContosoConfiguration",
+    "properties": {
+      "organization": {
+        "type": {
+          "$ref": "#/1"
+        },
+        "flags": 0
+      }
+    }
+  },
+  {
+    "$type": "UnionType",
+    "elements": [
+      {
+        "$ref": "#/2"
+      },
+      {
+        "$ref": "#/3"
+      }
+    ]
+  },
+  {
+    "$type": "StringType"
+  },
+  {
+    "$type": "NullType"
+  },
+  {
+    "$type": "ObjectType",
+    "name": "Repository",
+    "properties": {
+      "description": {
+        "type": {
+          "$ref": "#/1"
+        },
+        "flags": 0,
+        "description": "Repository description"
+      },
+      "name": {
+        "type": {
+          "$ref": "#/2"
+        },
+        "flags": 17,
+        "description": "Repository name"
+      }
+    }
+  },
+  {
+    "$type": "ResourceType",
+    "name": "Repository@v1",
+    "body": {
+      "$ref": "#/4"
+    },
+    "readableScopes": 31,
+    "writableScopes": 31
+  },
+  {
+    "$type": "ResourceType",
+    "name": "Repository@v2",
+    "body": {
+      "$ref": "#/4"
+    },
+    "readableScopes": 31,
+    "writableScopes": 31
+  }
+]
