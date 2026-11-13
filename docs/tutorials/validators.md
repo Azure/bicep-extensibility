@@ -1,5 +1,7 @@
 # Validators
 
+*Learning path, step 5 of 5. Previous: [Behaviors](behaviors.md)*
+
 The Core SDK includes a fluent validation framework built around `ModelValidator<T>`. Use it to validate request models (e.g., `ResourceSpecification`) with composable, declarative rules.
 
 ## Defining a validator
