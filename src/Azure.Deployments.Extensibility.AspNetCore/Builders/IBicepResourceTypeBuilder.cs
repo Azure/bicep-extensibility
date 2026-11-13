@@ -9,6 +9,11 @@ namespace Azure.Deployments.Extensibility.AspNetCore;
 /// <summary>
 /// Configures handlers and behaviors for one Bicep resource type.
 /// </summary>
+/// <remarks>
+/// This legacy hosting surface is kept for compatibility with existing consumers.
+/// New applications should use the Azure.Deployments.Extensibility.Hosting package instead.
+/// This interface is slated for removal in a future release.
+/// </remarks>
 public interface IBicepResourceTypeBuilder
 {
     /// <summary>
