@@ -10,20 +10,20 @@ namespace Azure.Deployments.Extensibility.Core.V2.Json;
 
 /// <summary>
 /// Resolves instance pointers to property schemas in a JSON schema. Only dialect draft-07 is supported. Schemas without a declared dialect
-/// are treated as draft-07.
+/// are treated as draft-07. References must resolve within the supplied document; external schemas are not loaded.
 /// </summary>
 public class JsonSchemaPropertyResolver
 {
     private readonly JsonSchema rootSchema;
-    private readonly Lazy<Dictionary<JsonSchema, JsonSchema>> resourceRoots;
+    private readonly Lazy<SchemaIndex> schemaIndex;
     private readonly ConcurrentDictionary<JsonSchema, JsonSchema> resolvedReferences = new(ReferenceEqualityComparer.Instance);
 
     public JsonSchemaPropertyResolver(JsonSchema rootSchema)
     {
         ValidateDialect(rootSchema);
-        
+
         this.rootSchema = rootSchema;
-        this.resourceRoots = new(() => GetResourceRoots(rootSchema));
+        this.schemaIndex = new(() => BuildSchemaIndex(rootSchema));
     }
 
     /// <summary>
@@ -86,40 +86,52 @@ public class JsonSchemaPropertyResolver
         }
     }
 
-    private static Dictionary<JsonSchema, JsonSchema> GetResourceRoots(JsonSchema rootSchema)
+    private static SchemaIndex BuildSchemaIndex(JsonSchema rootSchema)
     {
-        var resourceRoots = new Dictionary<JsonSchema, JsonSchema>(ReferenceEqualityComparer.Instance);
-        var pending = new Stack<(JsonSchema Schema, JsonSchema ResourceRoot)>();
-        pending.Push((rootSchema, rootSchema));
+        var index = new SchemaIndex();
+        var documentUri = new Uri(rootSchema.BaseUri.GetLeftPart(UriPartial.Query));
+        index.Identifiers.Add(SchemaIdentifier.FromUri(documentUri), rootSchema);
+        var pending = new Stack<(JsonSchema Schema, Uri BaseUri)>();
+        pending.Push((rootSchema, documentUri));
 
         while (pending.TryPop(out var entry))
         {
-            var (schema, resourceRoot) = entry;
+            var (schema, baseUri) = entry;
 
-            if (schema.GetId() is not null)
+            if (schema.GetRef() is null && schema.GetId() is { } id)
             {
-                resourceRoot = schema;
+                baseUri = new Uri(baseUri, id);
+                var identifier = SchemaIdentifier.FromUri(baseUri);
+
+                if (!index.Identifiers.TryAdd(identifier, schema) &&
+                    !ReferenceEquals(index.Identifiers[identifier], schema))
+                {
+                    throw new InvalidOperationException($"Duplicate schema identifier '{baseUri}'.");
+                }
             }
 
-            if (!resourceRoots.TryAdd(schema, resourceRoot))
+            if (!index.BaseUris.TryAdd(schema, baseUri))
             {
                 continue;
             }
 
-            ValidateDialect(schema);
+            if (schema.GetRef() is null)
+            {
+                ValidateDialect(schema);
+            }
 
             foreach (var keyword in schema.Keywords ?? [])
             {
                 if (keyword is ISchemaContainer { Schema: { } child })
                 {
-                    pending.Push((child, resourceRoot));
+                    pending.Push((child, baseUri));
                 }
 
                 if (keyword is ISchemaCollector { Schemas: { } children })
                 {
                     foreach (var subschema in children)
                     {
-                        pending.Push((subschema, resourceRoot));
+                        pending.Push((subschema, baseUri));
                     }
                 }
 
@@ -127,7 +139,7 @@ public class JsonSchemaPropertyResolver
                 {
                     foreach (var subschema in namedChildren.Values)
                     {
-                        pending.Push((subschema, resourceRoot));
+                        pending.Push((subschema, baseUri));
                     }
                 }
 
@@ -135,13 +147,13 @@ public class JsonSchemaPropertyResolver
                 {
                     foreach (var subschema in customChildren)
                     {
-                        pending.Push((subschema, resourceRoot));
+                        pending.Push((subschema, baseUri));
                     }
                 }
             }
         }
 
-        return resourceRoots;
+        return index;
     }
 
     private JsonSchema ResolveReference(JsonSchema schema)
@@ -157,10 +169,9 @@ public class JsonSchemaPropertyResolver
                 break;
             }
 
-            ValidateDialect(schema);
-
             if (schema.GetRef() is not { } reference)
             {
+                ValidateDialect(schema);
                 this.resolvedReferences.TryAdd(schema, schema);
 
                 break;
@@ -173,21 +184,28 @@ public class JsonSchemaPropertyResolver
                 throw new InvalidOperationException($"Circular schema reference '{reference}'.");
             }
 
-            if (reference.OriginalString.Length > 0 && !reference.OriginalString.StartsWith('#'))
+            var index = this.schemaIndex.Value;
+            var baseUri = index.BaseUris[schema];
+            // An empty reference drops a fragment inherited from a named $id.
+            var referenceUri = reference.OriginalString.Length == 0
+                ? new Uri(baseUri.GetLeftPart(UriPartial.Query))
+                : new Uri(baseUri, reference);
+
+            var identifier = SchemaIdentifier.FromUri(referenceUri);
+            JsonSchema? target;
+
+            if (identifier.Fragment.StartsWith('/'))
             {
-                throw new NotSupportedException($"Only local schema references are supported: '{reference}'.");
+                target = index.Identifiers.TryGetValue(identifier with { Fragment = string.Empty }, out var resourceRoot)
+                    ? ((IBaseDocument)resourceRoot).FindSubschema(JsonPointer.Parse(identifier.Fragment), new EvaluationOptions())
+                    : null;
+            }
+            else
+            {
+                index.Identifiers.TryGetValue(identifier, out target);
             }
 
-            var fragment = reference.OriginalString.Length == 0
-                ? string.Empty
-                : Uri.UnescapeDataString(reference.OriginalString[1..]);
-
-            if (fragment.Length > 0 && !fragment.StartsWith('/'))
-            {
-                throw new NotSupportedException($"Only local JSON Pointer schema references are supported: '{reference}'.");
-            }
-
-            schema = ((IBaseDocument)this.resourceRoots.Value[schema]).FindSubschema(JsonPointer.Parse(fragment), new EvaluationOptions())
+            schema = target
                 ?? throw new InvalidOperationException($"Cannot resolve schema reference '{reference}'.");
         }
 
@@ -200,5 +218,19 @@ public class JsonSchemaPropertyResolver
         }
 
         return schema;
+    }
+
+    private sealed class SchemaIndex
+    {
+        public Dictionary<JsonSchema, Uri> BaseUris { get; } = new(ReferenceEqualityComparer.Instance);
+        public Dictionary<SchemaIdentifier, JsonSchema> Identifiers { get; } = [];
+    }
+
+    private sealed record SchemaIdentifier(Uri DocumentUri, string Fragment)
+    {
+        public static SchemaIdentifier FromUri(Uri uri)
+            => new(
+                new Uri(uri.GetLeftPart(UriPartial.Query)),
+                uri.Fragment.Length == 0 ? string.Empty : Uri.UnescapeDataString(uri.Fragment[1..]));
     }
 }

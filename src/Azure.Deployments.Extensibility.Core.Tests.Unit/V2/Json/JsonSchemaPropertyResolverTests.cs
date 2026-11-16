@@ -472,37 +472,37 @@ public class JsonSchemaPropertyResolverTests
         var schema = JsonSchema.FromText(
             """
             {
-                "$defs": {
+                "definitions": {
                     "nested": {
                         "$id": "https://example.com/nested",
-                        "$defs": { "value": { "type": "integer" } },
-                        "$ref": "#/$defs/value"
+                        "definitions": { "value": { "type": "integer" } },
+                        "properties": { "alias": { "$ref": "#/definitions/value" } }
                     }
                 },
                 "properties": {
-                    "alias": { "$ref": "#/$defs/nested" },
+                    "alias": { "$ref": "#/definitions/nested/properties/alias" },
                     "nested": {
                         "$id": "https://example.com/other",
-                        "$defs": {
+                        "definitions": {
                             "target": {
                                 "$id": "target",
-                                "$defs": { "value": { "type": "boolean" } },
-                                "$ref": "#/$defs/value"
+                                "definitions": { "value": { "type": "boolean" } },
+                                "properties": { "alias": { "$ref": "#/definitions/value" } }
                             }
                         },
-                        "properties": { "alias": { "$ref": "#/$defs/target" } }
+                        "properties": { "alias": { "$ref": "#/definitions/target/properties/alias" } }
                     }
                 }
             }
             """);
 
         var target = pointer == "/alias"
-            ? schema.GetDefs()!["nested"]
-            : schema.GetProperties()!["nested"].GetDefs()!["target"];
+            ? schema.GetDefinitions()!["nested"]
+            : schema.GetProperties()!["nested"].GetDefinitions()!["target"];
 
         foreach (var resolve in GetResolvers(schema, pointer))
         {
-            resolve().Should().BeSameAs(target.GetDefs()!["value"]);
+            resolve().Should().BeSameAs(target.GetDefinitions()!["value"]);
         }
     }
 
@@ -572,7 +572,7 @@ public class JsonSchemaPropertyResolverTests
     [Theory]
     [InlineData("#value")]
     [InlineData("#%76alue")]
-    public void FindByPointer_NamedAnchor_ThrowsNotSupportedException(string reference)
+    public void FindByPointer_AnchorKeyword_IsIgnored(string reference)
     {
         var schema = JsonSchema.FromText(
             $$"""
@@ -589,8 +589,244 @@ public class JsonSchemaPropertyResolverTests
         foreach (var resolve in GetResolvers(schema, "/alias"))
         {
             resolve.Should()
-                .Throw<NotSupportedException>()
-                .WithMessage("Only local JSON Pointer schema references are supported: '#value'.");
+                .Throw<InvalidOperationException>()
+                .WithMessage("Cannot resolve schema reference '#value'.");
+        }
+    }
+
+    [Theory]
+    [InlineData("#value")]
+    [InlineData("#%76alue")]
+    public void FindByPointer_NamedId_ResolvesWithinEnclosingResource(string reference)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "$id": "https://example.com/root.json",
+                  "definitions": {
+                      "value": { "$id": "#value", "type": "string" },
+                      "other": { "$id": "#other", "type": "boolean" }
+                  },
+                  "properties": {
+                      "alias": { "$ref": "{{reference}}" },
+                      "other": { "$ref": "#other" },
+                      "nested": {
+                          "$id": "nested.json",
+                          "definitions": { "value": { "$id": "#value", "type": "integer" } },
+                          "properties": { "alias": { "$ref": "{{reference}}" } }
+                      }
+                  }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, "/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["value"]);
+        }
+
+        foreach (var resolve in GetResolvers(schema, "/other"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["other"]);
+        }
+
+        foreach (var resolve in GetResolvers(schema, "/nested/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetProperties()!["nested"].GetDefinitions()!["value"]);
+        }
+    }
+
+    [Theory]
+    [InlineData("nested/child.json#/definitions/value", "/alias")]
+    [InlineData("https://example.com/folder/nested/child.json#/definitions/value", "/alias")]
+    [InlineData("nested/child.json", "/alias/value")]
+    [InlineData("nested/child.json#", "/alias/value")]
+    public void FindByPointer_EmbeddedResourceUri_ResolvesRelativeAndAbsoluteReferences(string reference, string pointer)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "$id": "https://example.com/folder/root.json",
+                  "definitions": {
+                      "child": {
+                          "$id": "nested/child.json",
+                          "definitions": { "value": { "type": "integer" } },
+                          "properties": { "value": { "$ref": "#/definitions/value" } }
+                      }
+                  },
+                  "properties": { "alias": { "$ref": "{{reference}}" } }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, pointer))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["child"].GetDefinitions()!["value"]);
+        }
+    }
+
+    [Theory]
+    [InlineData("urn:example:target")]
+    [InlineData("child.json?version=1")]
+    public void FindByPointer_ResourceIdentifier_PreservesSchemeAndQuery(string identifier)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "$id": "https://example.com/root.json",
+                  "definitions": {
+                      "target": {
+                          "$id": "{{identifier}}",
+                          "properties": { "value": { "type": "string" } }
+                      }
+                  },
+                  "properties": { "alias": { "$ref": "{{identifier}}#/properties/value" } }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, "/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["target"].GetProperties()!["value"]);
+        }
+    }
+
+    [Theory]
+    [InlineData("../root.json#value")]
+    [InlineData("../root.json#/definitions/value")]
+    [InlineData("https://example.com/root.json#value")]
+    public void FindByPointer_ReferenceToParentResource_UsesInheritedBaseUri(string reference)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "$id": "https://example.com/root.json",
+                  "definitions": { "value": { "$id": "#value", "type": "string" } },
+                  "properties": {
+                      "child": {
+                          "$id": "nested/child.json",
+                          "properties": {
+                              "nested": {
+                                  "properties": { "alias": { "$ref": "{{reference}}" } }
+                              }
+                          }
+                      }
+                  }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, "/child/nested/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["value"]);
+        }
+    }
+
+    [Theory]
+    [InlineData("#/definitions/value", "/alias/value")]
+    [InlineData("#", "/alias/value/name")]
+    [InlineData("", "/alias/value/name")]
+    public void FindByPointer_ReferenceInsideNamedId_UsesDocumentRoot(string reference, string pointer)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "definitions": {
+                      "value": { "type": "integer" },
+                      "named": {
+                          "$id": "#named",
+                          "properties": { "value": { "$ref": "{{reference}}" } }
+                      }
+                  },
+                  "properties": {
+                      "alias": { "$ref": "#named" },
+                      "name": { "type": "string" }
+                  }
+              }
+              """);
+
+        var expected = reference == "#/definitions/value"
+            ? schema.GetDefinitions()!["value"]
+            : schema.GetProperties()!["name"];
+
+        foreach (var resolve in GetResolvers(schema, pointer))
+        {
+            resolve().Should().BeSameAs(expected);
+        }
+    }
+
+    [Fact]
+    public void FindByPointer_ReferenceSiblingId_DoesNotChangeBaseUriOrRegisterIdentifier()
+    {
+        var schema = JsonSchema.FromText(
+            """
+            {
+                "$id": "https://example.com/root.json",
+                "definitions": { "target": { "$id": "target.json", "type": "integer" } },
+                "properties": {
+                    "alias": {
+                        "$id": "wrong/alias.json",
+                        "$schema": "https://json-schema.org/draft/2020-12/schema",
+                        "$ref": "target.json"
+                    },
+                    "ignored": { "$ref": "wrong/alias.json" }
+                }
+            }
+            """);
+
+        foreach (var resolve in GetResolvers(schema, "/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()!["target"]);
+        }
+
+        foreach (var resolve in GetResolvers(schema, "/ignored"))
+        {
+            resolve.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("Cannot resolve schema reference 'wrong/alias.json'.");
+        }
+    }
+
+    [Theory]
+    [InlineData("#/definitions/a%20b", "a b")]
+    [InlineData("#/definitions/a~1b", "a/b")]
+    [InlineData("#/definitions/a%7E1b", "a/b")]
+    public void FindByPointer_EncodedReferenceFragment_ResolvesJsonPointer(string reference, string propertyName)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "definitions": {
+                      "a b": { "type": "string" },
+                      "a/b": { "type": "integer" }
+                  },
+                  "properties": { "alias": { "$ref": "{{reference}}" } }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, "/alias"))
+        {
+            resolve().Should().BeSameAs(schema.GetDefinitions()![propertyName]);
+        }
+    }
+
+    [Theory]
+    [InlineData("#same")]
+    [InlineData("child.json")]
+    public void FindByPointer_DuplicateIdentifiers_ThrowsInvalidOperationException(string identifier)
+    {
+        var schema = JsonSchema.FromText(
+            $$"""
+              {
+                  "definitions": {
+                      "first": { "$id": "{{identifier}}", "type": "string" },
+                      "second": { "$id": "{{identifier}}", "type": "integer" }
+                  },
+                  "properties": { "alias": { "$ref": "#/definitions/first" } }
+              }
+              """);
+
+        foreach (var resolve in GetResolvers(schema, "/alias"))
+        {
+            resolve.Should()
+                .Throw<InvalidOperationException>()
+                .WithMessage("Duplicate schema identifier '*'.");
         }
     }
 
@@ -599,7 +835,7 @@ public class JsonSchemaPropertyResolverTests
     [InlineData("other.json", "")]
     [InlineData("https://example.com/schema.json", "/alias")]
     [InlineData("other.json", "/alias")]
-    public void FindByPointer_NonLocalReference_ThrowsNotSupportedException(string reference, string pointer)
+    public void FindByPointer_ReferenceOutsideDocument_ThrowsInvalidOperationException(string reference, string pointer)
     {
         var schema = JsonSchema.FromText(
             pointer == ""
@@ -609,8 +845,8 @@ public class JsonSchemaPropertyResolverTests
         foreach (var resolve in GetResolvers(schema, pointer))
         {
             resolve.Should()
-                .Throw<NotSupportedException>()
-                .WithMessage($"Only local schema references are supported: '{reference}'.");
+                .Throw<InvalidOperationException>()
+                .WithMessage($"Cannot resolve schema reference '{reference}'.");
         }
     }
 
