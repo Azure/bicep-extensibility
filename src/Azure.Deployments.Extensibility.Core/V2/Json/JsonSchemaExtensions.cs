@@ -11,7 +11,7 @@ public static class JsonSchemaExtensions
 {
     /// <summary>
     /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
-    /// Invalid or unsupported schema references still raise exceptions.
+    /// Invalid schema references will raise exceptions.
     /// </summary>
     public static JsonSchema? FindPropertySchemaByJsonPointerSegments(this JsonSchema rootSchema, IEnumerable<string> pointerSegments)
     {
@@ -42,14 +42,14 @@ public static class JsonSchemaExtensions
 
     /// <summary>
     /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
-    /// Invalid or unsupported schema references still raise exceptions.
+    /// Invalid schema references will raise exceptions.
     /// </summary>
     public static JsonSchema? FindPropertySchemaByJsonPointerSegments(this JsonSchema rootSchema, params string[] pointerSegments)
         => rootSchema.FindPropertySchemaByJsonPointerSegments((IEnumerable<string>)pointerSegments);
 
     /// <summary>
     /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
-    /// Invalid or unsupported schema references still raise exceptions.
+    /// Invalid schema references will raise exceptions.
     /// </summary>
     public static JsonSchema? FindPropertySchemaByJsonPointer(this JsonSchema rootSchema, JsonPointer propertyPointer)
         => rootSchema.FindPropertySchemaByJsonPointerSegments(propertyPointer);
