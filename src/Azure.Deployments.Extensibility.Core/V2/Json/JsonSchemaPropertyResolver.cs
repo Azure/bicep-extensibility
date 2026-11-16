@@ -8,6 +8,10 @@ using Json.Schema;
 
 namespace Azure.Deployments.Extensibility.Core.V2.Json;
 
+/// <summary>
+/// Resolves instance pointers to property schemas in a JSON schema. Only dialect draft-07 is supported. Schemas without a declared dialect
+/// are treated as draft-07.
+/// </summary>
 public class JsonSchemaPropertyResolver
 {
     private readonly JsonSchema rootSchema;
@@ -16,6 +20,8 @@ public class JsonSchemaPropertyResolver
 
     public JsonSchemaPropertyResolver(JsonSchema rootSchema)
     {
+        ValidateDialect(rootSchema);
+        
         this.rootSchema = rootSchema;
         this.resourceRoots = new(() => GetResourceRoots(rootSchema));
     }
@@ -38,8 +44,8 @@ public class JsonSchemaPropertyResolver
             else if ((segment.Length == 1 || !segment.StartsWith('0')) &&
                 int.TryParse(segment, NumberStyles.None, CultureInfo.InvariantCulture, out var index))
             {
-                schema = schema.GetPrefixItems() is { } prefixItems && index < prefixItems.Count
-                    ? prefixItems[index]
+                schema = schema.GetItemsArrayForm() is { } tupleItems
+                    ? index < tupleItems.Count ? tupleItems[index] : schema.GetAdditionalItems()
                     : schema.GetItems();
 
                 if (schema is null)
@@ -72,6 +78,14 @@ public class JsonSchemaPropertyResolver
     public JsonSchema? FindByJsonPointer(JsonPointer propertyPointer)
         => this.FindByJsonPointerSegments(propertyPointer);
 
+    private static void ValidateDialect(JsonSchema schema)
+    {
+        if (schema.GetSchema() is { } dialect && dialect != MetaSchemas.Draft7Id)
+        {
+            throw new NotSupportedException($"Only JSON Schema draft-07 is supported: '{dialect}'.");
+        }
+    }
+
     private static Dictionary<JsonSchema, JsonSchema> GetResourceRoots(JsonSchema rootSchema)
     {
         var resourceRoots = new Dictionary<JsonSchema, JsonSchema>(ReferenceEqualityComparer.Instance);
@@ -91,6 +105,8 @@ public class JsonSchemaPropertyResolver
             {
                 continue;
             }
+
+            ValidateDialect(schema);
 
             foreach (var keyword in schema.Keywords ?? [])
             {
@@ -130,18 +146,22 @@ public class JsonSchemaPropertyResolver
 
     private JsonSchema ResolveReference(JsonSchema schema)
     {
-        if (this.resolvedReferences.TryGetValue(schema, out var resolved))
-        {
-            return resolved;
-        }
-
         HashSet<JsonSchema>? visited = null;
 
-        while (schema.GetRef() is { } reference)
+        while (true)
         {
-            if (this.resolvedReferences.TryGetValue(schema, out resolved))
+            if (this.resolvedReferences.TryGetValue(schema, out var resolved))
             {
                 schema = resolved;
+
+                break;
+            }
+
+            ValidateDialect(schema);
+
+            if (schema.GetRef() is not { } reference)
+            {
+                this.resolvedReferences.TryAdd(schema, schema);
 
                 break;
             }
@@ -153,12 +173,21 @@ public class JsonSchemaPropertyResolver
                 throw new InvalidOperationException($"Circular schema reference '{reference}'.");
             }
 
-            if (!reference.OriginalString.StartsWith('#'))
+            if (reference.OriginalString.Length > 0 && !reference.OriginalString.StartsWith('#'))
             {
                 throw new NotSupportedException($"Only local schema references are supported: '{reference}'.");
             }
 
-            schema = ((IBaseDocument)this.resourceRoots.Value[schema]).FindSubschema(JsonPointer.Parse(reference.OriginalString), new EvaluationOptions())
+            var fragment = reference.OriginalString.Length == 0
+                ? string.Empty
+                : Uri.UnescapeDataString(reference.OriginalString[1..]);
+
+            if (fragment.Length > 0 && !fragment.StartsWith('/'))
+            {
+                throw new NotSupportedException($"Only local JSON Pointer schema references are supported: '{reference}'.");
+            }
+
+            schema = ((IBaseDocument)this.resourceRoots.Value[schema]).FindSubschema(JsonPointer.Parse(fragment), new EvaluationOptions())
                 ?? throw new InvalidOperationException($"Cannot resolve schema reference '{reference}'.");
         }
 
