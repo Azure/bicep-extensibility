@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
 using System.Globalization;
 using Json.Pointer;
 using Json.Schema;
@@ -11,7 +12,7 @@ public class JsonSchemaPropertyResolver
 {
     private readonly JsonSchema rootSchema;
     private readonly Lazy<Dictionary<JsonSchema, JsonSchema>> resourceRoots;
-    private readonly Dictionary<JsonSchema, JsonSchema> resolvedReferences = new(ReferenceEqualityComparer.Instance);
+    private readonly ConcurrentDictionary<JsonSchema, JsonSchema> resolvedReferences = new(ReferenceEqualityComparer.Instance);
 
     public JsonSchemaPropertyResolver(JsonSchema rootSchema)
     {
