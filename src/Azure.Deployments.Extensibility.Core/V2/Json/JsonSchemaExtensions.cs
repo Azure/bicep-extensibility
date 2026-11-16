@@ -13,12 +13,12 @@ public static class JsonSchemaExtensions
     /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
     /// Invalid or unsupported schema references still raise exceptions.
     /// </summary>
-    public static JsonSchema? FindPropertySchemaByPointer(this JsonSchema rootSchema, JsonPointer propertyPointer)
+    public static JsonSchema? FindPropertySchemaByJsonPointerSegments(this JsonSchema rootSchema, IEnumerable<string> pointerSegments)
     {
         // The pointer addresses the instance, not the schema document's /properties and /items keywords.
         var schema = ResolveReference(rootSchema, rootSchema);
 
-        foreach (var segment in propertyPointer)
+        foreach (var segment in pointerSegments)
         {
             if (schema.GetProperties() is { } properties && properties.TryGetValue(segment, out var propertySchema))
             {
@@ -39,6 +39,20 @@ public static class JsonSchemaExtensions
 
         return schema;
     }
+
+    /// <summary>
+    /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
+    /// Invalid or unsupported schema references still raise exceptions.
+    /// </summary>
+    public static JsonSchema? FindPropertySchemaByJsonPointerSegments(this JsonSchema rootSchema, params string[] pointerSegments)
+        => rootSchema.FindPropertySchemaByJsonPointerSegments((IEnumerable<string>)pointerSegments);
+
+    /// <summary>
+    /// Tries to resolve an instance pointer relative to the supplied root schema, returning null when no property schema is found.
+    /// Invalid or unsupported schema references still raise exceptions.
+    /// </summary>
+    public static JsonSchema? FindPropertySchemaByJsonPointer(this JsonSchema rootSchema, JsonPointer propertyPointer)
+        => rootSchema.FindPropertySchemaByJsonPointerSegments(propertyPointer);
 
     private static JsonSchema ResolveReference(JsonSchema rootSchema, JsonSchema schema)
     {
