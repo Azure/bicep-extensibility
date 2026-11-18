@@ -1,12 +1,4 @@
 apiRules:
-  # Public Managed service extensions intentionally follow the Microsoft DI namespace convention
-  - include:
-      uidRegex: ^Microsoft\.Extensions\.DependencyInjection$
-      type: Namespace
-  - include:
-      uidRegex: ^Microsoft\.Extensions\.DependencyInjection\.BicepManagedServiceCollectionExtensions$
-      type: Type
-
   # Exclude BCL and framework namespaces — only Extensibility types should appear
   - exclude:
       uidRegex: ^System\.
@@ -20,13 +12,13 @@ apiRules:
 
   # Hide obsolete members and InternalsVisibleTo attributes
   - exclude:
+      type: Member
       hasAttribute:
         uid: System.ObsoleteAttribute
-      type: Member
   - exclude:
+      type: Member
       hasAttribute:
         uid: System.Runtime.CompilerServices.InternalsVisibleToAttribute
-      type: Member
 
   # Legacy V1 provider types — superseded by V2 contract
   - exclude:
