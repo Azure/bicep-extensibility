@@ -1,5 +1,7 @@
 # Getting Started
 
+*Learning path, step 2 of 5. Previous: [How extensions work](../contract/index.md)*
+
 > [!WARNING]
 > The Bicep Extensibility platform is a work in progress and the SDKs are not yet ready for extension authors to consume. Follow this guide to explore and give feedback, not to build a production extension.
 
