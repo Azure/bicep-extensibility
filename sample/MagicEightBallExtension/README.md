@@ -212,8 +212,8 @@ builder.Services.AddBicepExtension(extension => extension
 
 var app = builder.Build();
 
-app.UseBicepExtension();
-app.MapDevelopmentApiExplorer(explorer => explorer
+app.MapBicepExtension();
+app.MapManagedScalarApiExplorer(explorer => explorer
     .WithTitle("Magic Eight Ball Extension API")
     .ConfigureExamples(FortuneExamples.Configure));
 

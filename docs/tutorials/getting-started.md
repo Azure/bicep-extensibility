@@ -76,7 +76,7 @@ builder.Services.AddBicepExtension(extension => extension
 
 var app = builder.Build();
 
-app.UseBicepExtension();
+app.MapBicepExtension();
 
 await app.RunAsync();
 ```
@@ -87,7 +87,7 @@ Key concepts:
 - **`AddBicepExtension`**: creates one immutable handler registration.
 - **`ForResourceType`**: scopes handlers to a specific resource type name.
 - **`AddHandler<T>`**: registers a handler. The SDK infers the operation (create, get, delete, preview, LRO) from the interface the handler implements.
-- **`UseBicepExtension`**: installs middleware and maps the five contract routes plus `GET /ping`.
+- **`MapBicepExtension`**: installs middleware and maps the five contract routes plus `GET /ping`.
 
 Handlers registered directly on the extension builder (outside `ForResourceType`) act as defaults. This is required for resource-type-agnostic operations such as LRO polling.
 

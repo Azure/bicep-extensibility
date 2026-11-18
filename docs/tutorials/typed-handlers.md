@@ -182,7 +182,7 @@ builder.Services.AddBicepExtension(extension => extension
             .AddHandler<WidgetDeleteHandler>()));
 
 var app = builder.Build();
-app.UseBicepExtension();
+app.MapBicepExtension();
 
 await app.RunAsync();
 ```

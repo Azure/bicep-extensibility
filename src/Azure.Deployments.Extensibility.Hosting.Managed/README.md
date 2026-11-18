@@ -23,7 +23,7 @@ builder.Services.AddBicepExtension(extension => extension
         .AddHandler<WidgetGetHandler>()));
 
 var app = builder.Build();
-app.UseBicepExtension();
-app.MapDevelopmentApiExplorer();
+app.MapBicepExtension();
+app.MapManagedScalarApiExplorer();
 await app.RunAsync();
 ```
