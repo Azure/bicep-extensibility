@@ -1,0 +1,23 @@
+extension "Contoso" version="1.2" singleton=false
+  preview=false deprecated=false
+  configuration: #1 object "ContosoConfiguration" sensitive=false
+    property "organization" flags=None description="Organization": #2 union
+      member[0]: #3 string sensitive=false minLength=none maxLength=none pattern=null
+      member[1]: #4 null
+  resource "Repository" versions=["2026-08-01", "2026-09-01"]
+    readableScopes=All writableScopes=All
+    body: #5 object "Repository" sensitive=false
+      property "description" flags=None description="Description": ref #2
+      property "url" flags=ReadOnly description="URL": ref #2
+      property "settings" flags=None description="Repository settings": #6 union
+        member[0]: #7 object "RepositorySettings" sensitive=false
+          property "topics" flags=None description="Repository topics": #8 array minLength=none maxLength=none
+            item: ref #3
+          property "labels" flags=None description="Custom labels": #9 object "Map:global::Contoso.Models.Repository.settings.labels" sensitive=false
+            additionalProperties: ref #2
+          property "visibility" flags=None description="Visibility": #10 union
+            member[0]: #11 literal "Private"
+            member[1]: #12 literal "Public"
+          property "parent" flags=None description="Parent settings": ref #6
+        member[1]: #13 null
+      property "name" flags=Required, Identifier description="Repository name": ref #3
